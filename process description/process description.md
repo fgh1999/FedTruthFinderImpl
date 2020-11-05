@@ -60,7 +60,7 @@ The **server** should have such *function point(s)*:
 
 While ***a server-coordinated communication structure*** is utilized to reduce the complexity of P2P network and shed the load of network maintenance in the user side, **server** also should have such *function point(s)*:
 
-1. can forward messages in a secure and confidential channel => SSL
+1. can forward messages in a secure and confidential channel => TSL (with authentication)
 
 And correspondingly, the **users**(or, clients) should have a *function point* to encrypt and decrypt messages. 
 
@@ -234,16 +234,6 @@ CheckKeySetTimeliness --> |out of date| FetchLatestPkSet
 CheckKeySetTimeliness --> |latest| E 
 ```
 
-## Class Diagram
-
-### Client (User)
-
-
-
-### Server
-
-
-
 # Secure Trustworthiness Leader-board
 
 ## Function Point Analysis
@@ -257,7 +247,7 @@ One possible method to divide clients into groups is:
 1. The number of group is *preset* in the server-side as $(2t+1)$.
 1. When a client communicates with the serve for the *first* time, the server allocates a $<uid, gid>$ pair to universally identified the client, where the $uid$ represents the global id of the client and $gid$ represents the global id of group (equals to $gid(u)$ in the paper).
 
-As a result, every group should have $\lfloor n/(2t+1) \rfloor$ or $\lceil n/(2t+1) \rceil$ members, where $n$ represents the total number of the clients (or, users) at that time.
+As a result, every group should have $\lfloor n/(2t+1) \rfloor$ or  $(\lfloor n/(2t+1)\rfloor +1)$ members, where $n$ represents the total number of the clients (or, users) at that time.
 
 However, this method cannot let the users to has the ability to observe the others' $gid$, which means that *user selection* in the following steps cannot be taken by the users. Besides, the group setting cannot be rearranged during the runtime. This is not all bad because user selection may depend on the stability of connections between client and server other than the quantities of connections among clients under a *server-coordinated* communication architecture.
 
@@ -423,12 +413,5 @@ S->>Ck: gid response: gid(u_k) = 2
 
 Cj->>S: gid request
 S->S: allocate a gid for u_j <br>and SUB u_j on this gid
-S->>Cj: gid response: gid(u_k) = 1
+S->>Cj: gid response: gid(u_k) = 3
 ```
-
-
-
-### Class Diagram
-
-
-
