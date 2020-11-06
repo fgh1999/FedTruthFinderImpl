@@ -263,13 +263,13 @@ Here's two parallelizable[^4] process: $\tau_i$-sharing and $r_k$-sharing.
 
 Each client first generates a sequence of number: $\tau_i, \tau_i^2, \cdots, \tau_i^{2t+1}$. For each one in the sequence, the client shares it with (t+1, 2t+1)-SSS to all the clients based on the receivers' $gid$. Specifically, one share of $\tau_i^k$ from $u_i$ to $u_j$ is denoted as $T_i^k(gid(u_j))$[^5].
 
-[^5]: The origin form of this notation is $\tau_{i_k}(gid(u_j))$ in the paper. To keep a uniform notation paradigm as in [Secret Sharing in Event Confidence Computation with SSS](#Secret Sharing), here I changed its representation.
+[^5]: The original form of this notation is $\tau_{i_k}(gid(u_j))$ in the paper. To keep a uniform notation paradigm as in [Secret Sharing in Event Confidence Computation with SSS](#Secret Sharing), here I changed its representation.
 
 #### $r_k$-sharing
 
 To generate a sequence of *positive* random number ($r_1, r_2, \cdots, r_{2t+1}$), the server first selects one client from each group based on some metrics, e.g., $u_{i,k}$ is selected by the server from group $g_k$ because the connection stability between $u_{i,k}$ and the server is the best in group $g_k$. Then, each chosen client $u_{i,k}$ shares the positive random number $r_k$ with (t+1, 2t+1)-SSS to all the clients in every group (i.e., $u_j$ will receive a share of $r_k$ regarding $gid(u_i)$ from $u_{i,k}$, denoted as $R_k(gid(u_j))$[^6]).
 
-[^6]: The origin form of this notation is $r_k(gid(u_i))$ in the paper. Out of the same consideration as [$\tau_i$-sharing](#$\tau_i$-sharing), I changed its representation here.
+[^6]: The original form of this notation is $r_k(gid(u_i))$ in the paper. Out of the same consideration as [$\tau_i$-sharing](#$\tau_i$-sharing), I changed its representation here.
 
 ### User-wise Secret Sharing
 
