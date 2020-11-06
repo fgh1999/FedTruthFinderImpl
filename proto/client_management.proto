@@ -1,5 +1,6 @@
 syntax = "proto3";
 package client;
+import "google/protobuf/empty.proto";
 
 message Identity {
     string uid = 1;
@@ -9,19 +10,19 @@ message Identity {
 import "pubsub.proto";
 
 message SelectionResult {
-    required GroupSharingContentType type = 1;
+    pubsub.GroupSharingContentType type = 1;
 }
 
 service ClientManagement {
-    rpc GetIdentity() returns Identity {}
+    rpc GetIdentity(google.protobuf.Empty) returns (Identity) {}
 
     // select a client to do 
-    rpc select(SelectionResult) returns () {}
+    rpc select(SelectionResult) returns (google.protobuf.Empty) {}
 }
 
 message KeyRegistration {
-    required string uid = 1;
-    required bytes public_key = 2;
+    string uid = 1;
+    bytes public_key = 2;
 }
 
 // These are optional request parameters in key request
@@ -32,7 +33,7 @@ message KeyRequest {
 
 service KeyManagement {
     // registrate a public key on the server
-    rpc KeyRegisterate(KeyRegistration) returns () {}
+    rpc KeyRegisterate(KeyRegistration) returns (google.protobuf.Empty) {}
 
     // fetch all the public keys of the clients from the server
     rpc FetchAllKeys(KeyRequest) returns (stream KeyRegistration) {}

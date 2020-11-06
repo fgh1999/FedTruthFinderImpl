@@ -2,12 +2,12 @@ syntax = "proto3";
 package survey;
 
 enum SurveyType {
-    SummationResult,
-    H
+    SummationResult = 0;
+    H = 1;
 }
 
 message SurveyRequest {
-    required SurveyType type = 1;
+    SurveyType type = 1;
     double payload = 2;
 }
 

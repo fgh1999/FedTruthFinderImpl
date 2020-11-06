@@ -1,9 +1,10 @@
 syntax = "proto3";
 package relay;
+import "google/protobuf/empty.proto";
 
 message RelayMessage {
-    required string txUid = 1;
-    required string rxUid = 2;
+    string txUid = 1;
+    string rxUid = 2;
     bytes encrytedMessage = 3;
 }
 
@@ -11,5 +12,5 @@ service Relay {
     // Forward the message until it reached rxUid.
     // This requires the server also has a uid.
     // When the target receiver receive the message, it can push it into a channel.
-    rpc forward(RelayMessage) returns () {}
+    rpc forward(RelayMessage) returns (google.protobuf.Empty) {}
 }
