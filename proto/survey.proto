@@ -1,0 +1,20 @@
+syntax = "proto3";
+package survey;
+
+enum SurveyType {
+    SummationResult,
+    H
+}
+
+message SurveyRequest {
+    required SurveyType type = 1;
+    double payload = 2;
+}
+
+message SurveyResponse {
+    double payload = 1;
+}
+
+service Survey {
+    rpc survey(stream SurveyRequest) returns (stream SurveyResponse) {}
+}

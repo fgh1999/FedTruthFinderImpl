@@ -1,0 +1,39 @@
+syntax = "proto3";
+package client;
+
+message Identity {
+    string uid = 1;
+    int32 gid = 2;
+}
+
+import "pubsub.proto";
+
+message SelectionResult {
+    required GroupSharingContentType type = 1;
+}
+
+service ClientManagement {
+    rpc GetIdentity() returns Identity {}
+
+    // select a client to do 
+    rpc select(SelectionResult) returns () {}
+}
+
+message KeyRegistration {
+    required string uid = 1;
+    required bytes public_key = 2;
+}
+
+// These are optional request parameters in key request
+message KeyRequest {
+    string uid = 1;
+    int32 gid = 2;
+}
+
+service KeyManagement {
+    // registrate a public key on the server
+    rpc KeyRegisterate(KeyRegistration) returns () {}
+
+    // fetch all the public keys of the clients from the server
+    rpc FetchAllKeys(KeyRequest) returns (stream KeyRegistration) {}
+}

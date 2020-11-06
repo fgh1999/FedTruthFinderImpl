@@ -1,0 +1,34 @@
+syntax = "proto3";
+package pubsub;
+
+enum GroupSharingContentType {
+    Tau,    // tau_i sharing
+    R,      // r_k sharing
+    H,      // H(gid(u_j)) sharing
+}
+
+message Notification {
+    required GroupSharingContentType type = 1;
+    double payload = 2;
+}
+
+message PubRequest {
+    required int32 gid = 1;
+    required Notification notification = 2;
+}
+
+message SubRequest {
+    required int32 gid = 1;
+}
+
+service PubSub {
+    rpc SubscribeGroupId(SubRequest) returns () {}
+
+    rpc Publish(PubRequest) returns () {}
+}
+
+// Here, server is on the client-side,
+// while the clients are on the server-side. 
+service Notification {
+    rpc Notify(Notification) returns () {}
+}
