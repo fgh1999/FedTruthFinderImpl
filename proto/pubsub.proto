@@ -33,3 +33,12 @@ service PubSub {
 service Delivery {
     rpc Notify(Notification) returns (google.protobuf.Empty) {}
 }
+
+message SelectionResult {
+    pubsub.GroupSharingContentType type = 1;
+}
+
+service Selection {
+    // select a client to do 
+    rpc select(SelectionResult) returns (google.protobuf.Empty) {}
+}

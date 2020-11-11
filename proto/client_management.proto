@@ -3,31 +3,23 @@ package client;
 import "google/protobuf/empty.proto";
 
 message Identity {
-    string uid = 1;
+    int32 uid = 1;
     int32 gid = 2;
 }
 
-import "pubsub.proto";
-
-message SelectionResult {
-    pubsub.GroupSharingContentType type = 1;
-}
-
 service ClientManagement {
+    // client apply a identity from the server
     rpc GetIdentity(google.protobuf.Empty) returns (Identity) {}
-
-    // select a client to do 
-    rpc select(SelectionResult) returns (google.protobuf.Empty) {}
 }
 
 message KeyRegistration {
-    string uid = 1;
+    int32 uid = 1;
     bytes public_key = 2;
 }
 
 // These are optional request parameters in key request
 message KeyRequest {
-    string uid = 1;
+    int32 uid = 1;
     int32 gid = 2;
 }
 
