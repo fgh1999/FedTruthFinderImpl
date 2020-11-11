@@ -3,30 +3,27 @@ package client;
 import "google/protobuf/empty.proto";
 
 message Identity {
-    int32 uid = 1;
-    int32 gid = 2;
+    int32 uid = 1;  // user id
+    int32 gid = 2;  // group id
+    bytes pk = 3;   // the bytes-form public key of this client 
 }
 
-service ClientManagement {
-    // client apply a identity from the server
-    rpc GetIdentity(google.protobuf.Empty) returns (Identity) {}
-}
-
-message KeyRegistration {
-    int32 uid = 1;
-    bytes public_key = 2;
+message PublicKey {
+    bytes pk = 1;
 }
 
 // These are optional request parameters in key request
 message KeyRequest {
-    int32 uid = 1;
-    int32 gid = 2;
+    oneof request {
+        google.protobuf.Empty All = 1;
+        int32 uid = 2;
+    }
 }
 
-service KeyManagement {
-    // registrate a public key on the server
-    rpc KeyRegisterate(KeyRegistration) returns (google.protobuf.Empty) {}
+service ClientManagement {
+    // client apply a identity from the server and registerate its pk on the server
+    rpc GetIdentity(PublicKey) returns (Identity) {}
 
-    // fetch all the public keys of the clients from the server
-    rpc FetchAllKeys(KeyRequest) returns (stream KeyRegistration) {}
+    // fetch public key(s) according to the KeyRequest from the server
+    rpc FetchClientPk(KeyRequest) returns (stream Identity) {}
 }
