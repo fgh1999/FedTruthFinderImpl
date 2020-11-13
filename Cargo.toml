@@ -5,12 +5,12 @@ authors = ["fgh1999 <fanguanghong1999@163.com>"]
 edition = "2018"
 
 [[bin]]
-name = "tls-client-auth-server"
-path = "src/tls_client_auth/server.rs"
+name = "server"
+path = "src/server.rs"
 
 [[bin]]
-name = "tls-client-auth-client"
-path = "src/tls_client_auth/client.rs"
+name = "client"
+path = "src/client.rs"
 
 [dependencies]
 tonic = { version = "^0.3", features = ["tls"]}
@@ -19,6 +19,9 @@ tokio = { version = "^0.2", features = ["full"]}
 futures = "^0.3"
 dashmap = "^3.11"
 async-stream = "^0.3"
+serde = { version = "^1.0", features = [ "derive" ]}
+serde_json = "^1.0"
+parking_lot = "^0.10"
 
 [build-dependencies]
 tonic-build = { version = "^0.3", features = ["prost"]}
