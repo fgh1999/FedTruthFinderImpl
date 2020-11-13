@@ -1,13 +1,7 @@
 tonic::include_proto!("client");
-use futures::Stream;
-use std::{pin::Pin, vec::Vec};
-use tonic::{Request, Response, Status};
+use super::{Gid, ResponseResult, ResponseStream, Uid};
 use parking_lot::RwLock;
-
-type ResponseResult<T> = Result<Response<T>, Status>;
-type ResponseStream<T> = Pin<Box<dyn Stream<Item = Result<T, Status>> + Send + Sync + 'static>>;
-type Uid = i32;
-type Gid = i32;
+use tonic::{Request, Response, Status};
 
 #[derive(Default, Debug, Clone)]
 pub struct Client {
@@ -57,7 +51,7 @@ impl ClientManagement for ClientManager {
         let new_client = Client {
             uid,
             gid: self.get_gid(uid),
-            pk
+            pk,
         };
         w_clients.insert(new_client.pk.clone(), new_client.clone());
         new_client
@@ -68,7 +62,7 @@ impl ClientManagement for ClientManager {
         let target = r_clients.get(&pk.to_vec());
         match target {
             Some(target) => Some(target.clone()),
-            None => None
+            None => None,
         }
     }
 
@@ -77,7 +71,7 @@ impl ClientManagement for ClientManager {
         let target = r_clients.iter().find(|x| x.value().uid == uid);
         match target {
             Some(target) => Some(target.clone()),
-            None => None
+            None => None,
         }
     }
 
@@ -102,34 +96,32 @@ impl client_management_server::ClientManagement for ClientManager {
                 Identity {
                     uid: existed_client.uid,
                     gid: existed_client.gid,
-                    pk: existed_client.pk
+                    pk: existed_client.pk,
                 }
             } else {
                 let new_client = self.add_client(pk);
                 Identity {
                     uid: new_client.uid,
                     gid: new_client.gid,
-                    pk: new_client.pk
+                    pk: new_client.pk,
                 }
-            }
+            },
         ))
     }
 
     type FetchClientPkStream = ResponseStream<Identity>;
     async fn fetch_client_pk(
         &self,
-        req: Request<KeyRequest>
+        req: Request<KeyRequest>,
     ) -> Result<Response<Self::FetchClientPkStream>, Status> {
         // 在 self.clients 中 找到 符合req 的 client 信息，转换为Identity 生成器返回
         if let Some(request) = req.into_inner().request {
             let results = match request {
                 key_request::Request::All(_) => self.get_all_client(),
-                key_request::Request::Uid(uid) => {
-                    match self.get_client_by_uid(uid) {
-                        Some(client) => vec![client],
-                        None => Vec::new()
-                    }
-                }
+                key_request::Request::Uid(uid) => match self.get_client_by_uid(uid) {
+                    Some(client) => vec![client],
+                    None => Vec::new(),
+                },
             };
             let output = async_stream::try_stream! {
                 for x in results.into_iter().map(|x| x.into()) {
@@ -148,7 +140,7 @@ impl Into<Client> for Identity {
         Client {
             uid: self.uid,
             gid: self.gid,
-            pk: self.pk
+            pk: self.pk,
         }
     }
 }
@@ -158,7 +150,7 @@ impl Into<Identity> for Client {
         Identity {
             uid: self.uid,
             gid: self.gid,
-            pk: self.pk
+            pk: self.pk,
         }
     }
 }
