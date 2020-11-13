@@ -15,7 +15,7 @@ message PublicKey {
 // These are optional request parameters in key request
 message KeyRequest {
     oneof request {
-        google.protobuf.Empty All = 1;
+        google.protobuf.Empty all = 1;
         int32 uid = 2;
     }
 }
