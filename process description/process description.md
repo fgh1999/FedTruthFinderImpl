@@ -401,7 +401,7 @@ participant Ci as Client u_i
 participant Cother as Client ...
 participant S as Server
 
-S->S: set the number of groups = 2
+S->S: set the number of groups = 3
 
 Ci->>S: gid request
 S->S: allocate a gid for u_i <br>and SUB u_i on this gid
