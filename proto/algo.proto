@@ -1,0 +1,89 @@
+syntax = "proto3";
+package algo;
+import "google/protobuf/empty.proto";
+
+message InitRequest {
+    bytes pk = 1;
+    string mailbox = 2; //string-form address of the client mailbox
+}
+message InitResponse {
+    int32 uid = 1;  //user id
+    int32 gid = 2;  //group id
+}
+
+//These are optional request parameters in key request
+message KeyRequest {
+    oneof request {
+        google.protobuf.Empty all = 1;
+        int32 uid = 2;
+    }
+}
+message PublicIdentity {
+    int32 uid = 1;  //user id
+    int32 gid = 2;  //group id
+    bytes pk = 3;   //the bytes-form public key of this client 
+}
+
+enum GroupSharingContentType {
+    Tau = 0;    // tau_i sharing
+    R = 1;      // r_k sharing
+    H = 2;      // H(gid(u_j)) sharing
+}
+message Notification {
+    GroupSharingContentType type = 1;
+    double payload = 2;
+}
+message PubRequest {
+    int32 gid = 1;
+    Notification notification = 2;
+}
+message SubRequest {
+    int32 gid = 1;
+}
+
+message SelectionResult {
+    GroupSharingContentType type = 1;
+}
+
+message RelayMessage {
+    int32 txUid = 1;
+    int32 rxUid = 2;
+    bytes encrytedMessage = 3;
+}
+
+enum SurveyType {
+    SummationResult = 0;
+    HResult = 1;
+}
+message SurveyRequest {
+    SurveyType type = 1;
+    double payload = 2;
+}
+message SurveyResponse {
+    double payload = 1;
+}
+
+service Algo {
+    //client apply a identity from the server and registerate its pk on the server
+    //server init a new identity according to the given pk; otherwise, return Status::already_exists
+    rpc Register(InitRequest) returns (InitResponse) {}
+    //fetch public key(s) according to the KeyRequest from the server
+    rpc FetchClientPk(KeyRequest) returns (stream PublicIdentity) {}
+
+    rpc Subscribe(SubRequest) returns (google.protobuf.Empty) {}
+    rpc Publish(PubRequest) returns (google.protobuf.Empty) {}
+
+    //Here, server is on the client-side,
+    //while the clients are on the server-side.
+    rpc Notify(Notification) returns (google.protobuf.Empty) {}
+
+    // select a client to do 
+    rpc Select(SelectionResult) returns (google.protobuf.Empty) {}
+
+    //Forward the message until it reached rxUid.
+    //This requires the server also has a uid.
+    //When the target receiver receive the message, it can push it into a channel.
+    rpc Forward(RelayMessage) returns (google.protobuf.Empty) {}
+
+    rpc Survey(stream SurveyRequest) returns (stream SurveyResponse) {}
+}
