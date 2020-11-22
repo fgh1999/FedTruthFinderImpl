@@ -7,7 +7,7 @@
 When a new *event* $e_j$ is sensed by a *client* $u_i$, it first calculates(or initializes) $\tau_i$ with:
 $$
 \tau_i = \begin{cases}
-    1 / 2 & \text{$u_i$ just joined the network for the first time} \\
+    1 / 2 & \text{$u_i$ joined the network for the first time} \\
     \frac{
         \sum_{e_j \in \mathcal{E}_{i,1}} \rho_j + \sum_{e_k \in \mathcal{E}_{i,0}}(1-\rho_k)
     }{
