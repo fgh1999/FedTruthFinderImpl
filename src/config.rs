@@ -41,7 +41,7 @@ enum Config {
 pub fn load_client_config(path: &str) -> ClientConfig {
     match load_and_parse_config(ConfigPath::Client(String::from(path))) {
         Config::Client(config) => config,
-        _ => panic!(format!("{} does not point to a server config", &path)),
+        _ => panic!(format!("{} does not point to a client config", &path)),
     }
 }
 
@@ -49,7 +49,7 @@ pub fn load_client_config(path: &str) -> ClientConfig {
 pub fn load_server_config(path: &str) -> ServerConfig {
     match load_and_parse_config(ConfigPath::Server(String::from(path))) {
         Config::Server(config) => config,
-        _ => panic!(format!("{} does not point to a client config", path)),
+        _ => panic!(format!("{} does not point to a server config", path)),
     }
 }
 
