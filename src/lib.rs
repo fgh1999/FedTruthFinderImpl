@@ -1,8 +1,6 @@
-// pub mod client_management;
 pub mod algo_client;
 pub mod algo_server;
 pub mod config;
-pub mod echo;
 pub mod event;
 pub mod id;
 
@@ -23,4 +21,13 @@ pub type ResponseStream<T> = Pin<Box<dyn Stream<Item = Result<T, Status>> + Send
 #[cfg(test)]
 mod test {
     use super::*;
+    
+    fn test_timer_wraper() {
+        use std::time;
+        let start = time::Instant::now();
+        // TODO: main test case
+        let end = time::Instant::now();
+        let duration = end - start;
+        println!("time cost: {:?} s", duration.as_secs_f64());
+    }
 }
