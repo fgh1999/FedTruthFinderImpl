@@ -1,7 +1,7 @@
 use super::deamon_error::DeamonError;
 use super::deamon_set::{Deamon, DeamonSet, GetFields};
 use super::deamon_set::{DeamonOperation, DeamonOperations};
-use super::id::{Gid, Uid};
+use crate::id::{Gid, Uid};
 use num_rational::BigRational;
 use num_traits::FromPrimitive;
 use sharks::{secret_type::Rational, Share};

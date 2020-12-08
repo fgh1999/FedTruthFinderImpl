@@ -3,7 +3,8 @@ use std::sync::Arc;
 use tokio::sync::RwLock;
 use tokio::sync::{broadcast, mpsc};
 
-use super::{deamon_error::DeamonError, event::Eid, id::Uid};
+use super::deamon_error::DeamonError;
+use crate::{event::Eid, id::Uid};
 
 type Payload = Share<Rational>;
 type Threshold = u8;

@@ -1,6 +1,6 @@
 use super::deamon_error::DeamonError;
 use super::deamon_set::{Deamon, DeamonOperation, DeamonOperations, DeamonSet, GetFields};
-use super::id::Uid;
+use crate::id::Uid;
 use sharks::{secret_type::Rational, SecretSharingOperation, Share, Sharks};
 
 type ChannelPayload = Share<Rational>; // (k, H'(k)) where h'_i(k) are ordered by i // deprecated this comment

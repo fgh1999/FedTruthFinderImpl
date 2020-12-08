@@ -21,9 +21,6 @@ pub struct AlgoServer {
     shared: Arc<Shared>,
 }
 
-// #[derive(Debug)]
-// struct InnerSelectionNotification(Eid, Gid, Uid);
-
 #[derive(Debug)]
 struct Shared {
     pub group_n: Gid, //number of groups

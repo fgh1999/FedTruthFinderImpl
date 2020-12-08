@@ -4,13 +4,8 @@ pub mod config;
 pub mod event;
 pub mod id;
 
-pub mod deamon_error;
-pub mod deamon_set;
-pub mod forward_deamons;
-pub mod h_apostrophe_deamons;
-pub mod h_deamons;
-pub mod leaderboard_deamons;
-pub mod summation_deamons;
+pub mod deamon;
+pub use deamon::*;
 
 use futures::Stream;
 use std::pin::Pin;

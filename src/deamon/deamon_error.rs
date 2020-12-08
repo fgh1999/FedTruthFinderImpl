@@ -1,4 +1,4 @@
-use super::id::Uid;
+use crate::id::Uid;
 use tokio::time::Elapsed;
 
 type Threshold = u8;
