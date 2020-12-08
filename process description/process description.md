@@ -234,7 +234,7 @@ CheckKeySetTimeliness --> |out of date| FetchLatestPkSet
 CheckKeySetTimeliness --> |latest| E 
 ```
 
-# Secure Trustworthiness Leader-board
+# Privacy-Preserving Trustworthiness Assessment
 
 ## Function Point Analysis
 
@@ -249,7 +249,7 @@ One possible method to divide clients into groups is:
 
 As a result, every group should have $\lfloor n/(2t+1) \rfloor$ or  $(\lfloor n/(2t+1)\rfloor +1)$ members, where $n$ represents the total number of the clients (or, users) at that time.
 
-However, this method cannot let the users to has the ability to observe the others' $gid$, which means that *user selection* in the following steps cannot be taken by the users. Besides, the group setting cannot be rearranged during the runtime. This is not all bad because user selection may depend on the stability of connections between client and server other than the quantities of connections among clients under a *server-coordinated* communication architecture.
+However, this method cannot let the users to has the ability to observe the others' $gid$, which means that *user selection* in the following steps cannot be taken by the users. Besides, the group setting cannot be rearranged during the runtime. This is not all bad because user selection may depend on the stability of connections between client and server other than the qualities of connections among clients under a *server-coordinated* communication architecture.
 
 ### Group-wise[^3] Secret Sharing
 
@@ -290,16 +290,16 @@ $$
 $$
 
 $$
-\gamma(gid(u_j))=\sum_{k=1}^{2t+1}R_k(gid(u_j))T_i^k(gid(u_j))
+\gamma_i(gid(u_j))=\sum_{k=1}^{2t+1}R_k(gid(u_j))T_i^k(gid(u_j))
 $$
 
 $$
-h_i(gid(u_j)) = \lambda(gid(u_j)) \cdot \gamma(gid(u_j)
+h_i(gid(u_j)) = \lambda(gid(u_j)) \cdot \gamma_i(gid(u_j))
 $$
 
 After this, it can got a result set $\{h_i(gid(u_j))|i = 1, \cdots, n\}$, denoted as $\mathcal{H}(gid(u_j))$.
 
-Then, the server chooses one client in each group in the same way as in [$r_k$-sharing](#$r_k$-sharing). The chosen clients dispatch every $h_i(gid(u_j))$ in $\mathcal{H}(gid(u_j))$ to **all the clients** with (t+1, n)-SSS. Specifically, the $\tau_i$'s mixed secret share from a chosen $u_j$ to a receiver $u_k$ is denoted as $h_i(gid(u_j),k)$. Let $g = gid(u_j)$. Because $u_j$ is chosen from every group, $g \in \{1, 2, \cdots, 2t+1\}$.
+Then, the server chooses one client in each group in the same way as in [$r_k$-sharing](#$r_k$-sharing). The chosen clients dispatch every $h_i(gid(u_{chosen}))$ in $\mathcal{H}(gid(u_{chosen}))$ to **all the clients** with (t+1, n)-SSS (suppose that $u_{chosen}$ is one of the chosen ones). Specifically, the $\tau_i$'s mixed secret share from $u_{chosen}$ to a receiver $u_k$ is denoted as $h_i(gid(u_{chosen}),k)$. Let $g = gid(u_{chosen})$. Because $u_{chosen}$ is chosen from *every* group, $g \in \{1, 2, \cdots, 2t+1\}$.
 
 Each receiver $u_k$(every client is a receiver) do aggregations to those received mixed secret shares based on $gid$.
 $$
