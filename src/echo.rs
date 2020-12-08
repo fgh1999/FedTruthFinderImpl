@@ -1,15 +1,52 @@
-pub mod client_management;
-pub mod config;
-pub mod echo;
-
+tonic::include_proto!("grpc.examples.echo");
 use futures::Stream;
 use std::pin::Pin;
-use tonic::{Response, Status};
-pub type ResponseResult<T> = Result<Response<T>, Status>;
-pub type ResponseStream<T> = Pin<Box<dyn Stream<Item = Result<T, Status>> + Send + Sync + 'static>>;
-pub type Uid = i32;
-pub type Gid = i32;
+use tonic::{Request, Response, Status};
 
+type EchoResult<T> = Result<Response<T>, Status>;
+type ResponseStream = Pin<Box<dyn Stream<Item = Result<EchoResponse, Status>> + Send + Sync>>;
+
+#[derive(Default)]
+pub struct EchoServer;
+
+#[tonic::async_trait]
+impl echo_server::Echo for EchoServer {
+    async fn unary_echo(&self, request: Request<EchoRequest>) -> EchoResult<EchoResponse> {
+        if let Some(certs) = request.peer_certs() {
+            println!("Got {} peer certs!", certs.len());
+        }
+
+        let message = request.into_inner().message;
+        Ok(Response::new(EchoResponse { message }))
+    }
+
+    type ServerStreamingEchoStream = ResponseStream;
+
+    async fn server_streaming_echo(
+        &self,
+        _: Request<EchoRequest>,
+    ) -> Result<Response<Self::ServerStreamingEchoStream>, Status> {
+        Err(Status::unimplemented("Not yet implemented"))
+    }
+
+    async fn client_streaming_echo(
+        &self,
+        _: Request<tonic::Streaming<EchoRequest>>,
+    ) -> Result<Response<EchoResponse>, Status> {
+        Err(Status::unimplemented("Not yet implemented"))
+    }
+
+    type BidirectionalStreamingEchoStream = ResponseStream;
+
+    async fn bidirectional_streaming_echo(
+        &self,
+        _: Request<tonic::Streaming<EchoRequest>>,
+    ) -> Result<Response<Self::BidirectionalStreamingEchoStream>, Status> {
+        Err(Status::unimplemented("Not yet implemented"))
+    }
+}
+
+use super::config;
 use tonic::transport::{Certificate, Channel, ClientTlsConfig, Identity, ServerTlsConfig};
 
 #[allow(dead_code)]
@@ -62,7 +99,7 @@ pub async fn init_server(
 
 ///Construct a echo service instance
 #[allow(dead_code)]
-pub fn new_echo_servive() -> echo::echo_server::EchoServer<echo::EchoServer> {
-    let server_instance = echo::EchoServer::default();
-    echo::echo_server::EchoServer::new(server_instance)
+pub fn new_echo_servive() -> echo_server::EchoServer<EchoServer> {
+    let server_instance = EchoServer::default();
+    echo_server::EchoServer::new(server_instance)
 }

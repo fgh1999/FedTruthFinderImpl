@@ -1,6 +1,6 @@
 [package]
 name = "fed-truth-finder"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["fgh1999 <fanguanghong1999@163.com>"]
 edition = "2018"
 
@@ -22,6 +22,25 @@ async-stream = "^0.3"
 serde = { version = "^1.0", features = [ "derive" ]}
 serde_json = "^1.0"
 parking_lot = "^0.10"
+
+# secrect sharing
+sharks = { git = "https://github.com/fgh1999/sharks.git" }
+num-rational = { version = "^0.3", features = ["serde"] }
+num-traits = "^0.2.11"
+
+# public key encryption
+ecies-ed25519 = { version="0.5.0", features = ["ring"], default_features = false }
+rand = "^0.7"
+
+# error handling
+anyhow = "1.0"
+thiserror = "1.0"
+
+# linear algebra
+nalgebra = "^0.23.1"
+
+# event records
+csv = "^1.1"
 
 [build-dependencies]
 tonic-build = { version = "^0.3", features = ["prost"]}

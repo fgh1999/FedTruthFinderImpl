@@ -3,6 +3,15 @@ package algo;
 import "google/protobuf/empty.proto";
 import "google/protobuf/wrappers.proto";
 
+// `identifier` is a string that can almost universally represent the event
+message EventRegistrationRequest {
+    string identifier = 1;
+}
+
+message EventRegistrationResponse {
+    uint64 eid = 1;
+}
+
 message InitRequest {
     bytes pk = 1;
     string mailbox = 2; //string-form address of the client mailbox
@@ -25,72 +34,125 @@ message PublicIdentity {
     bytes pk = 3;   //the bytes-form public key of this client 
 }
 
-enum GroupSharingContentType {
-    Tau = 0;    // tau_i sharing
-    R = 1;      // r_k sharing
-    H = 2;      // H(gid(u_j)) sharing
+message RandCoefShareNotification {
+    uint64 eid = 1;     // for sync
+    int32 clientNum = 2;
+    int32 groupNum = 3;
+    bytes share = 4;    // a share of a random coefficient
+    int32 gid = 5;      // which group the random coefficient generated from
 }
-message Notification {
-    GroupSharingContentType type = 1;
-    bytes payload = 2;
-}
-message PubRequest {
-    int32 gid = 1;
-    Notification notification = 2;
-}
-message SubRequest {
-    int32 gid = 1;
+message RandCoefSharePubRequest {
+    int32 topic_gid = 1;
+    RandCoefShareNotification notification = 2;
 }
 
-message SelectionResult {
-    GroupSharingContentType type = 1;
+message TauSeqShareNotification {
+    uint64 eid = 1;     //for sync
+    int32 clientNum = 2;
+    int32 groupNum = 3;
+    bytes share = 4;    // a share of a tau_sequence
+    int32 uid = 5;      // which client the tau belongs to
+}
+message TauSeqSharePubRequest {
+    int32 topic_gid = 1;
+    TauSeqShareNotification notification = 2;
 }
 
 message RelayMessage {
     int32 txUid = 1;
     int32 rxUid = 2;
-    bytes encrytedMessage = 3;
+    int32 clientNum = 3;
+    uint64 eid = 4;
+    bytes encryptedMessage = 5;
 }
 
-enum SurveyType {
-    SummationResult = 0;
-    HResult = 1;
-}
-message SurveyRequest {
-    SurveyType type = 1;
-    double payload = 2;
-}
-message SurveyResponse {
-    double payload = 1;
+message SubmitSummationRequest {
+    uint64 eid = 1;             // which event is under process
+    bytes summationPair = 2;   // [\hat{d_j^k}, \hat{s_j^k}] => Share<Rational>
+    double allowedSeconds = 3;  // Time limitation for return
 }
 
-service Algo {
+message EventConfidenceComputationConfigRequest {
+    uint64 eid = 1;
+}
+message EventConfidenceComputationConfig {
+    map<int32, bytes> clientsPk = 1; // map<Uid, pk> 
+    int32 threshold = 2;
+}
+
+message LeaderBoardComputationConfigRequest {
+    uint64 eid = 1;
+}
+message LeaderBoardComputationConfig {
+    map<int32, int32> clients = 1;
+}
+
+message HApoShare {
+    uint64 eid = 1;
+    double allowedSeconds = 2;
+    bytes share = 3;
+}
+message LeaderBoard {
+    // the leader-board is ranked ascendingly by the clients' trustworthiness
+    repeated int32 clients = 1;
+}
+
+service AlgoMaster {
     //client apply a identity from the server and registerate its pk on the server
     //server init a new identity according to the given pk; otherwise, return Status::already_exists
     rpc Register(InitRequest) returns (InitResponse) {}
+
     //fetch public key(s) according to the KeyRequest from the server
     rpc FetchClientPk(KeyRequest) returns (stream PublicIdentity) {}
 
-    rpc Subscribe(SubRequest) returns (google.protobuf.Empty) {}
-    rpc Publish(PubRequest) returns (google.protobuf.Empty) {}
+    // Find the event on the server.
+    // If already exists, return its eid on the server;
+    // Or, registrate it to new a eid and return it. 
+    rpc FindOrRegisterEvent(EventRegistrationRequest) returns (EventRegistrationResponse) {}
 
-    //Here, server is on the client-side,
-    //while the clients are on the server-side.
-    rpc Notify(Notification) returns (google.protobuf.Empty) {}
-
-    // select a client to do 
-    rpc Select(SelectionResult) returns (google.protobuf.Empty) {}
+    // Publish to subscribers
+    rpc PublishTauSequence(TauSeqSharePubRequest) returns (google.protobuf.Empty) {}
+    rpc PublishR(RandCoefSharePubRequest) returns (google.protobuf.Empty) {}
+    rpc ForwardHShare(RelayMessage) returns (google.protobuf.Empty) {}
 
     //Forward the message until it reached rxUid.
-    //This requires the server also has a uid.
     //When the target receiver receive the message, it can push it into a channel.
     rpc Forward(RelayMessage) returns (google.protobuf.Empty) {}
 
-    rpc Survey(stream SurveyRequest) returns (stream SurveyResponse) {}
+    // submit the result of client-side summation and await a feedback(confidence of the processing event)
+    rpc SubmitSummation(SubmitSummationRequest) returns (google.protobuf.DoubleValue) {}
+
+    // submit the result of client-side H set and await a feedback(leader-board of clients) 
+    rpc SubmitHApoShare(HApoShare) returns (LeaderBoard) {}
 
     //Return the number of groups on the server
     rpc GetGroupNum(google.protobuf.Empty) returns (google.protobuf.Int32Value) {}
 
     //Return the number of clients registered on the server
     rpc GetClientNum(google.protobuf.Empty) returns (google.protobuf.Int32Value) {}
+
+    rpc GetEventConfidenceComputationConfig(EventConfidenceComputationConfigRequest) returns (EventConfidenceComputationConfig) {}
+
+    rpc GetLeaderBoardComputationConfig(LeaderBoardComputationConfigRequest) returns (LeaderBoardComputationConfig) {}
+}
+
+message Selection {
+    uint64 eid = 1;
+    int32 groupNum = 2;
+    int32 clientNum = 3;
+}
+
+service AlgoNode {
+    //Forward the message until it reached rxUid.
+    //When the target receiver receive the message, it can push it into a channel.
+    rpc Forward(RelayMessage) returns (google.protobuf.Empty) {}
+
+    // Select a client to do 
+    rpc SelectToShareR(Selection) returns (google.protobuf.Empty) {}
+    rpc SelectToShareHSet(Selection) returns (google.protobuf.Empty) {}
+
+    // Being notified because of having registered
+    rpc NotifyTauSequence(TauSeqShareNotification) returns (google.protobuf.Empty) {}
+    rpc NotifyR(RandCoefShareNotification) returns (google.protobuf.Empty) {}
+    rpc SendHShare(RelayMessage) returns (google.protobuf.Empty) {}
 }
