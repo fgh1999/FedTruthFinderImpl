@@ -1,5 +1,5 @@
-use tonic::transport::Server;
 use fed_truth_finder::echo;
+use tonic::transport::Server;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {

@@ -2,24 +2,24 @@ tonic::include_proto!("algo");
 use super::{
     config::ClientConfig,
     deamon_set::{DeamonOperations, DeamonSet},
-    event::{Eid, Event, Judge, EventIdentifierReceiver},
+    event::{Eid, Event, EventIdentifierReceiver, Judge},
     forward_deamons::{ForwardDeamonSet, SummationOperations},
-    h_deamons::{HDeamonSet, HChannelPayload},
     h_apostrophe_deamons::HApoDeamonSet,
+    h_deamons::{HChannelPayload, HDeamonSet},
     id::{Gid, Id, Uid},
     ResponseResult,
 };
-use std::sync::{Arc, Mutex};
-use std::convert::TryFrom;
-use std::time::Duration;
 use std::collections::{HashMap, HashSet};
+use std::convert::TryFrom;
+use std::sync::{Arc, Mutex};
+use std::time::Duration;
 
 use num_rational::BigRational;
 use num_traits::cast::{FromPrimitive, ToPrimitive};
 
-use tonic::{Request, Response, Status};
 use ecies_ed25519::{self as ecies, PublicKey, SecretKey};
 use sharks::{secret_type::Rational, Share};
+use tonic::{Request, Response, Status};
 
 #[derive(Debug)]
 pub struct AlgoClient {
@@ -68,31 +68,60 @@ impl AlgoCore {
 
 #[tonic::async_trait]
 impl algo_node_server::AlgoNode for AlgoClient {
-    async fn notify_tau_sequence(&self, req: Request<TauSeqShareNotification>) -> ResponseResult<()> {
-        let TauSeqShareNotification { eid, share, uid, group_num, client_num } = req.into_inner();
+    async fn notify_tau_sequence(
+        &self,
+        req: Request<TauSeqShareNotification>,
+    ) -> ResponseResult<()> {
+        let TauSeqShareNotification {
+            eid,
+            share,
+            uid,
+            group_num,
+            client_num,
+        } = req.into_inner();
         match Share::<Rational>::try_from(&share[..]) {
             Ok(share) => {
                 let payload = HChannelPayload::TauSequenceShare(uid, share);
-                match self.shared.h_deamons.add_share(&eid, payload, group_num as u8, client_num as u8).await {
+                match self
+                    .shared
+                    .h_deamons
+                    .add_share(&eid, payload, group_num as u8, client_num as u8)
+                    .await
+                {
                     Ok(_) => Ok(Response::new((()))),
                     Err(e) => Err(Status::internal(format!("cannot share tau due to {}", e))),
                 }
             }
-            Err(_) => Err(Status::invalid_argument("cannot deserialize a Share<Rational> from the given bytes"))
+            Err(_) => Err(Status::invalid_argument(
+                "cannot deserialize a Share<Rational> from the given bytes",
+            )),
         }
     }
 
     async fn notify_r(&self, req: Request<RandCoefShareNotification>) -> ResponseResult<()> {
-        let RandCoefShareNotification { eid, share, gid, group_num, client_num } = req.into_inner();
+        let RandCoefShareNotification {
+            eid,
+            share,
+            gid,
+            group_num,
+            client_num,
+        } = req.into_inner();
         match Share::<Rational>::try_from(&share[..]) {
             Ok(share) => {
                 let payload = HChannelPayload::RandomCoefficientShare(gid, share);
-                match self.shared.h_deamons.add_share(&eid, payload, group_num as u8, client_num as u8).await {
+                match self
+                    .shared
+                    .h_deamons
+                    .add_share(&eid, payload, group_num as u8, client_num as u8)
+                    .await
+                {
                     Ok(_) => Ok(Response::new((()))),
                     Err(e) => Err(Status::internal(format!("cannot share tau due to {}", e))),
                 }
             }
-            Err(_) => Err(Status::invalid_argument("cannot deserialize a Share<Rational> from the given bytes"))
+            Err(_) => Err(Status::invalid_argument(
+                "cannot deserialize a Share<Rational> from the given bytes",
+            )),
         }
     }
 
@@ -136,7 +165,11 @@ impl algo_node_server::AlgoNode for AlgoClient {
     }
 
     async fn select_to_share_r(&self, req: Request<Selection>) -> ResponseResult<()> {
-        let Selection { eid, client_num, group_num } = req.into_inner();
+        let Selection {
+            eid,
+            client_num,
+            group_num,
+        } = req.into_inner();
         match self.share_r(&eid, group_num as u8, client_num as u8).await {
             Ok(_) => Ok(Response::new((()))),
             Err(e) => Err(Status::internal(format!(
@@ -147,13 +180,17 @@ impl algo_node_server::AlgoNode for AlgoClient {
     }
 
     async fn select_to_share_h_set(&self, req: Request<Selection>) -> ResponseResult<()> {
-        let Selection { eid, client_num, group_num } = req.into_inner();
-        match self.share_h_set(&eid, group_num as u8, client_num as u8).await {
+        let Selection {
+            eid,
+            client_num,
+            group_num,
+        } = req.into_inner();
+        match self
+            .share_h_set(&eid, group_num as u8, client_num as u8)
+            .await
+        {
             Ok(_) => Ok(Response::new((()))),
-            Err(e) => Err(Status::internal(format!(
-                "cannot share h_set due to {}",
-                e
-            ))),
+            Err(e) => Err(Status::internal(format!("cannot share h_set due to {}", e))),
         }
     }
 
@@ -200,7 +237,11 @@ impl algo_node_server::AlgoNode for AlgoClient {
 trait EventConfidenceComputation {
     /// Figure out the confidence of given event `e`, and update corresponding inner states.
     /// Implementations should make sure that the confidence of the new event is valid([0, 1]).
-    async fn compute_and_add_event_confidence(&mut self, e: &Event, allowed_seconds_for_server: f64) -> anyhow::Result<()>;
+    async fn compute_and_add_event_confidence(
+        &mut self,
+        e: &Event,
+        allowed_seconds_for_server: f64,
+    ) -> anyhow::Result<()>;
 
     /// (d_{ij}, s_{ij})
     fn calculate_dsij_pair(&self, eid: &Eid, event: &Event) -> anyhow::Result<(f64, f64)>;
@@ -232,7 +273,11 @@ trait TauComputation {
 
 #[tonic::async_trait]
 impl EventConfidenceComputation for AlgoClient {
-    async fn compute_and_add_event_confidence(&mut self, e: &Event, allowed_seconds_for_server: f64) -> anyhow::Result<()> {
+    async fn compute_and_add_event_confidence(
+        &mut self,
+        e: &Event,
+        allowed_seconds_for_server: f64,
+    ) -> anyhow::Result<()> {
         if e.get_confidence() != None {
             return Ok(()); // there's no need to compute again
         }
@@ -255,7 +300,7 @@ impl EventConfidenceComputation for AlgoClient {
         // dispatch shares
         let tx_uid = self.shared.id.get_uid();
         let mut relay_handles = Vec::with_capacity(shares.len());
-        
+
         for share in shares {
             let message = Vec::from(&share);
 
@@ -414,9 +459,13 @@ trait TrustWorthinessAssessment {
 
     async fn share_h_set(&self, eid: &Eid, group_n: u8, client_n: u8) -> anyhow::Result<()>;
 
-    async fn get_trustworthiness_assessment_clients(&self, eid: &Eid) -> anyhow::Result<(HashMap<Uid, Gid>, Uid, Gid)>;
+    async fn get_trustworthiness_assessment_clients(
+        &self,
+        eid: &Eid,
+    ) -> anyhow::Result<(HashMap<Uid, Gid>, Uid, Gid)>;
 
-    async fn fetch_ascending_leader_board_from_server(&self, eid: &Eid) -> anyhow::Result<Vec<Uid>>;
+    async fn fetch_ascending_leader_board_from_server(&self, eid: &Eid)
+        -> anyhow::Result<Vec<Uid>>;
 }
 
 fn make_shares(secrets: &[BigRational], t: u8, n: u8) -> anyhow::Result<Vec<Share<Rational>>> {
@@ -447,7 +496,8 @@ impl TrustWorthinessAssessment for AlgoClient {
             .get_leader_board_computation_config(req)
             .await?
             .into_inner()
-            .clients.len() as Uid)
+            .clients
+            .len() as Uid)
     }
 
     async fn get_group_num_from_server(&self) -> anyhow::Result<u8> {
@@ -485,7 +535,10 @@ impl TrustWorthinessAssessment for AlgoClient {
                 share,
             });
 
-            let req = Request::new(TauSeqSharePubRequest { topic_gid, notification });
+            let req = Request::new(TauSeqSharePubRequest {
+                topic_gid,
+                notification,
+            });
             let server_url = url.clone();
 
             let handle = tokio::spawn(async move {
@@ -507,7 +560,8 @@ impl TrustWorthinessAssessment for AlgoClient {
 
     async fn share_r(&self, eid: &Eid, group_n: u8, client_n: u8) -> anyhow::Result<()> {
         let threshold = (group_n - 1) / 2 + 1;
-        let r = vec![BigRational::from_u128(rand::random::<u128>()).unwrap_or(BigRational::from_u64(3).unwrap())];
+        let r = vec![BigRational::from_u128(rand::random::<u128>())
+            .unwrap_or(BigRational::from_u64(3).unwrap())];
         let shares = make_shares(&r, threshold, group_n)?;
         let gid = self.shared.id.get_gid();
 
@@ -525,7 +579,10 @@ impl TrustWorthinessAssessment for AlgoClient {
                 share,
                 gid: gid.clone(),
             });
-            let req = Request::new(RandCoefSharePubRequest { topic_gid, notification });
+            let req = Request::new(RandCoefSharePubRequest {
+                topic_gid,
+                notification,
+            });
             let server_url = url.clone();
             let handle = tokio::spawn(async move {
                 let mut client = algo_master_client::AlgoMasterClient::connect(server_url)
@@ -549,7 +606,11 @@ impl TrustWorthinessAssessment for AlgoClient {
         //! e.i. calling this method
 
         let time_limitation = Duration::from_secs_f64(self.get_allowed_seconds_for_server().await);
-        let h_set: Vec<BigRational> = self.shared.h_deamons.get_result(eid, group_n, client_num, time_limitation).await?;
+        let h_set: Vec<BigRational> = self
+            .shared
+            .h_deamons
+            .get_result(eid, group_n, client_num, time_limitation)
+            .await?;
         let threshold = (group_n - 1) / 2 + 1;
         let shares = make_shares(&h_set, threshold, client_num as u8)?;
         drop(h_set);
@@ -586,12 +647,18 @@ impl TrustWorthinessAssessment for AlgoClient {
         Ok(())
     }
 
-    async fn get_trustworthiness_assessment_clients(&self, eid: &Eid) -> anyhow::Result<(HashMap<Uid, Gid>, Uid, Gid)> {
+    async fn get_trustworthiness_assessment_clients(
+        &self,
+        eid: &Eid,
+    ) -> anyhow::Result<(HashMap<Uid, Gid>, Uid, Gid)> {
         let server_url = self.config.addrs.remote_addr.clone();
         let mut client = algo_master_client::AlgoMasterClient::connect(server_url).await?;
-        let leader_board_computation_config = client.get_leader_board_computation_config(Request::new(LeaderBoardComputationConfigRequest{
-            eid: eid.clone(),
-        })).await?.into_inner();
+        let leader_board_computation_config = client
+            .get_leader_board_computation_config(Request::new(
+                LeaderBoardComputationConfigRequest { eid: eid.clone() },
+            ))
+            .await?
+            .into_inner();
 
         let clients = leader_board_computation_config.clients;
         let client_n = clients.len() as Uid;
@@ -600,20 +667,33 @@ impl TrustWorthinessAssessment for AlgoClient {
         Ok((clients, client_n, group_n))
     }
 
-    async fn fetch_ascending_leader_board_from_server(&self, eid: &Eid) -> anyhow::Result<Vec<Uid>> {
+    async fn fetch_ascending_leader_board_from_server(
+        &self,
+        eid: &Eid,
+    ) -> anyhow::Result<Vec<Uid>> {
         // fetch the configuration for this round of trustworthiness assessment
-        let (_clients, client_n, group_n) = self.get_trustworthiness_assessment_clients(eid).await?;
-        
+        let (_clients, client_n, group_n) =
+            self.get_trustworthiness_assessment_clients(eid).await?;
+
         // generate & publish tau_sequence
-        self.share_tau_sequence(eid, group_n as u8, client_n as u8).await?;
+        self.share_tau_sequence(eid, group_n as u8, client_n as u8)
+            .await?;
 
         // await the h'(uid) for this round
         let h_apostrophe_deamons_threshold = ((group_n - 1) / 2 + 1) as u8;
         let allowed_seconds = self.get_allowed_seconds_for_server().await;
         let time_limitation = Duration::from_secs_f64(allowed_seconds);
-        let h_apostrophe_share = self.shared.h_apostrophe_deamons.get_result(
-            eid, h_apostrophe_deamons_threshold, client_n as u8, time_limitation).await?;
-        
+        let h_apostrophe_share = self
+            .shared
+            .h_apostrophe_deamons
+            .get_result(
+                eid,
+                h_apostrophe_deamons_threshold,
+                client_n as u8,
+                time_limitation,
+            )
+            .await?;
+
         let server_url = self.config.addrs.remote_addr.clone();
         let mut algo_client = algo_master_client::AlgoMasterClient::connect(server_url).await?;
         let req = Request::new(HApoShare {
@@ -630,7 +710,11 @@ impl TrustWorthinessAssessment for AlgoClient {
 trait AlgoClientUtil: EventConfidenceComputation + TauComputation + TrustWorthinessAssessment {
     async fn get_allowed_seconds_for_server(&self) -> f64;
 
-    async fn register(server_url: String, mailbox_addr: String, pk: PublicKey) -> anyhow::Result<Id>;
+    async fn register(
+        server_url: String,
+        mailbox_addr: String,
+        pk: PublicKey,
+    ) -> anyhow::Result<Id>;
 
     async fn register_event(&self, event_identifier: String) -> anyhow::Result<Eid>;
 
@@ -650,7 +734,11 @@ impl AlgoClientUtil for AlgoClient {
         ALLOWED_SECONDS
     }
 
-    async fn register(server_url: String, mailbox_addr: String, pk: PublicKey) -> anyhow::Result<Id> {
+    async fn register(
+        server_url: String,
+        mailbox_addr: String,
+        pk: PublicKey,
+    ) -> anyhow::Result<Id> {
         let pk = pk.to_bytes().to_vec();
         let mut client = algo_master_client::AlgoMasterClient::connect(server_url).await?;
         let req = Request::new(InitRequest {
@@ -664,9 +752,12 @@ impl AlgoClientUtil for AlgoClient {
     async fn register_event(&self, event_identifier: String) -> anyhow::Result<Eid> {
         let server_url = self.config.addrs.remote_addr.clone();
         let mut client = algo_master_client::AlgoMasterClient::connect(server_url).await?;
-        let EventRegistrationResponse { eid } = client.find_or_register_event(Request::new(EventRegistrationRequest {
-            identifier: event_identifier,
-        })).await?.into_inner();
+        let EventRegistrationResponse { eid } = client
+            .find_or_register_event(Request::new(EventRegistrationRequest {
+                identifier: event_identifier,
+            }))
+            .await?
+            .into_inner();
         Ok(eid)
     }
 
@@ -697,13 +788,18 @@ impl AlgoClientUtil for AlgoClient {
     }
 
     async fn listen_to(&mut self, mut event_src: EventIdentifierReceiver, error_rate: f64) {
-        assert!(error_rate <= 1.0 && error_rate >= 0.0, "error_rate out of range");
+        assert!(
+            error_rate <= 1.0 && error_rate >= 0.0,
+            "error_rate out of range"
+        );
         let weights = vec![error_rate, 1.0 - error_rate];
-        let distribution = rand::distributions::weighted::alias_method::WeightedIndex::new(weights).unwrap();
+        let distribution =
+            rand::distributions::weighted::alias_method::WeightedIndex::new(weights).unwrap();
 
         loop {
             let event_identifier = event_src.recv().await;
-            if let Err(_e) = event_identifier { // event_src is dried
+            if let Err(_e) = event_identifier {
+                // event_src is dried
                 break;
             }
             let event_identifier = event_identifier.unwrap();
@@ -716,11 +812,24 @@ impl AlgoClientUtil for AlgoClient {
                 let judge = distribution.sample(&mut rand::thread_rng());
                 let event = Event::new(eid, judge);
 
-                self.compute_and_add_event_confidence(&event, self.get_allowed_seconds_for_server().await).await.unwrap();
+                self.compute_and_add_event_confidence(
+                    &event,
+                    self.get_allowed_seconds_for_server().await,
+                )
+                .await
+                .unwrap();
                 self.update_tau();
-                let leader_board = self.fetch_ascending_leader_board_from_server(&event.get_id()).await.unwrap();
-                println!("[Eid: {}] Leader Board (Ascending): {:?}", event.get_id(), leader_board);
-            }.await; // TODO: handle the result
+                let leader_board = self
+                    .fetch_ascending_leader_board_from_server(&event.get_id())
+                    .await
+                    .unwrap();
+                println!(
+                    "[Eid: {}] Leader Board (Ascending): {:?}",
+                    event.get_id(),
+                    leader_board
+                );
+            }
+            .await; // TODO: handle the result
         }
     }
 

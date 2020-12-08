@@ -1,7 +1,7 @@
+use rand::distributions::weighted::alias_method::{Weight, WeightedIndex};
+use rand::prelude::*;
 use std::option::Option;
 use std::sync::Mutex;
-use rand::distributions::weighted::alias_method::{WeightedIndex, Weight};
-use rand::prelude::*;
 
 pub type Eid = u64;
 pub type EventIdentifier = String;
@@ -99,7 +99,10 @@ pub type EventIdentifierReceiver = Receiver<EventIdentifier>;
 pub type EventIdentifierSender = Sender<EventIdentifier>;
 
 /// read raw event records from some csv files with a maximum records number limitation
-pub async fn read_raw_event_records<P: AsRef<std::path::Path>>(path: P, limitation: usize) -> anyhow::Result<Vec<RawEventRecord>> {
+pub async fn read_raw_event_records<P: AsRef<std::path::Path>>(
+    path: P,
+    limitation: usize,
+) -> anyhow::Result<Vec<RawEventRecord>> {
     let mut rdr = csv::Reader::from_path(path)?;
     let mut res = Vec::with_capacity(limitation);
     for record in rdr.deserialize() {
@@ -113,8 +116,12 @@ pub async fn read_raw_event_records<P: AsRef<std::path::Path>>(path: P, limitati
     Ok(res)
 }
 
-pub async fn dispatch_event_identifier_from<T>(raw_event_record_iter: T, dispatcher: EventIdentifierSender)
-where T: Iterator<Item = RawEventRecord> {
+pub async fn dispatch_event_identifier_from<T>(
+    raw_event_record_iter: T,
+    dispatcher: EventIdentifierSender,
+) where
+    T: Iterator<Item = RawEventRecord>,
+{
     for record in raw_event_record_iter {
         let duration = record.delay_senconds;
         let duration = tokio::time::Duration::from_secs_f64(duration);

@@ -1,7 +1,7 @@
 tonic::include_proto!("algo");
 use super::{
-    deamon_set::{DeamonOperations, DeamonSet},
     deamon_error::DeamonError,
+    deamon_set::{DeamonOperations, DeamonSet},
     event::{Eid, EidAssigner, Event, EventIdentifier, Judge},
     id::{Gid, Id, Uid, UidAssigner},
     leaderboard_deamons::*,
@@ -9,11 +9,11 @@ use super::{
     ResponseResult, ResponseStream,
 };
 use sharks::{secret_type::Rational, Share};
+use std::collections::HashMap;
 use std::net::SocketAddr;
 use std::sync::Arc;
 use std::time::Duration;
-use std::collections::HashMap;
-use tokio::sync::{RwLock, mpsc};
+use tokio::sync::{mpsc, RwLock};
 use tonic::{Request, Response, Status};
 
 #[derive(Debug)]
@@ -98,7 +98,9 @@ impl AlgoServer {
         let shared_for_selection = shared.clone();
         tokio::spawn(async move {
             while let Some(eid) = rx.recv().await {
-                let config = shared_for_selection.trustworthiness_assessment_configurations.get(&eid);
+                let config = shared_for_selection
+                    .trustworthiness_assessment_configurations
+                    .get(&eid);
                 if config.is_none() {
                     continue;
                 }
@@ -108,15 +110,30 @@ impl AlgoServer {
                 let mut handles = Vec::with_capacity(shared_for_selection.group_n as usize);
                 for group in shared_for_selection.groups.iter() {
                     // select a client
-                    let selected_client = selection_operations::select_from_group(group.value()).await;
+                    let selected_client =
+                        selection_operations::select_from_group(group.value()).await;
                     if selected_client.is_none() {
                         continue;
                     }
                     let selected_client = selected_client.unwrap();
 
                     let handle = tokio::spawn(async move {
-                        selection_operations::notify_to_group_share_r(eid, client_num, group_num, selected_client.clone()).await.unwrap();
-                        selection_operations::notify_to_group_share_h_set(eid, client_num, group_num, selected_client).await.unwrap();
+                        selection_operations::notify_to_group_share_r(
+                            eid,
+                            client_num,
+                            group_num,
+                            selected_client.clone(),
+                        )
+                        .await
+                        .unwrap();
+                        selection_operations::notify_to_group_share_h_set(
+                            eid,
+                            client_num,
+                            group_num,
+                            selected_client,
+                        )
+                        .await
+                        .unwrap();
                     });
                     handles.push(handle);
                 }
@@ -139,7 +156,9 @@ impl AlgoServer {
             )),
             DeamonError::SharesNotEnough => Status::data_loss("shares not enough"),
             DeamonError::Timeout(_) => Status::deadline_exceeded("result calculation timeout"),
-            DeamonError::InvalidConversion => Status::data_loss("result cannot be converted into f64"),
+            DeamonError::InvalidConversion => {
+                Status::data_loss("result cannot be converted into f64")
+            }
             DeamonError::SharesCannotAdded => {
                 Status::data_loss("cannot add this share (should not happen)")
             }
@@ -218,7 +237,11 @@ impl ClientManagement for AlgoServer {
                 };
 
                 // update the groups
-                shared.groups.entry(new_client.id.get_gid()).or_insert(Vec::new()).push(new_client);
+                shared
+                    .groups
+                    .entry(new_client.id.get_gid())
+                    .or_insert(Vec::new())
+                    .push(new_client);
                 res
             }
         }
@@ -335,8 +358,14 @@ impl algo_master_server::AlgoMaster for AlgoServer {
         }
     }
 
-    async fn publish_tau_sequence(&self, req: Request<TauSeqSharePubRequest>) -> ResponseResult<()> {
-        let TauSeqSharePubRequest { topic_gid, notification } = req.into_inner();
+    async fn publish_tau_sequence(
+        &self,
+        req: Request<TauSeqSharePubRequest>,
+    ) -> ResponseResult<()> {
+        let TauSeqSharePubRequest {
+            topic_gid,
+            notification,
+        } = req.into_inner();
         // TODO: check if notification.eid is valid
         // check if the notification is empty
         if notification.is_none() {
@@ -355,8 +384,7 @@ impl algo_master_server::AlgoMaster for AlgoServer {
             let request = Request::new(notification.clone());
 
             let handle = tokio::spawn(async move {
-                if let Ok(mut client) =
-                    algo_node_client::AlgoNodeClient::connect(mailbox_url).await
+                if let Ok(mut client) = algo_node_client::AlgoNodeClient::connect(mailbox_url).await
                 {
                     if let Err(_) = client.notify_tau_sequence(request).await {
                         Err(subscriber.id.get_uid())
@@ -393,7 +421,10 @@ impl algo_master_server::AlgoMaster for AlgoServer {
     }
 
     async fn publish_r(&self, req: Request<RandCoefSharePubRequest>) -> ResponseResult<()> {
-        let RandCoefSharePubRequest { topic_gid, notification } = req.into_inner();
+        let RandCoefSharePubRequest {
+            topic_gid,
+            notification,
+        } = req.into_inner();
         // TODO: check if notification.eid is valid
         // check if the notification is empty
         if notification.is_none() {
@@ -412,8 +443,7 @@ impl algo_master_server::AlgoMaster for AlgoServer {
             let request = Request::new(notification.clone());
 
             let handle = tokio::spawn(async move {
-                if let Ok(mut client) =
-                    algo_node_client::AlgoNodeClient::connect(mailbox_url).await
+                if let Ok(mut client) = algo_node_client::AlgoNodeClient::connect(mailbox_url).await
                 {
                     if let Err(_) = client.notify_r(request).await {
                         Err(subscriber.id.get_uid())
@@ -763,10 +793,12 @@ impl algo_master_server::AlgoMaster for AlgoServer {
     ) -> ResponseResult<LeaderBoardComputationConfig> {
         let eid = req.into_inner().eid;
         let entry = self
-            .shared.trustworthiness_assessment_configurations
+            .shared
+            .trustworthiness_assessment_configurations
             .entry(eid)
             .or_insert({
-                let event_confidence_computaion_configuration = self.shared.event_computation_configurations.get(&eid);
+                let event_confidence_computaion_configuration =
+                    self.shared.event_computation_configurations.get(&eid);
                 if let None = event_confidence_computaion_configuration {
                     return Err(Status::failed_precondition(format!(
                         "event(eid={})'s confidence hasn't been calculated",
@@ -779,7 +811,10 @@ impl algo_master_server::AlgoMaster for AlgoServer {
                 clients.extend(clients_uids_iter.map(|uid| (*uid, self.get_gid(uid))));
 
                 // notify to start selection
-                self.shared.trustworthiness_assessment_notifier.send(eid).unwrap(); 
+                self.shared
+                    .trustworthiness_assessment_notifier
+                    .send(eid)
+                    .unwrap();
                 LeaderBoardComputationConfig { clients }
             });
         Ok(Response::new(entry.value().clone()))
@@ -787,7 +822,7 @@ impl algo_master_server::AlgoMaster for AlgoServer {
 }
 
 pub mod selection_operations {
-    use super::{Arc, ClientInfo, Eid, Uid, Gid, Selection, algo_node_client, Request};
+    use super::{algo_node_client, Arc, ClientInfo, Eid, Gid, Request, Selection, Uid};
     pub async fn select_from_group(clients: &[Arc<ClientInfo>]) -> Option<Arc<ClientInfo>> {
         if clients.is_empty() {
             None
@@ -797,9 +832,16 @@ pub mod selection_operations {
     }
 
     /// client_num should be consistent with the one in event_confidence_computation_config
-    pub async fn notify_to_group_share_r(eid: Eid, client_num: Uid, group_num: Gid, selected_client: Arc<ClientInfo>) -> anyhow::Result<()> {
+    pub async fn notify_to_group_share_r(
+        eid: Eid,
+        client_num: Uid,
+        group_num: Gid,
+        selected_client: Arc<ClientInfo>,
+    ) -> anyhow::Result<()> {
         let req = Request::new(Selection {
-            eid, client_num, group_num
+            eid,
+            client_num,
+            group_num,
         });
         let mailbox_uri = format!("http://{}", selected_client.mailbox);
         let mut client = algo_node_client::AlgoNodeClient::connect(mailbox_uri).await?;
@@ -807,9 +849,16 @@ pub mod selection_operations {
         Ok(())
     }
 
-    pub async fn notify_to_group_share_h_set(eid: Eid, client_num: Uid, group_num: Gid, selected_client: Arc<ClientInfo>) -> anyhow::Result<()> {
+    pub async fn notify_to_group_share_h_set(
+        eid: Eid,
+        client_num: Uid,
+        group_num: Gid,
+        selected_client: Arc<ClientInfo>,
+    ) -> anyhow::Result<()> {
         let req = Request::new(Selection {
-            eid, client_num, group_num
+            eid,
+            client_num,
+            group_num,
         });
         let mailbox_uri = format!("http://{}", selected_client.mailbox);
         let mut client = algo_node_client::AlgoNodeClient::connect(mailbox_uri).await?;
