@@ -39,7 +39,7 @@ use std::sync::Mutex;
 // }
 // pub type UidAssigner = IdGenerator<Uid>;
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct UidAssigner(Mutex<Uid>);
 
 #[allow(dead_code)]
@@ -48,11 +48,5 @@ impl UidAssigner {
         let mut assigner = self.0.lock().unwrap();
         *assigner += 1;
         *assigner
-    }
-}
-
-impl Default for UidAssigner {
-    fn default() -> Self {
-        UidAssigner(Mutex::new(1)) // starts from `1`
     }
 }

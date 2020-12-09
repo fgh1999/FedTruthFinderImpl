@@ -69,7 +69,7 @@ impl Event {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct EidAssigner(Mutex<Eid>);
 
 #[allow(dead_code)]
@@ -81,16 +81,10 @@ impl EidAssigner {
     }
 }
 
-impl Default for EidAssigner {
-    fn default() -> Self {
-        EidAssigner(Mutex::new(1 as Eid))
-    }
-}
-
 #[derive(Debug, serde::Deserialize)]
 pub struct RawEventRecord {
     pub identifier: EventIdentifier,
-    pub delay_senconds: f64,
+    pub delay_seconds: f64,
 }
 
 use tokio::sync::broadcast::{Receiver, Sender};
@@ -123,7 +117,7 @@ pub async fn dispatch_event_identifier_from<T>(
     T: Iterator<Item = RawEventRecord>,
 {
     for record in raw_event_record_iter {
-        let duration = record.delay_senconds;
+        let duration = record.delay_seconds;
         let duration = tokio::time::Duration::from_secs_f64(duration);
         dispatcher.send(record.identifier).unwrap();
         tokio::time::delay_for(duration).await;
