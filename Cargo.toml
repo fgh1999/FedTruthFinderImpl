@@ -1,6 +1,6 @@
 [package]
 name = "fed-truth-finder"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["fgh1999 <fanguanghong1999@163.com>"]
 edition = "2018"
 
@@ -34,5 +34,22 @@ nalgebra = "^0.23.1"
 # event records
 csv = "^1.1"
 
+# logging
+slog= "^2.7"
+slog-term = "^2.6"
+slog-async = "^2.5"
+
 [build-dependencies]
 tonic-build = { version = "^0.3", features = ["prost"]}
+
+[[bin]]
+name = "master"
+path = "src/master.rs"
+
+[[bin]]
+name = "slave"
+path = "src/slave.rs"
+
+[[bin]]
+name = "raw_event_broadcaster"
+path = "src/broadcast_raw_event.rs"

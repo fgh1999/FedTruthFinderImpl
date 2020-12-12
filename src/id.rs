@@ -22,6 +22,12 @@ impl Id {
     }
 }
 
+impl std::fmt::Display for Id {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "Id {{ uid: {}, gid: {} }}", self.uid, self.gid)
+    }
+}
+
 use std::sync::Mutex;
 // TODO: A generic id generator
 // use core::ops::Add;

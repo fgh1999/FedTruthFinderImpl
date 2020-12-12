@@ -1,5 +1,8 @@
 use super::deamon_error::DeamonError;
-use crate::{event::Eid, id::{Uid, Gid}};
+use crate::{
+    event::Eid,
+    id::{Gid, Uid},
+};
 
 use std::collections::HashMap;
 use std::sync::Arc;
@@ -275,7 +278,5 @@ fn generate_lambda_sequence(group_n: usize) -> Vec<f64> {
     let dm = DMatrix::from_fn(group_n, group_n, |i, j| pow(j as f64 + 1.0, i));
     let dm = dm.try_inverse().unwrap();
     let dm = dm.row(0);
-    dm.column_iter()
-        .map(|col| col[(0, 0)])
-        .collect()
+    dm.column_iter().map(|col| col[(0, 0)]).collect()
 }

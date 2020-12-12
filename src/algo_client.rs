@@ -2,7 +2,8 @@ tonic::include_proto!("algo");
 use super::{
     config::ClientConfig,
     deamon_set::{DeamonOperations, DeamonSet},
-    event::{Eid, Event, EventIdentifierReceiver, Judge},
+    event::{Eid, Event, Judge},
+    fmt_leader_board,
     forward_deamons::{ForwardDeamonSet, SummationOperations},
     h_apostrophe_deamons::HApoDeamonSet,
     h_deamons::{HChannelPayload, HDeamonSet},
@@ -18,12 +19,17 @@ use num_rational::BigRational;
 use num_traits::cast::{FromPrimitive, ToPrimitive};
 
 use ecies_ed25519::{self as ecies, PublicKey, SecretKey};
+use rand::distributions::weighted::alias_method::WeightedIndex;
 use sharks::{secret_type::Rational, Share};
+use slog::{crit, debug, error, info, trace, warn, Logger};
 use tonic::{Request, Response, Status};
+
+type ErrorRate = f64;
 
 #[derive(Debug)]
 pub struct AlgoClient {
     config: ClientConfig,
+    distribution: WeightedIndex<ErrorRate>,
     shared: Arc<Shared>,
 }
 
@@ -39,6 +45,8 @@ struct Shared {
     /// for PP trustworthiness assessment
     h_deamons: HDeamonSet,
     h_apostrophe_deamons: HApoDeamonSet,
+
+    logger: Logger,
 }
 
 #[derive(Debug)]
@@ -79,22 +87,26 @@ impl algo_node_server::AlgoNode for AlgoClient {
             group_num,
             client_num,
         } = req.into_inner();
-        match Share::<Rational>::try_from(&share[..]) {
-            Ok(share) => {
-                let payload = HChannelPayload::TauSequenceShare(uid, share);
-                match self
-                    .shared
-                    .h_deamons
-                    .add_share(&eid, payload, group_num as u8, client_num as u8)
-                    .await
-                {
-                    Ok(_) => Ok(Response::new((()))),
-                    Err(e) => Err(Status::internal(format!("cannot share tau due to {}", e))),
+
+        match ecies::decrypt(&self.shared.sk, &share) {
+            Ok(share) => match Share::<Rational>::try_from(&share[..]) {
+                Ok(share) => {
+                    let payload = HChannelPayload::TauSequenceShare(uid, share);
+                    match self
+                        .shared
+                        .h_deamons
+                        .add_share(&eid, payload, group_num as u8, client_num as u8)
+                        .await
+                    {
+                        Ok(_) => Ok(Response::new((()))),
+                        Err(e) => Err(Status::internal(format!("cannot share tau due to {}", e))),
+                    }
                 }
-            }
-            Err(_) => Err(Status::invalid_argument(
-                "cannot deserialize a Share<Rational> from the given bytes",
-            )),
+                Err(_) => Err(Status::invalid_argument(
+                    "cannot deserialize a Share<Rational> from the given bytes",
+                )),
+            },
+            Err(e) => Err(Status::invalid_argument(format!("{}", e))),
         }
     }
 
@@ -106,22 +118,26 @@ impl algo_node_server::AlgoNode for AlgoClient {
             group_num,
             client_num,
         } = req.into_inner();
-        match Share::<Rational>::try_from(&share[..]) {
-            Ok(share) => {
-                let payload = HChannelPayload::RandomCoefficientShare(gid, share);
-                match self
-                    .shared
-                    .h_deamons
-                    .add_share(&eid, payload, group_num as u8, client_num as u8)
-                    .await
-                {
-                    Ok(_) => Ok(Response::new((()))),
-                    Err(e) => Err(Status::internal(format!("cannot share tau due to {}", e))),
+
+        match ecies::decrypt(&self.shared.sk, &share) {
+            Ok(share) => match Share::<Rational>::try_from(&share[..]) {
+                Ok(share) => {
+                    let payload = HChannelPayload::RandomCoefficientShare(gid, share);
+                    match self
+                        .shared
+                        .h_deamons
+                        .add_share(&eid, payload, group_num as u8, client_num as u8)
+                        .await
+                    {
+                        Ok(_) => Ok(Response::new((()))),
+                        Err(e) => Err(Status::internal(format!("cannot share tau due to {}", e))),
+                    }
                 }
-            }
-            Err(_) => Err(Status::invalid_argument(
-                "cannot deserialize a Share<Rational> from the given bytes",
-            )),
+                Err(_) => Err(Status::invalid_argument(
+                    "cannot deserialize a Share<Rational> from the given bytes",
+                )),
+            },
+            Err(e) => Err(Status::invalid_argument(format!("{}", e))),
         }
     }
 
@@ -140,13 +156,12 @@ impl algo_node_server::AlgoNode for AlgoClient {
         let eid = msg.eid;
         let client_n = msg.client_num as u8;
         let msg = msg.encrypted_message;
-        use std::convert::TryFrom;
         match ecies::decrypt(&self.shared.sk, &msg) {
             Ok(msg) => match Share::<Rational>::try_from(&msg[..]) {
                 Ok(share) => match self.get_group_num_from_server().await {
                     Ok(group_n) => match shared
                         .h_apostrophe_deamons
-                        .add_share(&eid, share, group_n, client_n)
+                        .add_share(&eid, share, ((group_n - 1) / 2 + 1) as u8, client_n)
                         .await
                     {
                         Ok(_) => Ok(Response::new((()))),
@@ -170,12 +185,19 @@ impl algo_node_server::AlgoNode for AlgoClient {
             client_num,
             group_num,
         } = req.into_inner();
+        info!(self.shared.logger, #"r sharing", "being selected to share r");
         match self.share_r(&eid, group_num as u8, client_num as u8).await {
-            Ok(_) => Ok(Response::new((()))),
-            Err(e) => Err(Status::internal(format!(
-                "cannot share r_sequence due to {}",
-                e
-            ))),
+            Ok(_) => {
+                info!(self.shared.logger, #"r sharing", "sharing successed");
+                Ok(Response::new((())))
+            }
+            Err(e) => {
+                error!(self.shared.logger, #"r sharing", "failed to share r");
+                Err(Status::internal(format!(
+                    "cannot share r_sequence due to {}",
+                    e
+                )))
+            }
         }
     }
 
@@ -230,15 +252,59 @@ impl algo_node_server::AlgoNode for AlgoClient {
             Err(e) => Err(Status::invalid_argument(format!("{}", e))),
         }
     }
+
+    /// for test
+    async fn handle(&self, req: Request<EventNotification>) -> ResponseResult<Uid> {
+        let event_identifier = req.into_inner().identifier;
+        info!(self.shared.logger, #"event", "received a new event"; "identifier" => event_identifier.clone());
+        let eid = self.register_event(event_identifier.clone()).await;
+        if let Err(e) = eid {
+            error!(self.shared.logger, #"event", "cannot get eid for the new event"; "identifier" => event_identifier);
+            return Err(Status::data_loss(format!("{}", e)));
+        }
+        let eid = eid.unwrap();
+
+        use rand::distributions::Distribution;
+        let judge = self.distribution.sample(&mut rand::thread_rng());
+        let event = Event::new(eid.clone(), judge);
+
+        if let Err(e) = self
+            .compute_and_add_event_confidence(&event, self.get_allowed_seconds_for_server().await)
+            .await
+        {
+            error!(self.shared.logger, #"event confidence computation", "event confidence computation failed"; "eid" => eid);
+            return Err(Status::data_loss(format!("{}", e)));
+        } else {
+            info!(self.shared.logger, #"event confidence computation", "event confidence computation successed"; "eid" => eid);
+        }
+
+        self.update_tau();
+        let leader_board = self
+            .fetch_ascending_leader_board_from_server(&event.get_id())
+            .await;
+        match leader_board {
+            Ok(leader_board) => {
+                info!(self.shared.logger, #"leader board", "leader board update successed";
+                    "eid" => eid,
+                    "ascending uid ranking list" => fmt_leader_board(leader_board),
+                );
+                Ok(Response::new(self.shared.id.get_uid()))
+            }
+            Err(e) => {
+                error!(self.shared.logger, #"leader board", "failed to fetch leader board"; "eid" => eid);
+                Err(Status::data_loss(format!("{}", e)))
+            }
+        }
+    }
 }
 
 /// Operations about e, event confidence.
 #[tonic::async_trait]
-trait EventConfidenceComputation {
+pub trait EventConfidenceComputation {
     /// Figure out the confidence of given event `e`, and update corresponding inner states.
     /// Implementations should make sure that the confidence of the new event is valid([0, 1]).
     async fn compute_and_add_event_confidence(
-        &mut self,
+        &self,
         e: &Event,
         allowed_seconds_for_server: f64,
     ) -> anyhow::Result<()>;
@@ -263,10 +329,10 @@ trait EventConfidenceComputation {
 }
 
 /// Operations about tau, trustworthiness of user.
-trait TauComputation {
+pub trait TauComputation {
     /// Compute and update the inner tau with events stored.
     /// Implementations should make sure that the new tau is valid([0, 1]).
-    fn update_tau(&mut self);
+    fn update_tau(&self);
 
     fn get_tau(&self) -> f64;
 }
@@ -274,7 +340,7 @@ trait TauComputation {
 #[tonic::async_trait]
 impl EventConfidenceComputation for AlgoClient {
     async fn compute_and_add_event_confidence(
-        &mut self,
+        &self,
         e: &Event,
         allowed_seconds_for_server: f64,
     ) -> anyhow::Result<()> {
@@ -282,17 +348,19 @@ impl EventConfidenceComputation for AlgoClient {
             return Ok(()); // there's no need to compute again
         }
 
-        let ds_ij_pair = self.calculate_dsij_pair(&e.get_id(), e)?;
+        // fetch the config of this event confidence computation session from the server
         let url = self.config.addrs.remote_addr.clone();
         let mut client = algo_master_client::AlgoMasterClient::connect(url.clone()).await?;
-
-        // fetch the config of this event confidence computation session from the server
-        let req = Request::new(EventConfidenceComputationConfigRequest { eid: e.get_id() });
+        let req = EventConfidenceComputationConfigRequest { eid: e.get_id() };
         let process_config = client.get_event_confidence_computation_config(req).await?;
         drop(client);
         let process_config = process_config.get_ref();
+        info!(self.shared.logger, #"event confidence computation", "figured out the payload pair";
+            "eid" => e.get_id(),
+        );
 
         // generate shares
+        let ds_ij_pair = self.calculate_dsij_pair(&e.get_id(), e)?;
         let client_num = process_config.clients_pk.len() as u8;
         let shares =
             self.generate_dsij_shares(ds_ij_pair, process_config.threshold as u8, client_num);
@@ -307,7 +375,7 @@ impl EventConfidenceComputation for AlgoClient {
             // encrypt the message
             let rx_uid = share.x as Uid;
             let rx_pk = process_config.clients_pk.get(&rx_uid);
-            if let None = rx_pk {
+            if rx_pk.is_none() {
                 return Err(anyhow::anyhow!("{} does not exist in EventConfidenceComputationConfig, while share.x equals to it", rx_uid));
             }
             let rx_pk = PublicKey::from_bytes(rx_pk.unwrap())?;
@@ -323,7 +391,6 @@ impl EventConfidenceComputation for AlgoClient {
                 client_num: client_num as Uid,
                 encrypted_message,
             };
-            let switch_req = Request::new(switch_req);
             let algo_master_server_url = url.clone();
             let handle = tokio::spawn(async move {
                 let mut client =
@@ -341,13 +408,22 @@ impl EventConfidenceComputation for AlgoClient {
         if first_dispatch_error.is_some() {
             // return a single dispatch error
             let result = first_dispatch_error.unwrap();
+            error!(self.shared.logger, #"event confidence computation", "failed to dispatch shares of the payload pair";
+                "eid" => e.get_id(),
+            );
             result?;
         }
+        info!(self.shared.logger, #"event confidence computation", "dispatched shares of the payload pair successfully";
+            "eid" => e.get_id(),
+        );
 
         // await the (\hat{d_j^k}, \hat{s_j^k}) where k = e.get_id() from deamon(s).
         let summation_pair = self
             .summate_received_shares(&e.get_id(), client_num)
             .await?;
+        info!(self.shared.logger, #"event confidence computation", "calculated the summation pair";
+            "eid" => e.get_id(),
+        );
         let summation_pair = Vec::from(&summation_pair); // encoded into bytes
 
         // sumbit the summation result and get the confidence of this event
@@ -358,11 +434,18 @@ impl EventConfidenceComputation for AlgoClient {
         });
         let mut client = algo_master_client::AlgoMasterClient::connect(url).await?;
         let event_confidence = client.submit_summation(req).await?.into_inner();
+        info!(self.shared.logger, #"event confidence computation", "fetched the confidence of the event from master";
+            "eid" => e.get_id(),
+            "confidence" => event_confidence,
+        );
 
         // update inner state: add the new event with its confidence
         let mut e = e.clone();
         e.set_confidence(event_confidence);
         self.shared.core.lock().unwrap().events.push(e);
+        info!(self.shared.logger, #"event confidence computation", "updated event list";
+            "eid" => e.get_id(),
+        );
         Ok(())
     }
 
@@ -412,7 +495,7 @@ impl EventConfidenceComputation for AlgoClient {
 }
 
 impl TauComputation for AlgoClient {
-    fn update_tau(&mut self) {
+    fn update_tau(&self) {
         let mut algo_core = self.shared.core.lock().unwrap();
 
         let ref events = algo_core.events;
@@ -432,8 +515,17 @@ impl TauComputation for AlgoClient {
                 / valid_events.count() as f64;
 
             match BigRational::from_f64(tau) {
-                Some(tau) => algo_core.tau = tau.to_f64().unwrap(),
-                None => algo_core.tau = 0.5, // reset if counters err
+                Some(tau) => {
+                    let tau = tau.to_f64().unwrap();
+                    info!(self.shared.logger, #"tau update", "new trustworthiness";
+                        "tau" => tau,
+                    );
+                    algo_core.tau = tau;
+                }
+                None => {
+                    crit!(self.shared.logger, #"tau update", "failed to update trustworthiness");
+                    algo_core.tau = 0.5; // reset if counters err
+                }
             }
         } else {
             algo_core.tau = 0.5;
@@ -447,7 +539,7 @@ impl TauComputation for AlgoClient {
 }
 
 #[tonic::async_trait]
-trait TrustWorthinessAssessment {
+pub trait TrustWorthinessAssessment {
     /// TODO: needless
     async fn get_client_n_snapshot_from_server(&self, eid: &Eid) -> anyhow::Result<Uid>;
 
@@ -510,11 +602,25 @@ impl TrustWorthinessAssessment for AlgoClient {
 
     async fn share_tau_sequence(&self, eid: &Eid, group_n: u8, client_n: u8) -> anyhow::Result<()> {
         // get inner current tau
-        let shared = self.shared.clone();
-        let tau = shared.core.lock().unwrap().tau.clone();
-        let uid = shared.id.get_uid();
-        drop(shared);
+        let tau = self.shared.core.lock().unwrap().tau.clone();
+        let uid = self.shared.id.get_uid();
         let threshold = (group_n - 1) / 2 + 1; // TODO: check if `group_n` is odd
+
+        // get configurations from server
+        let url = self.config.addrs.remote_addr.clone();
+        let mut client = algo_master_client::AlgoMasterClient::connect(url.clone()).await?;
+        let event_confidence_computation_config = client
+            .get_event_confidence_computation_config(EventConfidenceComputationConfigRequest {
+                eid: eid.clone(),
+            })
+            .await?
+            .into_inner();
+        let leader_board_computation_config = client
+            .get_leader_board_computation_config(LeaderBoardComputationConfigRequest {
+                eid: eid.clone(),
+            })
+            .await?
+            .into_inner();
 
         // make shares
         let tau_sequence = generate_tau_sequence(tau, group_n as usize);
@@ -522,33 +628,51 @@ impl TrustWorthinessAssessment for AlgoClient {
 
         // PUB shares to the server
         let mut pub_handles = Vec::with_capacity(group_n as usize);
-        let url = self.config.addrs.remote_addr.clone();
         for share in shares {
             let topic_gid = share.x as i32;
             let share: Vec<u8> = Vec::from(&share);
-            let eid = eid.clone();
-            let notification = Some(TauSeqShareNotification {
-                group_num: group_n as Gid,
-                client_num: client_n as Uid,
-                eid,
-                uid: uid.clone(),
-                share,
-            });
+            // uid iter
+            let group = leader_board_computation_config
+                .clients
+                .iter()
+                .filter(|(_k, v)| **v == topic_gid)
+                .map(|(k, _v)| k.clone());
 
-            let req = Request::new(TauSeqSharePubRequest {
-                topic_gid,
-                notification,
-            });
-            let server_url = url.clone();
-
-            let handle = tokio::spawn(async move {
-                let mut client = algo_master_client::AlgoMasterClient::connect(server_url)
-                    .await
+            for ref member in group {
+                // TODO: handle these `unwrap`s
+                let pk = event_confidence_computation_config
+                    .clients_pk
+                    .get(member)
                     .unwrap();
-                client.publish_tau_sequence(req).await.unwrap();
-            });
-            pub_handles.push(handle);
+                let pk = ecies::PublicKey::from_bytes(pk).unwrap();
+                let encrypted_message =
+                    ecies::encrypt(&pk, share.as_ref(), &mut rand::thread_rng()).unwrap();
+                let notification = Some(TauSeqShareNotification {
+                    group_num: group_n as Gid,
+                    client_num: client_n as Uid,
+                    eid: eid.clone(),
+                    uid: uid.clone(),
+                    share: encrypted_message,
+                });
+
+                let req = TauSeqSharePubRequest {
+                    tx_uid: uid.clone(),
+                    rx_uid: member.clone(),
+                    topic_gid,
+                    notification,
+                };
+                let server_url = url.clone();
+
+                let handle = tokio::spawn(async move {
+                    let mut client = algo_master_client::AlgoMasterClient::connect(server_url)
+                        .await
+                        .unwrap();
+                    client.publish_tau_sequence(req).await.unwrap();
+                });
+                pub_handles.push(handle);
+            }
         }
+
         let rts = futures::future::join_all(pub_handles).await;
         let first_dispatch_error = rts.into_iter().filter(|rt| rt.is_err()).take(1).next();
         if first_dispatch_error.is_some() {
@@ -564,34 +688,71 @@ impl TrustWorthinessAssessment for AlgoClient {
             .unwrap_or(BigRational::from_u64(3).unwrap())];
         let shares = make_shares(&r, threshold, group_n)?;
         let gid = self.shared.id.get_gid();
+        let uid = self.shared.id.get_uid();
+
+        // get configurations from server
+        let url = self.config.addrs.remote_addr.clone();
+        let mut client = algo_master_client::AlgoMasterClient::connect(url.clone()).await?;
+        let event_confidence_computation_config = client
+            .get_event_confidence_computation_config(EventConfidenceComputationConfigRequest {
+                eid: eid.clone(),
+            })
+            .await?
+            .into_inner();
+        let leader_board_computation_config = client
+            .get_leader_board_computation_config(LeaderBoardComputationConfigRequest {
+                eid: eid.clone(),
+            })
+            .await?
+            .into_inner();
 
         // PUB shares to the server
         let mut pub_handles = Vec::with_capacity(group_n as usize);
-        let url = self.config.addrs.remote_addr.clone();
         for share in shares {
             let topic_gid = share.x as Gid;
             let share: Vec<u8> = Vec::from(&share);
-            let eid = eid.clone();
-            let notification = Some(RandCoefShareNotification {
-                group_num: group_n as Gid,
-                client_num: client_n as Uid,
-                eid,
-                share,
-                gid: gid.clone(),
-            });
-            let req = Request::new(RandCoefSharePubRequest {
-                topic_gid,
-                notification,
-            });
-            let server_url = url.clone();
-            let handle = tokio::spawn(async move {
-                let mut client = algo_master_client::AlgoMasterClient::connect(server_url)
-                    .await
+            // uid iter
+            let group = leader_board_computation_config
+                .clients
+                .iter()
+                .filter(|(_k, v)| **v == topic_gid)
+                .map(|(k, _v)| k.clone());
+
+            for ref member in group {
+                // TODO: handle these `unwrap`s
+                let pk = event_confidence_computation_config
+                    .clients_pk
+                    .get(member)
                     .unwrap();
-                client.publish_r(req).await.unwrap();
-            });
-            pub_handles.push(handle);
+                let pk = ecies::PublicKey::from_bytes(pk).unwrap();
+                let encrypted_message =
+                    ecies::encrypt(&pk, share.as_ref(), &mut rand::thread_rng()).unwrap();
+                let notification = Some(RandCoefShareNotification {
+                    group_num: group_n as Gid,
+                    client_num: client_n as Uid,
+                    eid: eid.clone(),
+                    share: encrypted_message,
+                    gid: gid.clone(),
+                });
+
+                let req = RandCoefSharePubRequest {
+                    tx_uid: uid.clone(),
+                    rx_uid: member.clone(),
+                    topic_gid,
+                    notification,
+                };
+                let server_url = url.clone();
+
+                let handle = tokio::spawn(async move {
+                    let mut client = algo_master_client::AlgoMasterClient::connect(server_url)
+                        .await
+                        .unwrap();
+                    client.publish_r(req).await.unwrap();
+                });
+                pub_handles.push(handle);
+            }
         }
+
         let rts = futures::future::join_all(pub_handles).await;
         let first_dispatch_error = rts.into_iter().filter(|rt| rt.is_err()).take(1).next();
         if first_dispatch_error.is_some() {
@@ -605,6 +766,25 @@ impl TrustWorthinessAssessment for AlgoClient {
         //! unlike described in the paper, here calculate the result only when being selected,
         //! e.i. calling this method
 
+        // get clients' pk
+        let mut client =
+            algo_master_client::AlgoMasterClient::connect(self.config.addrs.remote_addr.clone())
+                .await?;
+        let EventConfidenceComputationConfig {
+            clients_pk,
+            threshold: _,
+        } = client
+            .get_event_confidence_computation_config(EventConfidenceComputationConfigRequest {
+                eid: eid.clone(),
+            })
+            .await?
+            .into_inner();
+        drop(client);
+        info!(self.shared.logger, "get event confidence configuration";
+            "clients_pk_len" => clients_pk.len(),
+            "eid" => eid.clone(),
+        );
+
         let time_limitation = Duration::from_secs_f64(self.get_allowed_seconds_for_server().await);
         let h_set: Vec<BigRational> = self
             .shared
@@ -614,20 +794,36 @@ impl TrustWorthinessAssessment for AlgoClient {
         let threshold = (group_n - 1) / 2 + 1;
         let shares = make_shares(&h_set, threshold, client_num as u8)?;
         drop(h_set);
+        trace!(self.shared.logger, #"selection", "figured out shares of h_set";
+            "shares_num" => shares.len(),
+        );
 
         // dispatch shares
         let tx_uid = self.shared.id.get_uid();
         let url = self.config.addrs.remote_addr.clone();
         let mut relay_handles = Vec::with_capacity(shares.len());
         for share in shares {
+            let rx_uid = share.x as Uid;
+            let pk = clients_pk.get(&rx_uid);
+            if pk.is_none() {
+                error!(self.shared.logger, "pk is none";
+                    "rx_uid" => rx_uid,
+                    "clients_pk_len" => clients_pk.len(),
+                    "eid" => eid.clone(),
+                );
+            }
+            let pk = pk.unwrap();
+            let pk = ecies::PublicKey::from_bytes(pk)?;
+            let encrypted_message =
+                ecies::encrypt(&pk, Vec::from(&share).as_slice(), &mut rand::thread_rng())?;
+
             let switch_req = RelayMessage {
                 tx_uid,
-                rx_uid: share.x as Uid,
+                rx_uid,
                 eid: eid.clone(),
                 client_num: client_num as Uid,
-                encrypted_message: Vec::from(&share),
+                encrypted_message,
             };
-            let switch_req = Request::new(switch_req);
             let server_url = url.clone();
             let handle = tokio::spawn(async move {
                 let mut client = algo_master_client::AlgoMasterClient::connect(server_url)
@@ -678,6 +874,9 @@ impl TrustWorthinessAssessment for AlgoClient {
         // generate & publish tau_sequence
         self.share_tau_sequence(eid, group_n as u8, client_n as u8)
             .await?;
+        info!(self.shared.logger, #"trustworthiness assessment", "generate and publish tau_sequence";
+            "eid" => eid.clone(),
+        );
 
         // await the h'(uid) for this round
         let h_apostrophe_deamons_threshold = ((group_n - 1) / 2 + 1) as u8;
@@ -693,36 +892,46 @@ impl TrustWorthinessAssessment for AlgoClient {
                 time_limitation,
             )
             .await?;
+        info!(self.shared.logger, #"trustworthiness assessment", "figured out h'(uid)";
+            "eid" => eid.clone(),
+        );
 
         let server_url = self.config.addrs.remote_addr.clone();
         let mut algo_client = algo_master_client::AlgoMasterClient::connect(server_url).await?;
-        let req = Request::new(HApoShare {
+        let req = HApoShare {
             eid: eid.clone(),
             allowed_seconds,
             share: Vec::from(&h_apostrophe_share),
-        });
+        };
         let leader_board = algo_client.submit_h_apo_share(req).await?.into_inner();
+        info!(self.shared.logger, #"trustworthiness assessment", "fetched leader-board from master";
+            "eid" => eid.clone(),
+        );
         Ok(leader_board.clients)
     }
 }
 
 #[tonic::async_trait]
-trait AlgoClientUtil: EventConfidenceComputation + TauComputation + TrustWorthinessAssessment {
+pub trait AlgoClientUtil:
+    EventConfidenceComputation + TauComputation + TrustWorthinessAssessment
+{
     async fn get_allowed_seconds_for_server(&self) -> f64;
 
+    /// returns (id, group_num)
     async fn register(
         server_url: String,
         mailbox_addr: String,
         pk: PublicKey,
-    ) -> anyhow::Result<Id>;
+    ) -> anyhow::Result<(Id, Gid)>;
 
     async fn register_event(&self, event_identifier: String) -> anyhow::Result<Eid>;
 
-    async fn new_algo_client(config: ClientConfig) -> anyhow::Result<AlgoClient>;
+    async fn new_algo_client<P: AsRef<std::path::Path> + Sync + Send>(
+        config: ClientConfig,
+        log_path: Option<P>,
+    ) -> anyhow::Result<AlgoClient>;
 
     fn generate_keypair() -> (SecretKey, PublicKey);
-
-    async fn listen_to(&mut self, mut event_src: EventIdentifierReceiver, error_rate: f64);
 }
 
 #[tonic::async_trait]
@@ -730,23 +939,25 @@ impl AlgoClientUtil for AlgoClient {
     #[inline]
     async fn get_allowed_seconds_for_server(&self) -> f64 {
         // TODO: get data from self.config
-        const ALLOWED_SECONDS: f64 = (5 * 60 * 60) as f64;
-        ALLOWED_SECONDS
+        (5 * 60 * 60) as f64
     }
 
     async fn register(
         server_url: String,
         mailbox_addr: String,
         pk: PublicKey,
-    ) -> anyhow::Result<Id> {
+    ) -> anyhow::Result<(Id, Gid)> {
         let pk = pk.to_bytes().to_vec();
         let mut client = algo_master_client::AlgoMasterClient::connect(server_url).await?;
-        let req = Request::new(InitRequest {
+
+        let req = InitRequest {
             pk,
             mailbox: mailbox_addr,
-        });
+        };
         let InitResponse { uid, gid } = client.register(req).await?.into_inner();
-        Ok(Id::new(uid, gid))
+        let group_num = client.get_group_num(()).await?.into_inner();
+
+        Ok((Id::new(uid, gid), group_num))
     }
 
     async fn register_event(&self, event_identifier: String) -> anyhow::Result<Eid> {
@@ -761,19 +972,53 @@ impl AlgoClientUtil for AlgoClient {
         Ok(eid)
     }
 
-    async fn new_algo_client(config: ClientConfig) -> anyhow::Result<Self> {
+    async fn new_algo_client<P: AsRef<std::path::Path> + Sync + Send>(
+        config: ClientConfig,
+        log_path: Option<P>,
+    ) -> anyhow::Result<Self> {
         let (sk, pk) = Self::generate_keypair();
         let core = Mutex::new(AlgoCore::new());
 
         // register to get id(uid, gid)
         let server_url = config.addrs.remote_addr.clone();
         let mailbox_addr = config.addrs.mailbox_addr.clone();
-        let id = Self::register(server_url, mailbox_addr, pk).await?;
+        let (id, group_n) = Self::register(server_url, mailbox_addr, pk).await?;
 
         // construct a relay processor
         let forward_deamons = ForwardDeamonSet::new();
         let h_apostrophe_deamons = DeamonSet::new();
-        let h_deamons = DeamonSet::new();
+        let h_deamons = DeamonSet::new_with_gid(id.get_gid(), group_n);
+
+        let weights = vec![config.error_rate, 1.0 - config.error_rate];
+        let distribution =
+            rand::distributions::weighted::alias_method::WeightedIndex::new(weights).unwrap();
+
+        // logger
+        use slog::Drain;
+        let owned_info = slog::o!("self.uid" => id.get_uid());
+        let logger = match log_path {
+            Some(path) => {
+                // log to file
+                let file = std::fs::OpenOptions::new()
+                    .create(true)
+                    .write(true)
+                    .truncate(true)
+                    .open(path)
+                    .unwrap(); // will overwrite existing content
+
+                let decorator = slog_term::PlainDecorator::new(file);
+                let drain = slog_term::FullFormat::new(decorator).build().fuse();
+                let drain = slog_async::Async::new(drain).build().fuse();
+                slog::Logger::root(drain, owned_info)
+            }
+            None => {
+                // log to terminal
+                let decorator = slog_term::TermDecorator::new().build();
+                let drain = slog_term::FullFormat::new(decorator).build().fuse();
+                let drain = slog_async::Async::new(drain).build().fuse();
+                slog::Logger::root(drain, owned_info)
+            }
+        };
 
         let shared = Shared {
             id,
@@ -782,57 +1027,18 @@ impl AlgoClientUtil for AlgoClient {
             forward_deamons,
             h_apostrophe_deamons,
             h_deamons,
+            logger: logger.clone(),
         };
         let shared = Arc::new(shared);
-        Ok(AlgoClient { shared, config })
+        info!(logger, #"new node", "node constructed");
+        Ok(AlgoClient {
+            shared,
+            config,
+            distribution,
+        })
     }
 
-    async fn listen_to(&mut self, mut event_src: EventIdentifierReceiver, error_rate: f64) {
-        assert!(
-            error_rate <= 1.0 && error_rate >= 0.0,
-            "error_rate out of range"
-        );
-        let weights = vec![error_rate, 1.0 - error_rate];
-        let distribution =
-            rand::distributions::weighted::alias_method::WeightedIndex::new(weights).unwrap();
-
-        loop {
-            let event_identifier = event_src.recv().await;
-            if let Err(_e) = event_identifier {
-                // event_src is dried
-                break;
-            }
-            let event_identifier = event_identifier.unwrap();
-            // tokio::spawn(async move {
-            //     TODO: async thread => may cause some sync errors
-            // }).await;
-            async {
-                let eid = self.register_event(event_identifier).await.unwrap();
-                use rand::distributions::Distribution;
-                let judge = distribution.sample(&mut rand::thread_rng());
-                let event = Event::new(eid, judge);
-
-                self.compute_and_add_event_confidence(
-                    &event,
-                    self.get_allowed_seconds_for_server().await,
-                )
-                .await
-                .unwrap();
-                self.update_tau();
-                let leader_board = self
-                    .fetch_ascending_leader_board_from_server(&event.get_id())
-                    .await
-                    .unwrap();
-                println!(
-                    "[Eid: {}] Leader Board (Ascending): {:?}",
-                    event.get_id(),
-                    leader_board
-                );
-            }
-            .await; // TODO: handle the result
-        }
-    }
-
+    #[inline]
     fn generate_keypair() -> (SecretKey, PublicKey) {
         let mut rng = rand::thread_rng();
         ecies::generate_keypair(&mut rng)

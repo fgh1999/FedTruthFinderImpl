@@ -1,7 +1,8 @@
 use sharks::{secret_type::Rational, Share};
+use std::collections::HashMap;
 use std::sync::Arc;
-use tokio::sync::RwLock;
-use tokio::sync::{broadcast, mpsc};
+
+use tokio::sync::{broadcast, mpsc, RwLock};
 
 use super::deamon_error::DeamonError;
 use crate::{event::Eid, id::Uid};
@@ -12,7 +13,7 @@ type Threshold = u8;
 #[derive(Debug)]
 struct ForwardDeamon {
     eid: Eid,             // which event this deamon is responsible for
-    threshold: Threshold, // how many shares needed to figure out the summation result
+    threshold: Threshold, // how many shares needed to figure out the summation result => should be equal to client_n
     client_n: Uid,
     share_entry_tx: Arc<RwLock<Option<mpsc::Sender<Payload>>>>, // dropped in get_summation_result as quickly as possible
     result_tx: Arc<broadcast::Sender<Payload>>,
@@ -21,7 +22,7 @@ struct ForwardDeamon {
 
 impl ForwardDeamon {
     pub fn new(eid: Eid, threshold: Threshold, client_n: Uid) -> ForwardDeamon {
-        let (share_entry_tx, mut share_entry_rx) = mpsc::channel(client_n as usize);
+        let (share_entry_tx, mut share_entry_rx) = mpsc::channel::<Payload>(client_n as usize);
         let (result_tx, _) = broadcast::channel(4);
 
         let result_tx = Arc::new(result_tx);
@@ -31,12 +32,13 @@ impl ForwardDeamon {
 
             while let Some(new_share) = share_entry_rx.recv().await {
                 // TODO: handle the exception when new_share is `None`
-                if needed_shares.len() < threshold as usize {
-                    needed_shares.push(new_share);
-                } else {
+                needed_shares.push(new_share);
+                if needed_shares.len() == threshold as usize {
                     break;
                 }
             }
+
+            let needed_shares = needed_shares;
             // TODO: handle the exception that shares in the channel isn't enough for needed_shares
             // but share_entry_rx.recv().await returns None
 
@@ -73,7 +75,7 @@ impl ForwardDeamon {
 
 #[tonic::async_trait]
 trait SummationOperation {
-    async fn add_received_shares(&self, share: Share<Rational>) -> Result<(), DeamonError>;
+    async fn add_received_share(&self, share: Share<Rational>) -> Result<(), DeamonError>;
 
     async fn get_summation_result(&self) -> Share<Rational>;
 }
@@ -101,7 +103,7 @@ impl SummationOperation for ForwardDeamon {
         }
     }
 
-    async fn add_received_shares(&self, share: Share<Rational>) -> Result<(), DeamonError> {
+    async fn add_received_share(&self, share: Share<Rational>) -> Result<(), DeamonError> {
         let share_entry_tx_r = self.share_entry_tx.read().await;
         if share_entry_tx_r.is_some() {
             drop(share_entry_tx_r);
@@ -119,13 +121,15 @@ impl SummationOperation for ForwardDeamon {
 
 #[derive(Debug)]
 pub struct ForwardDeamonSet {
-    deamons: dashmap::DashMap<Eid, ForwardDeamon>,
+    // deamons: dashmap::DashMap<Eid, ForwardDeamon>,
+    deamons: RwLock<HashMap<Eid, ForwardDeamon>>,
 }
 
 impl ForwardDeamonSet {
     pub fn new() -> ForwardDeamonSet {
         ForwardDeamonSet {
-            deamons: dashmap::DashMap::new(),
+            // deamons: dashmap::DashMap::new(),
+            deamons: RwLock::new(HashMap::new()),
         }
     }
 }
@@ -156,16 +160,23 @@ impl SummationOperations for ForwardDeamonSet {
     ) -> Result<(), DeamonError> {
         let threshold = client_n;
         let client_n = client_n as Uid;
-        let entry = self
-            .deamons
-            .entry(eid.clone())
-            .or_insert(ForwardDeamon::new(eid.clone(), threshold, client_n));
+
+        if !self.deamons.read().await.contains_key(eid) {
+            let mut deamons_w = self.deamons.write().await;
+            deamons_w.entry(eid.clone()).or_insert(ForwardDeamon::new(
+                eid.clone(),
+                threshold,
+                client_n,
+            ));
+        }
+        let deamons_r = self.deamons.read().await;
+        let deamon = deamons_r.get(eid).unwrap();
 
         // check consistency of (threshold, client_n)
-        DeamonError::check_threshold_consistency(threshold, entry.value().get_threshold())?;
-        DeamonError::check_client_num_consistency(client_n, entry.value().get_client_n())?;
+        DeamonError::check_threshold_consistency(threshold, deamon.get_threshold())?;
+        DeamonError::check_client_num_consistency(client_n, deamon.get_client_n())?;
 
-        entry.value().add_received_shares(share).await
+        deamon.add_received_share(share).await
     }
 
     async fn get_summation_result(
@@ -175,15 +186,21 @@ impl SummationOperations for ForwardDeamonSet {
     ) -> Result<Share<Rational>, DeamonError> {
         let threshold = client_n;
         let client_n = client_n as Uid;
-        let entry = self
-            .deamons
-            .entry(eid.clone())
-            .or_insert(ForwardDeamon::new(eid.clone(), threshold, client_n));
+        if !self.deamons.read().await.contains_key(eid) {
+            let mut deamons_w = self.deamons.write().await;
+            deamons_w.entry(eid.clone()).or_insert(ForwardDeamon::new(
+                eid.clone(),
+                threshold,
+                client_n,
+            ));
+        }
+        let deamons_r = self.deamons.read().await;
+        let deamon = deamons_r.get(eid).unwrap();
 
         // check consistency of (threshold, client_n)
-        DeamonError::check_threshold_consistency(threshold, entry.value().get_threshold())?;
-        DeamonError::check_client_num_consistency(client_n, entry.value().get_client_n())?;
+        DeamonError::check_threshold_consistency(threshold, deamon.get_threshold())?;
+        DeamonError::check_client_num_consistency(client_n, deamon.get_client_n())?;
 
-        Ok(entry.value().get_summation_result().await)
+        Ok(deamon.get_summation_result().await)
     }
 }

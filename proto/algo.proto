@@ -43,7 +43,9 @@ message RandCoefShareNotification {
 }
 message RandCoefSharePubRequest {
     int32 topic_gid = 1;
-    RandCoefShareNotification notification = 2;
+    int32 txUid = 2;
+    int32 rxUid = 3;
+    RandCoefShareNotification notification = 4;
 }
 
 message TauSeqShareNotification {
@@ -55,7 +57,9 @@ message TauSeqShareNotification {
 }
 message TauSeqSharePubRequest {
     int32 topic_gid = 1;
-    TauSeqShareNotification notification = 2;
+    int32 txUid = 2;
+    int32 rxUid = 3;
+    TauSeqShareNotification notification = 4;
 }
 
 message RelayMessage {
@@ -84,7 +88,7 @@ message LeaderBoardComputationConfigRequest {
     uint64 eid = 1;
 }
 message LeaderBoardComputationConfig {
-    map<int32, int32> clients = 1;
+    map<int32, int32> clients = 1; // map<Uid, Gid>
 }
 
 message HApoShare {
@@ -103,6 +107,7 @@ service AlgoMaster {
     rpc Register(InitRequest) returns (InitResponse) {}
 
     //fetch public key(s) according to the KeyRequest from the server
+    // TODO: deprecated
     rpc FetchClientPk(KeyRequest) returns (stream PublicIdentity) {}
 
     // Find the event on the server.
@@ -142,6 +147,11 @@ message Selection {
     int32 clientNum = 3;
 }
 
+// for test
+message EventNotification {
+    string identifier = 1;
+}
+
 service AlgoNode {
     //Forward the message until it reached rxUid.
     //When the target receiver receive the message, it can push it into a channel.
@@ -155,4 +165,7 @@ service AlgoNode {
     rpc NotifyTauSequence(TauSeqShareNotification) returns (google.protobuf.Empty) {}
     rpc NotifyR(RandCoefShareNotification) returns (google.protobuf.Empty) {}
     rpc SendHShare(RelayMessage) returns (google.protobuf.Empty) {}
+
+    // for test, returns self.uid
+    rpc Handle(EventNotification) returns (google.protobuf.Int32Value) {}
 }
