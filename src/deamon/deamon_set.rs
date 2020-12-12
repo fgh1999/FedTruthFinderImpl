@@ -1,6 +1,7 @@
-use crate::{event::Eid, id::Uid};
 use super::deamon_error::DeamonError;
+use crate::{event::Eid, id::{Uid, Gid}};
 
+use std::collections::HashMap;
 use std::sync::Arc;
 use std::time::Duration;
 use tokio::sync::{mpsc, Mutex, RwLock};
@@ -18,6 +19,7 @@ pub struct Deamon<
     client_n: Uid,
     tx: Arc<RwLock<Option<mpsc::Sender<ChannelPayload>>>>,
     buffer: Arc<Mutex<mpsc::Receiver<ChannelPayload>>>,
+    lambda_g: f64,
 }
 
 impl<ResultType: Clone + Send + Sync + 'static, ChannelPayload: Clone + Send + Sync + 'static>
@@ -34,7 +36,14 @@ impl<ResultType: Clone + Send + Sync + 'static, ChannelPayload: Clone + Send + S
             eid,
             tx,
             buffer: Arc::new(Mutex::new(rx)),
+            lambda_g: 0.0,
         }
+    }
+
+    pub fn new_with_lambda(eid: Eid, threshold: Threshold, client_n: Uid, lambda_g: f64) -> Self {
+        let mut deamon = Self::new(eid, threshold, client_n);
+        deamon.lambda_g = lambda_g;
+        deamon
     }
 }
 
@@ -49,6 +58,7 @@ pub trait GetFields<
     fn get_eid(&self) -> Eid;
     fn get_tx(&self) -> Arc<RwLock<Option<mpsc::Sender<ChannelPayload>>>>;
     fn get_buffer(&self) -> Arc<Mutex<mpsc::Receiver<ChannelPayload>>>;
+    fn get_lambda_g(&self) -> f64;
 }
 
 impl<ResultType: Clone + Send + Sync + 'static, ChannelPayload: Clone + Send + Sync + 'static>
@@ -71,6 +81,9 @@ impl<ResultType: Clone + Send + Sync + 'static, ChannelPayload: Clone + Send + S
     }
     fn get_buffer(&self) -> Arc<Mutex<mpsc::Receiver<ChannelPayload>>> {
         self.buffer.clone()
+    }
+    fn get_lambda_g(&self) -> f64 {
+        self.lambda_g
     }
 }
 
@@ -148,7 +161,9 @@ pub struct DeamonSet<
 > where
     Deamon<ResultType, ChannelPayload>: DeamonOperation<ResultType, ChannelPayload>,
 {
-    deamons: Arc<dashmap::DashMap<Eid, Deamon<ResultType, ChannelPayload>>>,
+    // deamons: Arc<dashmap::DashMap<Eid, Deamon<ResultType, ChannelPayload>>>,
+    deamons: Arc<RwLock<HashMap<Eid, Deamon<ResultType, ChannelPayload>>>>,
+    lambda_g: f64,
 }
 
 pub trait GetSetFields<
@@ -156,15 +171,19 @@ pub trait GetSetFields<
     ChannelPayload: Clone + Send + Sync + 'static,
 >
 {
-    fn get_deamons(&self) -> Arc<dashmap::DashMap<Eid, Deamon<ResultType, ChannelPayload>>>;
+    fn get_deamons(&self) -> Arc<RwLock<HashMap<Eid, Deamon<ResultType, ChannelPayload>>>>;
+    fn get_lambda_g(&self) -> f64;
 }
 impl<ResultType: Clone + Send + Sync + 'static, ChannelPayload: Clone + Send + Sync + 'static>
     GetSetFields<ResultType, ChannelPayload> for DeamonSet<ResultType, ChannelPayload>
 where
     Deamon<ResultType, ChannelPayload>: DeamonOperation<ResultType, ChannelPayload>,
 {
-    fn get_deamons(&self) -> Arc<dashmap::DashMap<Eid, Deamon<ResultType, ChannelPayload>>> {
+    fn get_deamons(&self) -> Arc<RwLock<HashMap<Eid, Deamon<ResultType, ChannelPayload>>>> {
         self.deamons.clone()
+    }
+    fn get_lambda_g(&self) -> f64 {
+        self.lambda_g
     }
 }
 
@@ -175,8 +194,17 @@ where
 {
     pub fn new() -> Self {
         DeamonSet {
-            deamons: Arc::new(dashmap::DashMap::new()),
+            // deamons: Arc::new(dashmap::DashMap::new()),
+            deamons: Arc::new(RwLock::new(HashMap::new())),
+            lambda_g: 0.0,
         }
+    }
+
+    pub fn new_with_gid(gid: Gid, group_n: Gid) -> Self {
+        let lambda_seq = generate_lambda_sequence(group_n as usize);
+        let mut set = Self::new();
+        set.lambda_g = lambda_seq[gid as usize - 1];
+        set
     }
 }
 
@@ -196,16 +224,21 @@ pub trait DeamonOperations<
     ) -> Result<(), DeamonError> {
         let client_n = client_n as Uid;
         let deamons = self.get_deamons();
-        let entry =
-            deamons
+
+        if !deamons.read().await.contains_key(eid) {
+            let mut deamons_w = deamons.write().await;
+            deamons_w
                 .entry(eid.clone())
                 .or_insert(Deamon::new(eid.clone(), threshold, client_n));
+        }
+        let deamons_r = deamons.read().await;
+        let deamon = deamons_r.get(eid).unwrap();
 
         // check consistency of (threshold, client_n)
-        DeamonError::check_threshold_consistency(threshold, entry.value().get_threshold())?;
-        DeamonError::check_client_num_consistency(client_n, entry.value().get_client_n())?;
+        DeamonError::check_threshold_consistency(threshold, deamon.get_threshold())?;
+        DeamonError::check_client_num_consistency(client_n, deamon.get_client_n())?;
 
-        entry.value().add_share(payload).await
+        deamon.add_share(payload).await
     }
 
     async fn get_result(
@@ -217,15 +250,32 @@ pub trait DeamonOperations<
     ) -> Result<ResultType, DeamonError> {
         let client_n = client_n as Uid;
         let deamons = self.get_deamons();
-        let entry =
-            deamons
+
+        if !deamons.read().await.contains_key(eid) {
+            let mut deamons_w = deamons.write().await;
+            deamons_w
                 .entry(eid.clone())
                 .or_insert(Deamon::new(eid.clone(), threshold, client_n));
+        }
+        let deamons_r = deamons.read().await;
+        let deamon = deamons_r.get(eid).unwrap();
 
         // check consistency of (threshold, client_n)
-        DeamonError::check_threshold_consistency(threshold, entry.value().get_threshold())?;
-        DeamonError::check_client_num_consistency(client_n, entry.value().get_client_n())?;
+        DeamonError::check_threshold_consistency(threshold, deamon.get_threshold())?;
+        DeamonError::check_client_num_consistency(client_n, deamon.get_client_n())?;
 
-        entry.value().get_result(time_limitation).await
+        deamon.get_result(time_limitation).await
     }
+}
+
+/// for h_deamon
+fn generate_lambda_sequence(group_n: usize) -> Vec<f64> {
+    use nalgebra::DMatrix;
+    use num_traits::pow;
+    let dm = DMatrix::from_fn(group_n, group_n, |i, j| pow(j as f64 + 1.0, i));
+    let dm = dm.try_inverse().unwrap();
+    let dm = dm.row(0);
+    dm.column_iter()
+        .map(|col| col[(0, 0)])
+        .collect()
 }

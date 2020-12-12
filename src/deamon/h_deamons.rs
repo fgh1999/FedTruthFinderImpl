@@ -25,20 +25,6 @@ pub enum HChannelPayload {
 
 type ChannelPayload = HChannelPayload;
 
-fn generate_lambda_sequence(group_n: usize) -> Vec<BigRational> {
-    use nalgebra::DMatrix;
-    use num_traits::pow;
-    let dm = DMatrix::from_fn(group_n, group_n, |i, j| pow(j as f64 + 1.0, i));
-    let dm = dm.try_inverse().unwrap();
-    let dm = dm.row(0);
-    dm.column_iter()
-        .map(|col| {
-            let lambda = col[(0, 0)];
-            BigRational::from_f64(lambda).unwrap()
-        })
-        .collect()
-}
-
 type HDeamon = Deamon<ResultType, ChannelPayload>; // threshold of this deamon should be group_n
 #[tonic::async_trait]
 impl DeamonOperation<ResultType, ChannelPayload> for HDeamon {
@@ -50,7 +36,9 @@ impl DeamonOperation<ResultType, ChannelPayload> for HDeamon {
         let mut tau_sequence_shares: BTreeMap<Uid, BTreeMap<Gid, BigRational>> = BTreeMap::new();
         let rx_buffer = self.get_buffer();
         let mut buffer_lock = rx_buffer.lock().await;
-        while random_coefficients_shares.len() < group_n || tau_sequence_shares.len() < 1 {
+        while random_coefficients_shares.len() < group_n
+            || tau_sequence_shares.len() < client_num as usize
+        {
             match buffer_lock.recv().await {
                 Some(payload) => {
                     match payload {
@@ -77,8 +65,7 @@ impl DeamonOperation<ResultType, ChannelPayload> for HDeamon {
             }
         }
         // TODO: check the len of coefs & tau_seq
-
-        let lambda_seq = generate_lambda_sequence(group_n);
+        let lambda_g = BigRational::from_f64(self.get_lambda_g()).unwrap();
         let mut h_set = Vec::with_capacity(client_num as usize);
         for i in 1..=client_num {
             let t_i_seq = tau_sequence_shares.get(&i).unwrap();
@@ -94,11 +81,10 @@ impl DeamonOperation<ResultType, ChannelPayload> for HDeamon {
             //     }
             //     gamma_i
             // };
-            let h_i = lambda_seq[i as usize - 1].clone() * gamma_i;
+            let h_i = lambda_g.clone() * gamma_i;
             h_set.push(h_i);
         }
-
-        Err(DeamonError::Unimplemented("".into()))
+        Ok(h_set)
     }
 }
 
