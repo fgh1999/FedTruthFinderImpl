@@ -1,0 +1,13 @@
+{
+    "addrs": {
+        "domain_name": "localhost",
+        "remote_addr": "http://[::1]:50050",
+        "mailbox_addr": "[::1]:50055"
+    },
+    "keys": {
+        "ca_path": "config/tls/ca.pem",
+        "sk_path": "config/tls/client1.key",
+        "pk_path": "config/tls/client1.pem"
+    },
+    "error_rate": 0.25
+}
