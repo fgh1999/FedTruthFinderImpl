@@ -12,11 +12,12 @@ pub struct SecurityPath {
 pub struct ServerConfig {
     pub addr: String,
     pub keys: SecurityPath,
+    pub group_num: i32,
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct ClientAddrs {
-    pub domain_name: String,
+    // pub domain_name: String,
     pub remote_addr: String,
     pub mailbox_addr: String,
 }
@@ -24,6 +25,7 @@ pub struct ClientAddrs {
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct ClientConfig {
     pub addrs: ClientAddrs,
+    pub error_rate: f64,
     pub keys: SecurityPath,
 }
 
