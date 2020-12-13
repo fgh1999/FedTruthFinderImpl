@@ -2,6 +2,26 @@
 
 An implementation of FedTruthFinder.
 
+# Architecture
+
+## Roles
+
+![roles](./img/roles.svg)
+
+* master server: just performs as the *'server'* in the paper.
+* slave server: listening in the background of *'clients'* in the paper, handling calls from the master server and the raw event sender installed alongside it.
+* raw event sender: a client-side adapter for slave server, changing detected events into identifiers and sending them to its background slave server.
+
+Communications among these crates are achieved by [tonic](https://github.com/hyperium/tonic), a [gRPC](https://grpc.io/) client & server implementation in [Rust](https://www.rust-lang.org/).
+
+## General Architecture
+
+![general architecture](./img/general_architecture.svg)
+
+## For Test
+
+![test architecture](./img/test_architecture.svg)
+
 # Configuration
 
 ## Master Configuration
@@ -83,8 +103,8 @@ identifier,delay_seconds
 ...,...
 ```
 
-* `identifier`: a string that can universally represents an event
-* `delay_seconds`: a positive number that indicates the internal after the next event
+* `identifier`: A string that can universally represents an event. Events that can result in the same identifier should be considered as the same.
+* `delay_seconds`: A positive number that indicates the internal after the next event.
 
 # Usage
 
@@ -92,7 +112,7 @@ identifier,delay_seconds
 
 ### Rust Language
 
-1. install rust language, here's an [instruction](https://www.rust-lang.org/zh-CN/learn/get-started). It would help if you learnt a little bit about usages of `cargo`, the biuld & package management tool of rust language.
+1. install rust language, here's an [instruction](https://www.rust-lang.org/tools/install). It would help if you learnt a little bit about usages of `cargo`, the biuld & package management tool of rust language.
 1. git clone this repository.
 1. cd into this repository and install crates with `cargo install --path . --bins`.
 
@@ -138,7 +158,7 @@ Enter this line in your cmd/shell to run a *slave*:
 slave config_path[, log_path]
 ```
 
-`config_path` and 'log_path' have the same meanings as in [run master](#master). Unfortunately, there's not a shell script provided for easing the startup of slaves at this moment, although it has been on the schedule. Hence, you have to manully enter these lines to run slaves.
+`config_path` and `log_path` here have the same meanings as in [run master](#master). Unfortunately, there's not a shell script provided for easing the startup of slaves at this moment, although it has been on the schedule. Hence, you have to manully enter these lines to run slaves.
 
 For instance, `slave ./config/client_1.json ./result/client_1.log`.
 
@@ -152,9 +172,9 @@ Enter this line in your cmd/shell to run a *raw event broadcaster*:
 raw_event_broadcaster event_num_limitation listeners_url_path event_data_path
 ```
 
-* `event_num_limitation`: 
-* `listeners_url_path`: 
-* `event_data_path`: 
+* `event_num_limitation`: a positive integer, the allowed maximum number of events' raw records
+* `listeners_url_path`: the path of urls file of event listeners
+* `event_data_path`: the path of raw event data file
 
 For instance, `raw_event_broadcaster 200 config\event\listeners.txt config\event\raw_event_records_1000.csv`.
 
@@ -174,3 +194,15 @@ the example one restored in `./result` where you can find:
 * [a wireshark packet set](./result/200.pcapng)
 * six slave-side log files named like `client_x.log`
 * a master-side log file named `server.log`
+
+Here's a flow chart of this process, exported from wireshark.
+
+![flow chart](./result/200.png)
+
+Its corresponding data is [here](./result/200.csv). And with this data, we can figure out the total flow of this whole process (200 rounds).
+
+|                            | All       | Master   | Slave 1 |
+|----------------------------|-----------|----------|---------|
+| Total Amount \(byte\)      | 107031541 | 63461454 | 7600523 |
+
+*Note*: Since slaves are similar, here we just provide the data amount of slave_1. If you are interested in the other slaves', you can utilize [the network packet set](./result/200.zip).
