@@ -12,7 +12,7 @@ An implementation of FedTruthFinder.
 * slave server: listening in the background of *'clients'* in the paper, handling calls from the master server and the raw event sender installed alongside it.
 * raw event sender: a client-side adapter for slave server, changing detected events into identifiers and sending them to its background slave server.
 
-Communications among these crates are achieved by [tonic](https://github.com/hyperium/tonic), a [gRPC](https://grpc.io/) client & server implementation in [Rust](https://www.rust-lang.org/).
+Communications among these crates are completed by [tonic](https://github.com/hyperium/tonic), a [gRPC](https://grpc.io/) client & server implementation in [Rust](https://www.rust-lang.org/). The protobuf file is [here](./proto/algo.proto) so you can implement any side without implementing the other side.
 
 ## General Architecture
 
