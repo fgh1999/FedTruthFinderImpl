@@ -18,8 +18,8 @@ async fn main() -> anyhow::Result<()> {
         error!(logger, "insufficient args"; "required" => 3, "given" => args.len());
         info!(logger, "args' meaning";
             "event_num_limitation" => "a positive integer; the allowed maximum number of events' raw records",
-            "listeners_url_path" => "path of the urls of event listeners",
-            "event_data_path" => "path of raw event data file",
+            "listeners_url_path" => "the path of urls file of event listeners",
+            "event_data_path" => "the path of raw event data file",
         );
         return Err(anyhow::anyhow!("insufficient args"));
     }
