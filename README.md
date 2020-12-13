@@ -205,4 +205,9 @@ Its corresponding data is [here](./result/200.csv). And with this data, we can f
 |----------------------------|-----------|----------|---------|
 | Total Amount \(byte\)      | 107031541 | 63461454 | 7600523 |
 
+Thus, we can figure out such estimations:
+
+* an approximate amount of data transmitted through *master* in one iteration: 317,300 B, i.e. 309.86 KB
+* an approximate amount of data transmitted through one *slave* in one iteration: 38,000 B, i.e. 37.11 KB
+
 *Note*: Since slaves are similar, here we just provide the data amount of slave_1. If you are interested in the other slaves', you can utilize [the network packet set](./result/200.zip).
