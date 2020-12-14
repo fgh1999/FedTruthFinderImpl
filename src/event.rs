@@ -14,7 +14,7 @@ pub enum Judge {
 
 impl<W: Weight> Distribution<Judge> for WeightedIndex<W> {
     fn sample<R: Rng + ?Sized>(&self, rng: &mut R) -> Judge {
-        match rng.gen_range(0, 2) {
+        match self.sample(rng) {
             0 => Judge::False,
             _ => Judge::True,
         }
