@@ -191,7 +191,7 @@ After having logged the last line (where the `eid` equals to min(the record maxi
 If you have followed all the instructions above, you may get a result similar with 
 the example one restored in `./result` where you can find:
 
-* [a wireshark packet set](./result/200.pcapng)
+* [a wireshark packet set](./result/200.zip)
 * six slave-side log files named like `client_x.log`
 * a master-side log file named `server.log`
 
@@ -207,7 +207,7 @@ Its corresponding data is [here](./result/200.csv). And with this data, we can f
 
 Thus, we can figure out such estimations:
 
-* an approximate amount of data transmitted through *master* in one iteration: 317,300 B, i.e. 309.86 KB
+* an approximate amount of data transmitted through *master* in one iteration per slave: 52,885 B, i.e. 51.65 KB
 * an approximate amount of data transmitted through one *slave* in one iteration: 38,000 B, i.e. 37.11 KB
 
 *Note*: Since slaves are similar, here we just provide the data amount of slave_1. If you are interested in the other slaves', you can utilize [the network packet set](./result/200.zip).
