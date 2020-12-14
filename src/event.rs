@@ -2,6 +2,7 @@ use rand::distributions::weighted::alias_method::{Weight, WeightedIndex};
 use rand::prelude::*;
 use std::option::Option;
 use std::sync::Mutex;
+use std::fmt;
 
 pub type Eid = u64;
 pub type EventIdentifier = String;
@@ -10,6 +11,15 @@ pub type EventIdentifier = String;
 pub enum Judge {
     False,
     True,
+}
+
+impl fmt::Display for Judge {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Judge::False => write!(f, "Judge::False"),
+            Judge::True => write!(f, "Judge::True")
+        }
+    }
 }
 
 impl<W: Weight> Distribution<Judge> for WeightedIndex<W> {

@@ -265,7 +265,11 @@ impl algo_node_server::AlgoNode for AlgoClient {
         let eid = eid.unwrap();
 
         use rand::distributions::Distribution;
-        let judge = self.distribution.sample(&mut rand::thread_rng());
+        let judge: Judge = self.distribution.sample(&mut rand::thread_rng());
+        info!(self.shared.logger, #"judgement", "judge the event";
+            "eid" => eid,
+            "judge" => %judge,
+        );
         let event = Event::new(eid.clone(), judge);
 
         if let Err(e) = self
