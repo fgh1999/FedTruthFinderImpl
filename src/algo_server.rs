@@ -738,9 +738,9 @@ impl algo_master_server::AlgoMaster for AlgoServer {
             Ok(share) => {
                 let configurations = shared.event_computation_configurations.read().await;
                 let configuration = configurations.get(&eid).unwrap();
-                let threshold = configuration.threshold as u8;
                 let client_n = configuration.clients_pk.len() as u8;
                 drop(configurations);
+                let threshold = (shared.group_n as u8 - 1) / 2 + 1;
 
                 match shared
                     .leaderboard_deamons
