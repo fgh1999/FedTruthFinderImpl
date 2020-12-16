@@ -521,7 +521,7 @@ impl algo_master_server::AlgoMaster for AlgoServer {
         }
     }
 
-    async fn forward_h_share(&self, req: Request<RelayMessage>) -> ResponseResult<()> {
+    async fn forward_h_share(&self, req: Request<HSetShareMessage>) -> ResponseResult<()> {
         let message = req.into_inner();
 
         // check against this message:

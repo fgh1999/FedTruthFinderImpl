@@ -70,6 +70,15 @@ message RelayMessage {
     bytes encryptedMessage = 5;
 }
 
+message HSetShareMessage {
+    int32 txUid = 1;
+    int32 rxUid = 2;
+    int32 clientNum = 3;
+    uint64 eid = 4;
+    bytes encryptedMessage = 5;
+    int32 txGid = 6;
+}
+
 message SubmitSummationRequest {
     uint64 eid = 1;             // which event is under process
     bytes summationPair = 2;   // [\hat{d_j^k}, \hat{s_j^k}] => Share<Rational>
@@ -118,7 +127,7 @@ service AlgoMaster {
     // Publish to subscribers
     rpc PublishTauSequence(TauSeqSharePubRequest) returns (google.protobuf.Empty) {}
     rpc PublishR(RandCoefSharePubRequest) returns (google.protobuf.Empty) {}
-    rpc ForwardHShare(RelayMessage) returns (google.protobuf.Empty) {}
+    rpc ForwardHShare(HSetShareMessage) returns (google.protobuf.Empty) {}
 
     //Forward the message until it reached rxUid.
     //When the target receiver receive the message, it can push it into a channel.
@@ -164,7 +173,7 @@ service AlgoNode {
     // Being notified because of having registered
     rpc NotifyTauSequence(TauSeqShareNotification) returns (google.protobuf.Empty) {}
     rpc NotifyR(RandCoefShareNotification) returns (google.protobuf.Empty) {}
-    rpc SendHShare(RelayMessage) returns (google.protobuf.Empty) {}
+    rpc SendHShare(HSetShareMessage) returns (google.protobuf.Empty) {}
 
     // for test, returns self.uid
     rpc Handle(EventNotification) returns (google.protobuf.Int32Value) {}

@@ -3,7 +3,7 @@ use super::deamon_set::{Deamon, DeamonOperation, DeamonOperations, DeamonSet, Ge
 use crate::id::Uid;
 use sharks::{secret_type::Rational, SecretSharingOperation, Share, Sharks};
 
-type ChannelPayload = Share<Rational>; // (k, H'(k)) where h'_i(k) are ordered by i // deprecated this comment
+type ChannelPayload = Share<Rational>; // H'(k) where h'_i(k) are ordered by i
 type ResultType = Vec<Uid>; // ordered by their corresponding restored h_i' ascendingly
 
 pub type LeaderBoardDeamon = Deamon<ResultType, ChannelPayload>;
@@ -23,7 +23,7 @@ impl DeamonOperation<ResultType, ChannelPayload> for LeaderBoardDeamon {
                     buffer.push(payload);
                 }
                 None => {
-                    return Err::<ResultType, DeamonError>(DeamonError::SharesNotEnough);
+                    return Err(DeamonError::SharesNotEnough);
                 }
             }
         }

@@ -141,7 +141,7 @@ impl algo_node_server::AlgoNode for AlgoClient {
         }
     }
 
-    async fn send_h_share(&self, req: Request<RelayMessage>) -> ResponseResult<()> {
+    async fn send_h_share(&self, req: Request<HSetShareMessage>) -> ResponseResult<()> {
         let msg = req.into_inner();
         let shared = self.shared.clone();
         // check rx_uid
@@ -152,6 +152,7 @@ impl algo_node_server::AlgoNode for AlgoClient {
                 msg.rx_uid, uid
             )));
         }
+        let tx_gid = msg.tx_gid;
 
         let eid = msg.eid;
         let client_n = msg.client_num as u8;
@@ -161,7 +162,7 @@ impl algo_node_server::AlgoNode for AlgoClient {
                 Ok(share) => match self.get_group_num_from_server().await {
                     Ok(group_n) => match shared
                         .h_apostrophe_deamons
-                        .add_share(&eid, share, ((group_n - 1) / 2 + 1) as u8, client_n)
+                        .add_share(&eid, (tx_gid, share), group_n as u8, client_n)
                         .await
                     {
                         Ok(_) => Ok(Response::new((()))),
@@ -282,7 +283,7 @@ impl algo_node_server::AlgoNode for AlgoClient {
             info!(self.shared.logger, #"event confidence computation", "event confidence computation successed"; "eid" => eid);
         }
 
-        self.update_tau();
+        self.update_tau(&eid);
         let leader_board = self
             .fetch_ascending_leader_board_from_server(&event.get_id())
             .await;
@@ -336,7 +337,7 @@ pub trait EventConfidenceComputation {
 pub trait TauComputation {
     /// Compute and update the inner tau with events stored.
     /// Implementations should make sure that the new tau is valid([0, 1]).
-    fn update_tau(&self);
+    fn update_tau(&self, eid: &Eid);
 
     fn get_tau(&self) -> f64;
 }
@@ -499,16 +500,16 @@ impl EventConfidenceComputation for AlgoClient {
 }
 
 impl TauComputation for AlgoClient {
-    fn update_tau(&self) {
+    fn update_tau(&self, eid: &Eid) {
         let mut algo_core = self.shared.core.lock().unwrap();
 
         let ref events = algo_core.events;
         if events.len() > 0 {
-            let valid_events = events.iter().filter(|x| x.get_confidence() != None);
-            let t_events = valid_events
+            let judged_events = events.iter().filter(|x| x.get_confidence() != None);
+            let t_events = judged_events
                 .clone()
                 .filter(|x| x.get_judge() == Judge::True);
-            let f_events = valid_events
+            let f_events = judged_events
                 .clone()
                 .filter(|x| x.get_judge() == Judge::False);
 
@@ -516,23 +517,22 @@ impl TauComputation for AlgoClient {
             let f_events_impossibility_sum: f64 =
                 f_events.map(|x| 1.0 - x.get_confidence().unwrap()).sum();
             let tau = (t_events_possibility_sum + f_events_impossibility_sum)
-                / valid_events.count() as f64;
+                / judged_events.count() as f64;
 
             match BigRational::from_f64(tau) {
                 Some(tau) => {
                     let tau = tau.to_f64().unwrap();
+                    algo_core.tau = tau;
                     info!(self.shared.logger, #"tau update", "new trustworthiness";
                         "tau" => tau,
+                        "eid" => eid.clone(),
                     );
-                    algo_core.tau = tau;
                 }
                 None => {
                     crit!(self.shared.logger, #"tau update", "failed to update trustworthiness");
                     algo_core.tau = 0.5; // reset if counters err
                 }
             }
-        } else {
-            algo_core.tau = 0.5;
         }
     }
 
@@ -804,6 +804,7 @@ impl TrustWorthinessAssessment for AlgoClient {
 
         // dispatch shares
         let tx_uid = self.shared.id.get_uid();
+        let tx_gid = self.shared.id.get_gid();
         let url = self.config.addrs.remote_addr.clone();
         let mut relay_handles = Vec::with_capacity(shares.len());
         for share in shares {
@@ -821,12 +822,13 @@ impl TrustWorthinessAssessment for AlgoClient {
             let encrypted_message =
                 ecies::encrypt(&pk, Vec::from(&share).as_slice(), &mut rand::thread_rng())?;
 
-            let switch_req = RelayMessage {
+            let switch_req = HSetShareMessage {
                 tx_uid,
                 rx_uid,
                 eid: eid.clone(),
                 client_num: client_num as Uid,
                 encrypted_message,
+                tx_gid,
             };
             let server_url = url.clone();
             let handle = tokio::spawn(async move {
@@ -883,7 +885,6 @@ impl TrustWorthinessAssessment for AlgoClient {
         );
 
         // await the h'(uid) for this round
-        let h_apostrophe_deamons_threshold = ((group_n - 1) / 2 + 1) as u8;
         let allowed_seconds = self.get_allowed_seconds_for_server().await;
         let time_limitation = Duration::from_secs_f64(allowed_seconds);
         let h_apostrophe_share = self
@@ -891,7 +892,7 @@ impl TrustWorthinessAssessment for AlgoClient {
             .h_apostrophe_deamons
             .get_result(
                 eid,
-                h_apostrophe_deamons_threshold,
+                group_n as u8,
                 client_n as u8,
                 time_limitation,
             )
