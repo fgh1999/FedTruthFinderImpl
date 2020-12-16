@@ -166,7 +166,7 @@ pub struct DeamonSet<
 {
     // deamons: Arc<dashmap::DashMap<Eid, Deamon<ResultType, ChannelPayload>>>,
     deamons: Arc<RwLock<HashMap<Eid, Deamon<ResultType, ChannelPayload>>>>,
-    lambda_g: f64,
+    lambda_g: Option<f64>,
 }
 
 pub trait GetSetFields<
@@ -175,7 +175,7 @@ pub trait GetSetFields<
 >
 {
     fn get_deamons(&self) -> Arc<RwLock<HashMap<Eid, Deamon<ResultType, ChannelPayload>>>>;
-    fn get_lambda_g(&self) -> f64;
+    fn get_lambda_g(&self) -> Option<f64>;
 }
 impl<ResultType: Clone + Send + Sync + 'static, ChannelPayload: Clone + Send + Sync + 'static>
     GetSetFields<ResultType, ChannelPayload> for DeamonSet<ResultType, ChannelPayload>
@@ -185,7 +185,7 @@ where
     fn get_deamons(&self) -> Arc<RwLock<HashMap<Eid, Deamon<ResultType, ChannelPayload>>>> {
         self.deamons.clone()
     }
-    fn get_lambda_g(&self) -> f64 {
+    fn get_lambda_g(&self) -> Option<f64> {
         self.lambda_g
     }
 }
@@ -199,14 +199,15 @@ where
         DeamonSet {
             // deamons: Arc::new(dashmap::DashMap::new()),
             deamons: Arc::new(RwLock::new(HashMap::new())),
-            lambda_g: 0.0,
+            lambda_g: None,
         }
     }
 
     pub fn new_with_gid(gid: Gid, group_n: Gid) -> Self {
         let lambda_seq = generate_lambda_sequence(group_n as usize);
+        assert_eq!(lambda_seq.len(), group_n as usize);
         let mut set = Self::new();
-        set.lambda_g = lambda_seq[gid as usize - 1];
+        set.lambda_g = Some(lambda_seq[gid as usize - 1]);
         set
     }
 }
@@ -232,7 +233,15 @@ pub trait DeamonOperations<
             let mut deamons_w = deamons.write().await;
             deamons_w
                 .entry(eid.clone())
-                .or_insert(Deamon::new(eid.clone(), threshold, client_n));
+                .or_insert({
+                    let lambda_g = self.get_lambda_g();
+                    if lambda_g.is_none() {
+                        Deamon::new(eid.clone(), threshold, client_n)
+                    } else {
+                        let lambda_g = lambda_g.unwrap();
+                        Deamon::new_with_lambda(eid.clone(), threshold, client_n, lambda_g)
+                    }    
+                });
         }
         let deamons_r = deamons.read().await;
         let deamon = deamons_r.get(eid).unwrap();
@@ -258,7 +267,15 @@ pub trait DeamonOperations<
             let mut deamons_w = deamons.write().await;
             deamons_w
                 .entry(eid.clone())
-                .or_insert(Deamon::new(eid.clone(), threshold, client_n));
+                .or_insert({
+                    let lambda_g = self.get_lambda_g();
+                    if lambda_g.is_none() {
+                        Deamon::new(eid.clone(), threshold, client_n)
+                    } else {
+                        let lambda_g = lambda_g.unwrap();
+                        Deamon::new_with_lambda(eid.clone(), threshold, client_n, lambda_g)
+                    }  
+                });
         }
         let deamons_r = deamons.read().await;
         let deamon = deamons_r.get(eid).unwrap();
@@ -275,7 +292,7 @@ pub trait DeamonOperations<
 fn generate_lambda_sequence(group_n: usize) -> Vec<f64> {
     use nalgebra::DMatrix;
     use num_traits::pow;
-    let dm = DMatrix::from_fn(group_n, group_n, |i, j| pow(j as f64 + 1.0, i));
+    let dm = DMatrix::from_fn(group_n, group_n, |i, j| pow(i as f64 + 1.0, j));
     let dm = dm.try_inverse().unwrap();
     let dm = dm.row(0);
     dm.column_iter().map(|col| col[(0, 0)]).collect()
