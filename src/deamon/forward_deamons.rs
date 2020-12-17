@@ -161,13 +161,16 @@ impl SummationOperations for ForwardDeamonSet {
         let threshold = client_n;
         let client_n = client_n as Uid;
 
-        if !self.deamons.read().await.contains_key(eid) {
+        let deamons_r = self.deamons.read().await;
+        if !deamons_r.contains_key(eid) {
+            drop(deamons_r);
             let mut deamons_w = self.deamons.write().await;
-            deamons_w.entry(eid.clone()).or_insert(ForwardDeamon::new(
-                eid.clone(),
-                threshold,
-                client_n,
-            ));
+            if !deamons_w.contains_key(eid) {
+                deamons_w.insert(
+                    eid.clone(),
+                    ForwardDeamon::new(eid.clone(), threshold, client_n),
+                );
+            }
         }
         let deamons_r = self.deamons.read().await;
         let deamon = deamons_r.get(eid).unwrap();
@@ -186,13 +189,17 @@ impl SummationOperations for ForwardDeamonSet {
     ) -> Result<Share<Rational>, DeamonError> {
         let threshold = client_n;
         let client_n = client_n as Uid;
-        if !self.deamons.read().await.contains_key(eid) {
+
+        let deamons_r = self.deamons.read().await;
+        if !deamons_r.contains_key(eid) {
+            drop(deamons_r);
             let mut deamons_w = self.deamons.write().await;
-            deamons_w.entry(eid.clone()).or_insert(ForwardDeamon::new(
-                eid.clone(),
-                threshold,
-                client_n,
-            ));
+            if !deamons_w.contains_key(eid) {
+                deamons_w.insert(
+                    eid.clone(),
+                    ForwardDeamon::new(eid.clone(), threshold, client_n),
+                );
+            }
         }
         let deamons_r = self.deamons.read().await;
         let deamon = deamons_r.get(eid).unwrap();
