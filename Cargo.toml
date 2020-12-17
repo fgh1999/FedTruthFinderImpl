@@ -53,3 +53,7 @@ path = "src/slave.rs"
 [[bin]]
 name = "raw_event_broadcaster"
 path = "src/broadcast_raw_event.rs"
+
+[[bin]]
+name = "configuration_generator"
+path = "src/configuration_generator.rs"

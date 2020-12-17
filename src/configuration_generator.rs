@@ -2,18 +2,18 @@
 //!
 //! # Usage
 //! ```shell
-//! configuration_generator slave_num master_configuration_template_path slave_configuration_template_path 
+//! configuration_generator slave_num master_configuration_template_path slave_configuration_template_path
 //! ```
-//! 
+//!
 //! * slave_num: the number of slaves should be no less than the group_num in master configuration
 //! * master_configuration_template_path: the path of master configuration template
 //! * slave_configuration_template_path: the path of slave configuration template
-//! 
+//!
 
 use fed_truth_finder::config;
 use slog::Drain;
-use std::io::Write;
 use std::fs::File;
+use std::io::Write;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
@@ -34,7 +34,8 @@ async fn main() -> anyhow::Result<()> {
     let template = config::load_server_config(&args[2]);
     let master_addr = template.addr.clone();
     let master_configuration = serde_json::to_string(&template)?;
-    let mut file = File::create("./config/master.json").expect("failed to create master configuration file");
+    let mut file =
+        File::create("./config/master.json").expect("failed to create master configuration file");
     file.write_all(master_configuration.as_bytes())?;
     slog::info!(logger, #"configuration", "master configuration constructed";
         "listening" => &master_addr,
