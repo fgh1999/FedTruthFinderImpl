@@ -57,11 +57,17 @@ struct AlgoCore {
 
 #[allow(dead_code)]
 impl AlgoCore {
-    /// Construct a new AlgoCore with a default tau = 0.5
+    /// Construct a new AlgoCore with a random tau within [0.45, 0.55]
     pub fn new() -> Self {
+        use rand::prelude::*;
+        let range = 0.1;
+        let mut rng = rand::thread_rng();
+        let disturbance: f64 = rng.gen();
+        let disturbance = disturbance * range - (range / 2.0);
+
         AlgoCore {
             events: vec![],
-            tau: 0.5,
+            tau: 0.5 + disturbance,
         }
     }
 
@@ -890,12 +896,7 @@ impl TrustWorthinessAssessment for AlgoClient {
         let h_apostrophe_share = self
             .shared
             .h_apostrophe_deamons
-            .get_result(
-                eid,
-                group_n as u8,
-                client_n as u8,
-                time_limitation,
-            )
+            .get_result(eid, group_n as u8, client_n as u8, time_limitation)
             .await?;
         info!(self.shared.logger, #"trustworthiness assessment", "figured out h'(uid)";
             "eid" => eid.clone(),
