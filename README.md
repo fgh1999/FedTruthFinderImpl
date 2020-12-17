@@ -12,7 +12,7 @@ An implementation of FedTruthFinder.
 * slave server: listening in the background of *'clients'* in the paper, handling calls from the master server and the raw event sender installed alongside it.
 * raw event sender: a client-side adapter for slave server, changing detected events into identifiers and sending them to its background slave server.
 
-Communications among these crates are completed by [tonic](https://github.com/hyperium/tonic), a [gRPC](https://grpc.io/) client & server implementation in [Rust](https://www.rust-lang.org/). The protobuf file is [here](./proto/algo.proto) so you can implement any side without implementing the other side.
+Communications among these crates are completed by [tonic](https://github.com/hyperium/tonic), a [gRPC](https://grpc.io/) client & server implementation in [Rust](https://www.rust-lang.org/). The protobuf file is [here](./proto/algo.proto) so you can implement any half without implementing the other side.
 
 ## General Architecture
 
@@ -26,7 +26,7 @@ Communications among these crates are completed by [tonic](https://github.com/hy
 
 ## Master Configuration
 
-A master-side configuration is a json file following such scheme:
+A master configuration is a json file following such scheme:
 
 ```json
 {
@@ -47,7 +47,7 @@ A master-side configuration is a json file following such scheme:
 
 ## Slave Configuration
 
-A slave-side configuration is a json file following such scheme:
+A slave configuration is a json file following such scheme:
 
 ```json
 {
@@ -79,7 +79,7 @@ A slave-side configuration is a json file following such scheme:
 Urls listed in lines.
 Raw event broadcaster use these urls to dispatch event identifier to slaves.
 
-For instance.
+For instance:
 
 ```
 http://[::1]:50051
@@ -122,11 +122,22 @@ identifier,delay_seconds
 
 For instance, [wireshark](https://www.wireshark.org/).
 
-## Obtain Data Packages
+## Generate Data Packages
 
-### prepare configurations
+### generate configurations
 
-Have configuration files in the directory that you will run tests.
+First, copy configuration template files (i.e., the `config` directory) to the directory where you will run tests.
+Then, run a command following such pattern:
+
+```shell
+configuration_generator slave_num master_configuration_template_path slave_configuration_template_path
+```
+
+* slave_num: The number of slaves should be no less than the group_num in master configuration. Temporarily, this value should not exceed 255 due to a limitation from one of our dependencies. 
+* master_configuration_template_path: The path of master configuration template.
+* slave_configuration_template_path: The path of slave configuration template.
+
+For instance, run `configuration_generator 6 ./config/master_template.json ./config/slave_template.json`. This will result in one master configuration file and six slave configuration files and one listener list text file. All of these will be stored in `./config` directory.
 
 ### start to capture
 
@@ -146,7 +157,7 @@ master config_path[, log_path]
 * `config_path`: Path of the configuration file
 * `log_path`(optional): Expected file path of output logs. If not specified, log will be output to your current terminal. However, this is not recommended because the output may be too long to avoid dropping by the terminal which means that you may loss some logs.
 
-For instance, `master ./config/server.json ./result/server.log`.
+For instance, `master ./config/master.json ./result/master.log`.
 
 **WARN**: Existing log files will be overwritten.
 
@@ -158,9 +169,9 @@ Enter this line in your cmd/shell to run a *slave*:
 slave config_path[, log_path]
 ```
 
-`config_path` and `log_path` here have the same meanings as in [run master](#master). Unfortunately, there's not a shell script provided for easing the startup of slaves at this moment, although it has been on the schedule. Hence, you have to manully enter these lines to run slaves.
+`config_path` and `log_path` here have the same meanings as in [run master](#master). 
 
-For instance, `slave ./config/client_1.json ./result/client_1.log`.
+For instance, `slave ./config/slave_1.json ./result/slave_1.log`.
 
 **WARN**: Existing log files will be overwritten.
 
@@ -176,38 +187,56 @@ raw_event_broadcaster event_num_limitation listeners_url_path event_data_path
 * `listeners_url_path`: the path of urls file of event listeners
 * `event_data_path`: the path of raw event data file
 
-For instance, `raw_event_broadcaster 200 config\event\listeners.txt config\event\raw_event_records_1000.csv`.
+For instance, `raw_event_broadcaster 200 config\listeners.txt config\event\raw_event_records_1000.csv`.
 
 ### end the capture
 
 After having logged the last line (where the `eid` equals to min(the record maximum limit, the length of provided raw events)), the raw event broadcaster ends itself. Then, after about 3 seconds, you can:
 
-1. kill the server;
+1. kill the master;
 1. kill the slaves;
 1. stop capturing network packets and save them if needed.
 
+### 🥳Automation
+
+Here we provide a [powershell](https://docs.microsoft.com/en-us/powershell/) script to automate above test process. You can copy the [script](./run_test.ps1) to a directory where also exists `config` directory and run it like this:
+
+```powershell
+./run_test.ps1 6 200
+```
+
+And then you can go ahead and collect network packages.
+
+Its general usage pattern may looks like:
+
+```powershell
+./run_test.ps1 client_num raw_event_record_num_limitation
+```
+
+More configurable test parameters will be added in the future.
+
 ## Example Result
 
-If you have followed all the instructions above, you may get a result similar with 
-the example one restored in `./result` where you can find:
+If you have followed all the instructions above or just have run the automatic testing script we 
+provide, you may get a result similar with the example one restored in `./result` where you can find:
 
-* [a wireshark packet set](./result/200.zip)
-* six slave-side log files named like `client_x.log`
-* a master-side log file named `server.log`
+* [a wireshark packet set](./result/6-200.zip) (you have to unzip it first)
+* six slave log files named like `slave_x.log`
+* a master log file named `master.log`
 
 Here's a flow chart of this process, exported from wireshark.
 
-![flow chart](./result/200.png)
+![flow chart](./result/6-200.png)
 
-Its corresponding data is [here](./result/200.csv). And with this data, we can figure out the total flow of this whole process (200 rounds).
+Its corresponding data is [here](./result/6-200.csv). With this data, we can figure out the total flow of this whole process (200 rounds).
 
 |                            | All       | Master   | Slave 1 |
 |----------------------------|-----------|----------|---------|
-| Total Amount \(byte\)      | 107031541 | 63461454 | 7600523 |
+| Total Amount \(byte\)      | 111921739 | 66160613 | 7955648 |
 
-Thus, we can figure out such estimations:
+We can figure out such estimations:
 
-* an approximate amount of data transmitted through *master* in one iteration per slave: 52,885 B, i.e. 51.65 KB
-* an approximate amount of data transmitted through one *slave* in one iteration: 38,000 B, i.e. 37.11 KB
+* an approximate amount of data transmitted through *master* in one iteration per slave: 55,134 B, i.e. 53.84 KB
+* an approximate amount of data transmitted through one *slave* in one iteration: 39,778 B, i.e. 38.85 KB
 
-*Note*: Since slaves are similar, here we just provide the data amount of slave_1. If you are interested in the other slaves', you can utilize [the network packet set](./result/200.zip).
+*Note*: Since slaves are similar, here we just provide the data amount of slave_1 (in most cases, other slaves' data amount should be no bigger than the slave_1's). If you are interested in the other slaves', you can utilize [the network packet set](./result/6-200.zip).

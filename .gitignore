@@ -21,3 +21,4 @@ Cargo.lock
 
 # network packet data package: too big
 *.pcapng
+*.pcapng.gz
