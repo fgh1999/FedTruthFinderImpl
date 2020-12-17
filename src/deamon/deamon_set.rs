@@ -231,17 +231,17 @@ pub trait DeamonOperations<
 
         if !deamons.read().await.contains_key(eid) {
             let mut deamons_w = deamons.write().await;
-            deamons_w
-                .entry(eid.clone())
-                .or_insert({
+            if !deamons_w.contains_key(eid) {
+                deamons_w.insert(eid.clone(), {
                     let lambda_g = self.get_lambda_g();
                     if lambda_g.is_none() {
                         Deamon::new(eid.clone(), threshold, client_n)
                     } else {
                         let lambda_g = lambda_g.unwrap();
                         Deamon::new_with_lambda(eid.clone(), threshold, client_n, lambda_g)
-                    }    
+                    }
                 });
+            }
         }
         let deamons_r = deamons.read().await;
         let deamon = deamons_r.get(eid).unwrap();
@@ -265,17 +265,17 @@ pub trait DeamonOperations<
 
         if !deamons.read().await.contains_key(eid) {
             let mut deamons_w = deamons.write().await;
-            deamons_w
-                .entry(eid.clone())
-                .or_insert({
+            if !deamons_w.contains_key(eid) {
+                deamons_w.insert(eid.clone(), {
                     let lambda_g = self.get_lambda_g();
                     if lambda_g.is_none() {
                         Deamon::new(eid.clone(), threshold, client_n)
                     } else {
                         let lambda_g = lambda_g.unwrap();
                         Deamon::new_with_lambda(eid.clone(), threshold, client_n, lambda_g)
-                    }  
+                    }
                 });
+            }
         }
         let deamons_r = deamons.read().await;
         let deamon = deamons_r.get(eid).unwrap();
