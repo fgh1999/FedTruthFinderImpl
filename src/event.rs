@@ -1,8 +1,8 @@
 use rand::distributions::weighted::alias_method::{Weight, WeightedIndex};
 use rand::prelude::*;
+use std::fmt;
 use std::option::Option;
 use std::sync::Mutex;
-use std::fmt;
 
 pub type Eid = u64;
 pub type EventIdentifier = String;
@@ -17,7 +17,7 @@ impl fmt::Display for Judge {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Judge::False => write!(f, "Judge::False"),
-            Judge::True => write!(f, "Judge::True")
+            Judge::True => write!(f, "Judge::True"),
         }
     }
 }

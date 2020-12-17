@@ -1,7 +1,7 @@
+use super::super::id::Gid;
 use super::deamon_error::DeamonError;
 use super::deamon_set::{Deamon, DeamonSet, GetFields};
 use super::deamon_set::{DeamonOperation, DeamonOperations};
-use super::super::id::Gid;
 use sharks::{secret_type::Rational, Share};
 use std::collections::HashMap;
 
@@ -39,9 +39,10 @@ impl DeamonOperation<ResultType, ChannelPayload> for HApoDeamon {
             }
         }
 
-        let y: Vec<_> = (0..client_n).into_iter().map(
-            |i| buffer.iter().map(|(_gid, share)| share.y[i].clone()).sum()
-        ).collect();
+        let y: Vec<_> = (0..client_n)
+            .into_iter()
+            .map(|i| buffer.iter().map(|(_gid, share)| share.y[i].clone()).sum())
+            .collect();
 
         let some_share: Vec<_> = buffer.values().take(1).collect();
         let some_share = some_share[0];

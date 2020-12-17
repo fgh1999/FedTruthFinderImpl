@@ -810,8 +810,7 @@ impl algo_master_server::AlgoMaster for AlgoServer {
 
         // do a snapshot and buffer it (identified by eid)
         let config_r = self.shared.event_computation_configurations.read().await;
-        if !config_r.contains_key(&eid)
-        {
+        if !config_r.contains_key(&eid) {
             drop(config_r);
             let mut config_w = self.shared.event_computation_configurations.write().await;
             if !config_w.contains_key(&eid) {
@@ -856,8 +855,7 @@ impl algo_master_server::AlgoMaster for AlgoServer {
         let event_identifier: EventIdentifier = req.into_inner().identifier;
 
         let events_r = self.shared.events.read().await;
-        if !events_r.contains_key(&event_identifier)
-        {
+        if !events_r.contains_key(&event_identifier) {
             drop(events_r);
             let mut events_w = self.shared.events.write().await;
             if !events_w.contains_key(&event_identifier) {
@@ -888,11 +886,18 @@ impl algo_master_server::AlgoMaster for AlgoServer {
     ) -> ResponseResult<LeaderBoardComputationConfig> {
         let eid = req.into_inner().eid;
 
-        let config_r = self.shared.trustworthiness_assessment_configurations.read().await;
-        if !config_r.contains_key(&eid)
-        {
+        let config_r = self
+            .shared
+            .trustworthiness_assessment_configurations
+            .read()
+            .await;
+        if !config_r.contains_key(&eid) {
             drop(config_r);
-            let mut config_w = self.shared.trustworthiness_assessment_configurations.write().await;
+            let mut config_w = self
+                .shared
+                .trustworthiness_assessment_configurations
+                .write()
+                .await;
             if !config_w.contains_key(&eid) {
                 config_w.insert(eid, {
                     let configurations_r =
@@ -909,7 +914,7 @@ impl algo_master_server::AlgoMaster for AlgoServer {
                     let mut clients = HashMap::new();
                     clients.extend(clients_uids_iter.map(|uid| (*uid, self.get_gid(uid))));
                     drop(configurations_r);
-        
+
                     // notify to start selection
                     self.shared
                         .trustworthiness_assessment_notifier

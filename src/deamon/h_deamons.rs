@@ -37,9 +37,7 @@ impl DeamonOperation<ResultType, ChannelPayload> for HDeamon {
         let mut tau_sequence_shares: BTreeMap<Uid, BTreeMap<Gid, BigRational>> = BTreeMap::new();
         let rx_buffer = self.get_buffer();
         let mut buffer_lock = rx_buffer.lock().await;
-        while tau_sequence_shares.len() < client_num
-            || random_coefficients_shares.len() < group_n
-        {
+        while tau_sequence_shares.len() < client_num || random_coefficients_shares.len() < group_n {
             match buffer_lock.recv().await {
                 Some(payload) => {
                     match payload {
