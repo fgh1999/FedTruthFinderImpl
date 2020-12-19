@@ -199,7 +199,7 @@ After having logged the last line (where the `eid` equals to min(the record maxi
 
 ### 🥳Automation
 
-Here we provide a [powershell](https://docs.microsoft.com/en-us/powershell/) script to automate above test process. You can copy the [script](./run_test.ps1) to a directory where also exists `config` directory and run it like this:
+Here we provide a [powershell](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell?view=powershell-7.1) script to automate above test process. You can copy the [script](./run_test.ps1) to a directory where exists `config` directory and run it like this:
 
 ```powershell
 ./run_test.ps1 6 200
@@ -207,7 +207,7 @@ Here we provide a [powershell](https://docs.microsoft.com/en-us/powershell/) scr
 
 And then you can go ahead and collect network packages.
 
-Its general usage pattern may looks like:
+Its general usage pattern looks like:
 
 ```powershell
 ./run_test.ps1 client_num raw_event_record_num_limitation
