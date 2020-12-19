@@ -1,13 +1,16 @@
 tonic::include_proto!("algo");
 use super::{
-    deamon_error::DeamonError,
-    deamon_set::{DeamonOperations, DeamonSet},
     event::{Eid, EidAssigner, Event, EventIdentifier, Judge},
     fmt_leader_board,
     id::{Gid, Id, Uid, UidAssigner},
+    ResponseResult,
+};
+use super::deamon::{
+    deamon_error::DeamonError,
+    deamon_set::{DeamonOperations, DeamonSet},
     leaderboard_deamons::*,
     summation_deamons::*,
-    ResponseResult, ResponseStream,
+
 };
 use sharks::{secret_type::Rational, Share};
 use slog::{crit, debug, error, info, trace, warn, Logger};
@@ -18,19 +21,21 @@ use std::time::Duration;
 use tokio::sync::{mpsc, RwLock};
 use tonic::{Request, Response, Status};
 
+/// A master server instance
 #[derive(Debug)]
-pub struct AlgoServer {
+pub struct MasterServer {
     shared: Arc<Shared>,
 }
 
+/// Shared fields among requests
 #[derive(Debug)]
 struct Shared {
     logger: Logger,
     pub group_n: Gid, //number of groups
 
     pub uid_assigner: UidAssigner,
-    pub clients: dashmap::DashMap<Uid, Arc<ClientInfo>>,
-    pub groups: dashmap::DashMap<Gid, Vec<Arc<ClientInfo>>>,
+    pub clients: dashmap::DashMap<Uid, Arc<SlaveInfo>>,
+    pub groups: dashmap::DashMap<Gid, Vec<Arc<SlaveInfo>>>,
 
     pub eid_assigner: EidAssigner,
     pub events: RwLock<HashMap<EventIdentifier, Event>>,
@@ -49,14 +54,15 @@ struct Shared {
     leaderboard_deamons: LeaderBoardDeamonSet,
 }
 
+/// A struct of slave inforamtion on the master side
 #[derive(Debug, Clone)]
-pub struct ClientInfo {
+pub struct SlaveInfo {
     pub id: Id,
     pub pk: Vec<u8>,
     pub mailbox: SocketAddr,
 }
 
-impl std::fmt::Display for ClientInfo {
+impl std::fmt::Display for SlaveInfo {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         let mut pk = String::new();
         self.pk
@@ -65,7 +71,7 @@ impl std::fmt::Display for ClientInfo {
             .for_each(|byte| pk.push_str(byte.as_ref()));
         write!(
             f,
-            "ClientInfo {{ id: {}, pk: {}, mailbox: {} }}",
+            "SlaveInfo {{ id: {}, pk: {}, mailbox: {} }}",
             self.id, pk, self.mailbox
         )
     }
@@ -79,14 +85,14 @@ impl Into<InitResponse> for Id {
         }
     }
 }
-impl Into<InitResponse> for ClientInfo {
+impl Into<InitResponse> for SlaveInfo {
     fn into(self) -> InitResponse {
         self.id.into()
     }
 }
 
-#[allow(dead_code)]
-impl AlgoServer {
+
+impl MasterServer {
     pub fn new<L: Into<Logger>>(group_n: Gid, logger: L) -> Self {
         let (trustworthiness_assessment_notifier, mut rx) = mpsc::unbounded_channel();
         let logger = logger.into();
@@ -185,7 +191,7 @@ impl AlgoServer {
             }
         });
 
-        AlgoServer { shared }
+        MasterServer { shared }
     }
 
     pub fn summation_err_to_status(e: DeamonError) -> Status {
@@ -211,6 +217,7 @@ impl AlgoServer {
     }
 }
 
+
 ///Interfaces to manage clients
 #[tonic::async_trait]
 pub trait ClientManagement {
@@ -221,19 +228,19 @@ pub trait ClientManagement {
     fn get_group_n(&self) -> Gid;
 
     /// Add a new client with its public key and return it
-    async fn add_client(&self, pk: &[u8], mailbox: &SocketAddr) -> Option<Arc<ClientInfo>>;
+    async fn add_client(&self, pk: &[u8], mailbox: &SocketAddr) -> Option<Arc<SlaveInfo>>;
 
     /// Return a clone of query result
-    async fn get_client_by_pk(&self, pk: &[u8]) -> Option<Arc<ClientInfo>>;
+    async fn get_client_by_pk(&self, pk: &[u8]) -> Option<Arc<SlaveInfo>>;
 
     /// Return a clone of query result
-    async fn get_client_by_uid(&self, uid: &Uid) -> Option<Arc<ClientInfo>>;
+    async fn get_client_by_uid(&self, uid: &Uid) -> Option<Arc<SlaveInfo>>;
 
     /// Return clones of clients which are of the given gid
-    async fn get_clients_by_gid(&self, gid: &Gid) -> Vec<Arc<ClientInfo>>;
+    async fn get_clients_by_gid(&self, gid: &Gid) -> Vec<Arc<SlaveInfo>>;
 
     /// Return clones of all clients
-    async fn get_all_client(&self) -> Vec<Arc<ClientInfo>>;
+    async fn get_all_client(&self) -> Vec<Arc<SlaveInfo>>;
 
     /// Return the number of clients
     fn get_client_n(&self) -> Uid;
@@ -247,7 +254,7 @@ pub trait ClientManagement {
 }
 
 #[tonic::async_trait]
-impl ClientManagement for AlgoServer {
+impl ClientManagement for MasterServer {
     fn new_uid(&self) -> Uid {
         let shared = self.shared.clone();
         shared.uid_assigner.new_uid()
@@ -258,12 +265,12 @@ impl ClientManagement for AlgoServer {
         shared.group_n
     }
 
-    async fn add_client(&self, pk: &[u8], mailbox: &SocketAddr) -> Option<Arc<ClientInfo>> {
+    async fn add_client(&self, pk: &[u8], mailbox: &SocketAddr) -> Option<Arc<SlaveInfo>> {
         match self.get_client_by_pk(pk).await {
             None => {
                 let uid = self.new_uid();
                 let pk = pk.to_vec();
-                let new_client = Arc::new(ClientInfo {
+                let new_client = Arc::new(SlaveInfo {
                     id: Id::new(uid, self.get_gid(&uid)),
                     pk,
                     mailbox: mailbox.clone(),
@@ -287,7 +294,7 @@ impl ClientManagement for AlgoServer {
         }
     }
 
-    async fn get_client_by_pk(&self, pk: &[u8]) -> Option<Arc<ClientInfo>> {
+    async fn get_client_by_pk(&self, pk: &[u8]) -> Option<Arc<SlaveInfo>> {
         let pk = pk.to_vec();
         let shared = self.shared.clone();
         let target = shared.clients.iter().find(|x| x.value().pk == pk);
@@ -297,7 +304,7 @@ impl ClientManagement for AlgoServer {
         }
     }
 
-    async fn get_client_by_uid(&self, uid: &Uid) -> Option<Arc<ClientInfo>> {
+    async fn get_client_by_uid(&self, uid: &Uid) -> Option<Arc<SlaveInfo>> {
         let shared = self.shared.clone();
         let target = shared.clients.get(uid);
         match target {
@@ -315,7 +322,7 @@ impl ClientManagement for AlgoServer {
         }
     }
 
-    async fn get_clients_by_gid(&self, gid: &Gid) -> Vec<Arc<ClientInfo>> {
+    async fn get_clients_by_gid(&self, gid: &Gid) -> Vec<Arc<SlaveInfo>> {
         let mut targets = vec![];
         let shared = self.shared.clone();
         shared
@@ -327,7 +334,7 @@ impl ClientManagement for AlgoServer {
         targets
     }
 
-    async fn get_all_client(&self) -> Vec<Arc<ClientInfo>> {
+    async fn get_all_client(&self) -> Vec<Arc<SlaveInfo>> {
         let shared = self.shared.clone();
         // very costly
         shared
@@ -353,10 +360,11 @@ impl ClientManagement for AlgoServer {
     }
 }
 
+
 const NO_NEED_TO_PUB_EMPTY_NOTIFICATION: &str = "There's no need to publish a empty notification";
 
 #[tonic::async_trait]
-impl algo_master_server::AlgoMaster for AlgoServer {
+impl master_server::Master for MasterServer {
     async fn register(&self, request: Request<InitRequest>) -> ResponseResult<InitResponse> {
         let InitRequest { pk, mailbox } = request.into_inner();
         let mailbox = mailbox.parse();
@@ -376,35 +384,6 @@ impl algo_master_server::AlgoMaster for AlgoServer {
                 "Invalid mailbox addr: {}",
                 e
             ))),
-        }
-    }
-
-    type FetchClientPkStream = ResponseStream<PublicIdentity>;
-    async fn fetch_client_pk(
-        &self,
-        req: Request<KeyRequest>,
-    ) -> Result<Response<Self::FetchClientPkStream>, Status> {
-        // 在 self.pk_clients_map 中 找到 符合req 的 client 信息，转换为Identity 生成器返回
-        if let Some(request) = req.into_inner().request {
-            let results = match request {
-                key_request::Request::All(_) => self.get_all_client().await,
-                key_request::Request::Uid(ref uid) => match self.get_client_by_uid(uid).await {
-                    Some(client) => vec![client],
-                    None => Vec::new(),
-                },
-            };
-            let output = async_stream::try_stream! {
-                for x in results.iter() {
-                    yield PublicIdentity {
-                        uid: x.id.get_uid(),
-                        gid: x.id.get_gid(),
-                        pk: x.pk.clone()
-                    }
-                }
-            };
-            Ok(Response::new(Box::pin(output) as Self::FetchClientPkStream))
-        } else {
-            Err(Status::invalid_argument("should use all or uid"))
         }
     }
 
@@ -453,7 +432,7 @@ impl algo_master_server::AlgoMaster for AlgoServer {
         // connect & forward the message to it destination('rx_uid')
         if let Some(dst) = self.get_client_by_uid(&rx_uid).await {
             let mailbox_uri = format!("http://{}", dst.mailbox);
-            if let Ok(mut client) = algo_node_client::AlgoNodeClient::connect(mailbox_uri).await {
+            if let Ok(mut client) = slave_client::SlaveClient::connect(mailbox_uri).await {
                 client.notify_tau_sequence(notification).await
             } else {
                 Err(Status::failed_precondition(format!(
@@ -508,7 +487,7 @@ impl algo_master_server::AlgoMaster for AlgoServer {
         // connect & forward the message to it destination('rx_uid')
         if let Some(dst) = self.get_client_by_uid(&rx_uid).await {
             let mailbox_uri = format!("http://{}", dst.mailbox);
-            if let Ok(mut client) = algo_node_client::AlgoNodeClient::connect(mailbox_uri).await {
+            if let Ok(mut client) = slave_client::SlaveClient::connect(mailbox_uri).await {
                 client.notify_r(notification).await
             } else {
                 Err(Status::failed_precondition(format!(
@@ -545,7 +524,7 @@ impl algo_master_server::AlgoMaster for AlgoServer {
         // connect & forward the message to it destination('rx_uid')
         if let Some(dst) = self.get_client_by_uid(&message.rx_uid).await {
             let mailbox_uri = format!("http://{}", dst.mailbox);
-            if let Ok(mut client) = algo_node_client::AlgoNodeClient::connect(mailbox_uri).await {
+            if let Ok(mut client) = slave_client::SlaveClient::connect(mailbox_uri).await {
                 client.send_h_share(message).await
             } else {
                 Err(Status::failed_precondition(format!(
@@ -585,7 +564,7 @@ impl algo_master_server::AlgoMaster for AlgoServer {
         // connect & forward the message to it destination('rx_uid')
         if let Some(dst) = self.get_client_by_uid(&message.rx_uid).await {
             let mailbox_uri = format!("http://{}", dst.mailbox);
-            if let Ok(mut client) = algo_node_client::AlgoNodeClient::connect(mailbox_uri).await {
+            if let Ok(mut client) = slave_client::SlaveClient::connect(mailbox_uri).await {
                 match client.forward(message.clone()).await {
                     Ok(ok) => {
                         trace!(self.shared.logger, #"forward", "message forward successed";
@@ -690,10 +669,10 @@ impl algo_master_server::AlgoMaster for AlgoServer {
                                     "eid" => eid, "confidence" => event_confidence);
                                 Ok(Response::new(event_confidence))
                             }
-                            Err(e) => Err(AlgoServer::summation_err_to_status(e)),
+                            Err(e) => Err(MasterServer::summation_err_to_status(e)),
                         }
                     }
-                    Err(e) => Err(AlgoServer::summation_err_to_status(e)),
+                    Err(e) => Err(MasterServer::summation_err_to_status(e)),
                 }
             }
             Err(_) => Err(Status::invalid_argument(
@@ -781,10 +760,10 @@ impl algo_master_server::AlgoMaster for AlgoServer {
                                     clients: leader_board,
                                 }))
                             }
-                            Err(e) => Err(AlgoServer::summation_err_to_status(e)),
+                            Err(e) => Err(MasterServer::summation_err_to_status(e)),
                         }
                     }
-                    Err(e) => Err(AlgoServer::summation_err_to_status(e)),
+                    Err(e) => Err(MasterServer::summation_err_to_status(e)),
                 }
             }
             Err(_) => Err(Status::invalid_argument(
@@ -936,9 +915,12 @@ impl algo_master_server::AlgoMaster for AlgoServer {
     }
 }
 
+
 pub mod selection_operations {
-    use super::{algo_node_client, Arc, ClientInfo, Eid, Gid, Request, Selection, Uid};
-    pub async fn select_from_group(clients: &[Arc<ClientInfo>]) -> Option<Arc<ClientInfo>> {
+    use super::{slave_client, Arc, SlaveInfo, Eid, Gid, Request, Selection, Uid};
+
+    /// select one client from the given list
+    pub async fn select_from_group(clients: &[Arc<SlaveInfo>]) -> Option<Arc<SlaveInfo>> {
         if clients.is_empty() {
             None
         } else {
@@ -951,7 +933,7 @@ pub mod selection_operations {
         eid: Eid,
         client_num: Uid,
         group_num: Gid,
-        selected_client: Arc<ClientInfo>,
+        selected_client: Arc<SlaveInfo>,
     ) -> anyhow::Result<()> {
         let req = Request::new(Selection {
             eid,
@@ -959,7 +941,7 @@ pub mod selection_operations {
             group_num,
         });
         let mailbox_uri = format!("http://{}", selected_client.mailbox);
-        let mut client = algo_node_client::AlgoNodeClient::connect(mailbox_uri).await?;
+        let mut client = slave_client::SlaveClient::connect(mailbox_uri).await?;
         client.select_to_share_r(req).await?;
         Ok(())
     }
@@ -968,7 +950,7 @@ pub mod selection_operations {
         eid: Eid,
         client_num: Uid,
         group_num: Gid,
-        selected_client: Arc<ClientInfo>,
+        selected_client: Arc<SlaveInfo>,
     ) -> anyhow::Result<()> {
         let req = Selection {
             eid,
@@ -976,7 +958,7 @@ pub mod selection_operations {
             group_num,
         };
         let mailbox_uri = format!("http://{}", selected_client.mailbox);
-        let mut client = algo_node_client::AlgoNodeClient::connect(mailbox_uri).await?;
+        let mut client = slave_client::SlaveClient::connect(mailbox_uri).await?;
         client.select_to_share_h_set(req).await?;
         Ok(())
     }

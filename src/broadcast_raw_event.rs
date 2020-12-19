@@ -47,7 +47,7 @@ async fn main() -> anyhow::Result<()> {
             let listener_url = listener_url.clone();
             let logger_clone = logger.clone();
             let handle = tokio::spawn(async move {
-                let client = algo_node_client::AlgoNodeClient::connect(listener_url.clone()).await;
+                let client = slave_client::SlaveClient::connect(listener_url.clone()).await;
                 match client {
                     Ok(mut client) => {
                         match client

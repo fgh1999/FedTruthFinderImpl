@@ -48,11 +48,11 @@ async fn run_tls_server(config_path: impl AsRef<std::path::Path>, logger: slog::
     // let key = tokio::fs::read(config.keys.sk_path).await.unwrap();
     // let identity = Identity::from_pem(cert, key);
     let addr = config.addr.parse().unwrap();
-    let server = algo_server::AlgoServer::new(config.group_num as id::Gid, logger);
+    let server = master_server::MasterServer::new(config.group_num as id::Gid, logger);
 
     Server::builder()
         // .tls_config(ServerTlsConfig::new().identity(identity)).unwrap()
-        .add_service(algo_server::algo_master_server::AlgoMasterServer::new(
+        .add_service(master_server::master_server::MasterServer::new(
             server,
         ))
         .serve(addr)

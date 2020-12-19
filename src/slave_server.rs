@@ -1,15 +1,19 @@
 tonic::include_proto!("algo");
+use tonic::{Request, Response, Status};
 use super::{
     config::ClientConfig,
-    deamon_set::{DeamonOperations, DeamonSet},
     event::{Eid, Event, Judge},
     fmt_leader_board,
-    forward_deamons::{ForwardDeamonSet, SummationOperations},
-    h_apostrophe_deamons::HApoDeamonSet,
-    h_deamons::{HChannelPayload, HDeamonSet},
     id::{Gid, Id, Uid},
     ResponseResult,
 };
+use super::deamon::{
+    deamon_set::{DeamonOperations, DeamonSet},
+    forward_deamons::{ForwardDeamonSet, SummationOperations},
+    h_apostrophe_deamons::HApoDeamonSet,
+    h_deamons::{HChannelPayload, HDeamonSet},    
+};
+
 use std::collections::{HashMap, HashSet};
 use std::convert::TryFrom;
 use std::sync::{Arc, Mutex};
@@ -22,12 +26,11 @@ use ecies_ed25519::{self as ecies, PublicKey, SecretKey};
 use rand::distributions::weighted::alias_method::WeightedIndex;
 use sharks::{secret_type::Rational, Share};
 use slog::{crit, debug, error, info, trace, warn, Logger};
-use tonic::{Request, Response, Status};
 
 type ErrorRate = f64;
 
 #[derive(Debug)]
-pub struct AlgoClient {
+pub struct SlaveServer {
     config: ClientConfig,
     distribution: WeightedIndex<ErrorRate>,
     shared: Arc<Shared>,
@@ -81,7 +84,7 @@ impl AlgoCore {
 }
 
 #[tonic::async_trait]
-impl algo_node_server::AlgoNode for AlgoClient {
+impl slave_server::Slave for SlaveServer {
     async fn notify_tau_sequence(
         &self,
         req: Request<TauSeqShareNotification>,
@@ -349,7 +352,7 @@ pub trait TauComputation {
 }
 
 #[tonic::async_trait]
-impl EventConfidenceComputation for AlgoClient {
+impl EventConfidenceComputation for SlaveServer {
     async fn compute_and_add_event_confidence(
         &self,
         e: &Event,
@@ -361,7 +364,7 @@ impl EventConfidenceComputation for AlgoClient {
 
         // fetch the config of this event confidence computation session from the server
         let url = self.config.addrs.remote_addr.clone();
-        let mut client = algo_master_client::AlgoMasterClient::connect(url.clone()).await?;
+        let mut client = master_client::MasterClient::connect(url.clone()).await?;
         let req = EventConfidenceComputationConfigRequest { eid: e.get_id() };
         let process_config = client.get_event_confidence_computation_config(req).await?;
         drop(client);
@@ -405,7 +408,7 @@ impl EventConfidenceComputation for AlgoClient {
             let algo_master_server_url = url.clone();
             let handle = tokio::spawn(async move {
                 let mut client =
-                    algo_master_client::AlgoMasterClient::connect(algo_master_server_url)
+                    master_client::MasterClient::connect(algo_master_server_url)
                         .await
                         .unwrap();
                 client.forward(switch_req).await.unwrap();
@@ -443,7 +446,7 @@ impl EventConfidenceComputation for AlgoClient {
             summation_pair,
             allowed_seconds: allowed_seconds_for_server,
         });
-        let mut client = algo_master_client::AlgoMasterClient::connect(url).await?;
+        let mut client = master_client::MasterClient::connect(url).await?;
         let event_confidence = client.submit_summation(req).await?.into_inner();
         info!(self.shared.logger, #"event confidence computation", "fetched the confidence of the event from master";
             "eid" => e.get_id(),
@@ -505,7 +508,7 @@ impl EventConfidenceComputation for AlgoClient {
     }
 }
 
-impl TauComputation for AlgoClient {
+impl TauComputation for SlaveServer {
     fn update_tau(&self, eid: &Eid) {
         let mut algo_core = self.shared.core.lock().unwrap();
 
@@ -588,10 +591,10 @@ fn generate_tau_sequence(tau: f64, group_n: usize) -> Vec<BigRational> {
 }
 
 #[tonic::async_trait]
-impl TrustWorthinessAssessment for AlgoClient {
+impl TrustWorthinessAssessment for SlaveServer {
     async fn get_client_n_snapshot_from_server(&self, eid: &Eid) -> anyhow::Result<Uid> {
         let url = self.config.addrs.remote_addr.clone();
-        let mut client = algo_master_client::AlgoMasterClient::connect(url.clone()).await?;
+        let mut client = master_client::MasterClient::connect(url.clone()).await?;
         let eid = eid.clone();
         let req = Request::new(LeaderBoardComputationConfigRequest { eid });
         Ok(client
@@ -604,7 +607,7 @@ impl TrustWorthinessAssessment for AlgoClient {
 
     async fn get_group_num_from_server(&self) -> anyhow::Result<u8> {
         let url = self.config.addrs.remote_addr.clone();
-        let mut client = algo_master_client::AlgoMasterClient::connect(url.clone()).await?;
+        let mut client = master_client::MasterClient::connect(url.clone()).await?;
         let req = Request::new(());
         let group_n = client.get_group_num(req).await?.into_inner();
         Ok(group_n as u8)
@@ -618,7 +621,7 @@ impl TrustWorthinessAssessment for AlgoClient {
 
         // get configurations from server
         let url = self.config.addrs.remote_addr.clone();
-        let mut client = algo_master_client::AlgoMasterClient::connect(url.clone()).await?;
+        let mut client = master_client::MasterClient::connect(url.clone()).await?;
         let event_confidence_computation_config = client
             .get_event_confidence_computation_config(EventConfidenceComputationConfigRequest {
                 eid: eid.clone(),
@@ -674,7 +677,7 @@ impl TrustWorthinessAssessment for AlgoClient {
                 let server_url = url.clone();
 
                 let handle = tokio::spawn(async move {
-                    let mut client = algo_master_client::AlgoMasterClient::connect(server_url)
+                    let mut client = master_client::MasterClient::connect(server_url)
                         .await
                         .unwrap();
                     client.publish_tau_sequence(req).await.unwrap();
@@ -702,7 +705,7 @@ impl TrustWorthinessAssessment for AlgoClient {
 
         // get configurations from server
         let url = self.config.addrs.remote_addr.clone();
-        let mut client = algo_master_client::AlgoMasterClient::connect(url.clone()).await?;
+        let mut client = master_client::MasterClient::connect(url.clone()).await?;
         let event_confidence_computation_config = client
             .get_event_confidence_computation_config(EventConfidenceComputationConfigRequest {
                 eid: eid.clone(),
@@ -754,7 +757,7 @@ impl TrustWorthinessAssessment for AlgoClient {
                 let server_url = url.clone();
 
                 let handle = tokio::spawn(async move {
-                    let mut client = algo_master_client::AlgoMasterClient::connect(server_url)
+                    let mut client = master_client::MasterClient::connect(server_url)
                         .await
                         .unwrap();
                     client.publish_r(req).await.unwrap();
@@ -778,7 +781,7 @@ impl TrustWorthinessAssessment for AlgoClient {
 
         // get clients' pk
         let mut client =
-            algo_master_client::AlgoMasterClient::connect(self.config.addrs.remote_addr.clone())
+            master_client::MasterClient::connect(self.config.addrs.remote_addr.clone())
                 .await?;
         let EventConfidenceComputationConfig {
             clients_pk,
@@ -838,7 +841,7 @@ impl TrustWorthinessAssessment for AlgoClient {
             };
             let server_url = url.clone();
             let handle = tokio::spawn(async move {
-                let mut client = algo_master_client::AlgoMasterClient::connect(server_url)
+                let mut client = master_client::MasterClient::connect(server_url)
                     .await
                     .unwrap();
                 client.forward_h_share(switch_req).await.unwrap();
@@ -860,7 +863,7 @@ impl TrustWorthinessAssessment for AlgoClient {
         eid: &Eid,
     ) -> anyhow::Result<(HashMap<Uid, Gid>, Uid, Gid)> {
         let server_url = self.config.addrs.remote_addr.clone();
-        let mut client = algo_master_client::AlgoMasterClient::connect(server_url).await?;
+        let mut client = master_client::MasterClient::connect(server_url).await?;
         let leader_board_computation_config = client
             .get_leader_board_computation_config(Request::new(
                 LeaderBoardComputationConfigRequest { eid: eid.clone() },
@@ -903,13 +906,13 @@ impl TrustWorthinessAssessment for AlgoClient {
         );
 
         let server_url = self.config.addrs.remote_addr.clone();
-        let mut algo_client = algo_master_client::AlgoMasterClient::connect(server_url).await?;
+        let mut slave_server = master_client::MasterClient::connect(server_url).await?;
         let req = HApoShare {
             eid: eid.clone(),
             allowed_seconds,
             share: Vec::from(&h_apostrophe_share),
         };
-        let leader_board = algo_client.submit_h_apo_share(req).await?.into_inner();
+        let leader_board = slave_server.submit_h_apo_share(req).await?.into_inner();
         info!(self.shared.logger, #"trustworthiness assessment", "fetched leader-board from master";
             "eid" => eid.clone(),
         );
@@ -918,7 +921,7 @@ impl TrustWorthinessAssessment for AlgoClient {
 }
 
 #[tonic::async_trait]
-pub trait AlgoClientUtil:
+pub trait SlaveServerUtil:
     EventConfidenceComputation + TauComputation + TrustWorthinessAssessment
 {
     async fn get_allowed_seconds_for_server(&self) -> f64;
@@ -932,16 +935,16 @@ pub trait AlgoClientUtil:
 
     async fn register_event(&self, event_identifier: String) -> anyhow::Result<Eid>;
 
-    async fn new_algo_client<P: AsRef<std::path::Path> + Sync + Send>(
+    async fn build_slave_server<P: AsRef<std::path::Path> + Sync + Send>(
         config: ClientConfig,
         log_path: Option<P>,
-    ) -> anyhow::Result<AlgoClient>;
+    ) -> anyhow::Result<SlaveServer>;
 
     fn generate_keypair() -> (SecretKey, PublicKey);
 }
 
 #[tonic::async_trait]
-impl AlgoClientUtil for AlgoClient {
+impl SlaveServerUtil for SlaveServer {
     #[inline]
     async fn get_allowed_seconds_for_server(&self) -> f64 {
         // TODO: get data from self.config
@@ -954,7 +957,7 @@ impl AlgoClientUtil for AlgoClient {
         pk: PublicKey,
     ) -> anyhow::Result<(Id, Gid)> {
         let pk = pk.to_bytes().to_vec();
-        let mut client = algo_master_client::AlgoMasterClient::connect(server_url).await?;
+        let mut client = master_client::MasterClient::connect(server_url).await?;
 
         let req = InitRequest {
             pk,
@@ -968,7 +971,7 @@ impl AlgoClientUtil for AlgoClient {
 
     async fn register_event(&self, event_identifier: String) -> anyhow::Result<Eid> {
         let server_url = self.config.addrs.remote_addr.clone();
-        let mut client = algo_master_client::AlgoMasterClient::connect(server_url).await?;
+        let mut client = master_client::MasterClient::connect(server_url).await?;
         let EventRegistrationResponse { eid } = client
             .find_or_register_event(Request::new(EventRegistrationRequest {
                 identifier: event_identifier,
@@ -978,7 +981,7 @@ impl AlgoClientUtil for AlgoClient {
         Ok(eid)
     }
 
-    async fn new_algo_client<P: AsRef<std::path::Path> + Sync + Send>(
+    async fn build_slave_server<P: AsRef<std::path::Path> + Sync + Send>(
         config: ClientConfig,
         log_path: Option<P>,
     ) -> anyhow::Result<Self> {
@@ -1037,7 +1040,7 @@ impl AlgoClientUtil for AlgoClient {
         };
         let shared = Arc::new(shared);
         info!(logger, #"new node", "node constructed");
-        Ok(AlgoClient {
+        Ok(SlaveServer {
             shared,
             config,
             distribution,

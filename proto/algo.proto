@@ -21,19 +21,6 @@ message InitResponse {
     int32 gid = 2;  //group id
 }
 
-//These are optional request parameters in key request
-message KeyRequest {
-    oneof request {
-        google.protobuf.Empty all = 1;
-        int32 uid = 2;
-    }
-}
-message PublicIdentity {
-    int32 uid = 1;  //user id
-    int32 gid = 2;  //group id
-    bytes pk = 3;   //the bytes-form public key of this client 
-}
-
 message RandCoefShareNotification {
     uint64 eid = 1;     // for sync
     int32 clientNum = 2;
@@ -110,14 +97,10 @@ message LeaderBoard {
     repeated int32 clients = 1;
 }
 
-service AlgoMaster {
+service Master {
     //client apply a identity from the server and registerate its pk on the server
     //server init a new identity according to the given pk; otherwise, return Status::already_exists
     rpc Register(InitRequest) returns (InitResponse) {}
-
-    //fetch public key(s) according to the KeyRequest from the server
-    // TODO: deprecated
-    rpc FetchClientPk(KeyRequest) returns (stream PublicIdentity) {}
 
     // Find the event on the server.
     // If already exists, return its eid on the server;
@@ -161,7 +144,7 @@ message EventNotification {
     string identifier = 1;
 }
 
-service AlgoNode {
+service Slave {
     //Forward the message until it reached rxUid.
     //When the target receiver receive the message, it can push it into a channel.
     rpc Forward(RelayMessage) returns (google.protobuf.Empty) {}
