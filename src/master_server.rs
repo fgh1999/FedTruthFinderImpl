@@ -34,8 +34,8 @@ struct Shared {
     pub group_n: Gid, //number of groups
 
     pub uid_assigner: UidAssigner,
-    pub clients: dashmap::DashMap<Uid, Arc<SlaveInfo>>,
-    pub groups: dashmap::DashMap<Gid, Vec<Arc<SlaveInfo>>>,
+    pub clients: RwLock<HashMap<Uid, Arc<SlaveInfo>>>,
+    pub groups: RwLock<HashMap<Gid, Vec<Arc<SlaveInfo>>>>,
 
     pub eid_assigner: EidAssigner,
     pub events: RwLock<HashMap<EventIdentifier, Event>>,
@@ -101,8 +101,8 @@ impl MasterServer {
             logger: logger.clone(),
             group_n,
             uid_assigner: UidAssigner::default(),
-            clients: dashmap::DashMap::default(),
-            groups: dashmap::DashMap::default(),
+            clients: RwLock::new(HashMap::new()),
+            groups: RwLock::new(HashMap::new()),
 
             eid_assigner: EidAssigner::default(),
             events: RwLock::new(HashMap::new()),
@@ -136,10 +136,11 @@ impl MasterServer {
                 drop(configurations_r);
                 let group_num = shared_for_selection.group_n.clone();
                 let mut handles = Vec::with_capacity(shared_for_selection.group_n as usize);
-                for group in shared_for_selection.groups.iter() {
+                let groups_r = shared_for_selection.groups.read().await;
+                for group in groups_r.values() {
                     // select a client
                     let selected_client =
-                        selection_operations::select_from_group(group.value()).await;
+                        selection_operations::select_from_group(group).await;
                     if selected_client.is_none() {
                         continue;
                     }
@@ -242,9 +243,6 @@ pub trait ClientManagement {
     /// Return clones of all clients
     async fn get_all_client(&self) -> Vec<Arc<SlaveInfo>>;
 
-    /// Return the number of clients
-    fn get_client_n(&self) -> Uid;
-
     /// Return a copy of required Sockaddr if it exists
     async fn get_mailbox(&self, uid: &Uid) -> Option<SocketAddr>;
 
@@ -276,17 +274,16 @@ impl ClientManagement for MasterServer {
                     mailbox: mailbox.clone(),
                 });
 
-                let shared = self.shared.clone();
-                shared
-                    .clients
-                    .insert(new_client.id.get_uid(), new_client.clone());
+                let mut clients_w = self.shared.clients.write().await;
+                let mut groups_w = self.shared.groups.write().await;
+                clients_w.insert(new_client.id.get_uid(), new_client.clone());
 
                 // update the groups
-                shared
-                    .groups
-                    .entry(new_client.id.get_gid())
-                    .or_insert(Vec::new())
-                    .push(new_client.clone());
+                let client_gid = new_client.id.get_gid();
+                if !groups_w.contains_key(&client_gid) {
+                    groups_w.insert(client_gid.clone(), Vec::new());
+                }
+                groups_w.get_mut(&client_gid).unwrap().push(new_client.clone());
 
                 Some(new_client)
             }
@@ -296,57 +293,46 @@ impl ClientManagement for MasterServer {
 
     async fn get_client_by_pk(&self, pk: &[u8]) -> Option<Arc<SlaveInfo>> {
         let pk = pk.to_vec();
-        let shared = self.shared.clone();
-        let target = shared.clients.iter().find(|x| x.value().pk == pk);
+        let clients_r = self.shared.clients.read().await;
+        let target = clients_r.values().find(|x| x.pk == pk);
         match target {
-            Some(target) => Some(target.value().clone()),
+            Some(target) => Some(target.clone()),
             None => None,
         }
     }
 
     async fn get_client_by_uid(&self, uid: &Uid) -> Option<Arc<SlaveInfo>> {
-        let shared = self.shared.clone();
-        let target = shared.clients.get(uid);
+        let clients_r = self.shared.clients.read().await;
+        let target = clients_r.get(uid);
         match target {
-            Some(target) => Some(target.value().clone()),
+            Some(target) => Some(target.clone()),
             None => None,
         }
     }
 
     async fn get_mailbox(&self, uid: &Uid) -> Option<SocketAddr> {
-        let shared = self.shared.clone();
-        let target = shared.clients.get(uid);
+        let clients_r = self.shared.clients.read().await;
+        let target = clients_r.get(uid);
         match target {
-            Some(target) => Some(target.value().mailbox.clone()),
+            Some(target) => Some(target.mailbox.clone()),
             None => None,
         }
     }
 
     async fn get_clients_by_gid(&self, gid: &Gid) -> Vec<Arc<SlaveInfo>> {
         let mut targets = vec![];
-        let shared = self.shared.clone();
-        shared
-            .clients
-            .iter()
-            .filter(|x| x.value().id.get_gid() == *gid)
-            .for_each(|x| targets.push(x.value().clone()));
+        let clients_r = self.shared.clients.read().await;
+        clients_r
+            .values()
+            .filter(|x| x.id.get_gid() == *gid)
+            .for_each(|x| targets.push(x.clone()));
 
         targets
     }
 
     async fn get_all_client(&self) -> Vec<Arc<SlaveInfo>> {
-        let shared = self.shared.clone();
-        // very costly
-        shared
-            .clients
-            .iter()
-            .map(|ref x| x.value().clone())
-            .collect()
-    }
-
-    #[inline]
-    fn get_client_n(&self) -> Uid {
-        self.shared.clients.iter().count() as Uid
+        let clients_r = self.shared.clients.read().await;
+        clients_r.values().cloned().collect()
     }
 
     #[inline]
@@ -774,10 +760,6 @@ impl master_server::Master for MasterServer {
 
     async fn get_group_num(&self, _req: Request<()>) -> ResponseResult<i32> {
         Ok(Response::new(self.get_group_n()))
-    }
-
-    async fn get_client_num(&self, _req: Request<()>) -> ResponseResult<i32> {
-        Ok(Response::new(self.get_client_n()))
     }
 
     async fn get_event_confidence_computation_config(

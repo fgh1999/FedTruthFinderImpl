@@ -125,9 +125,6 @@ service Master {
     //Return the number of groups on the server
     rpc GetGroupNum(google.protobuf.Empty) returns (google.protobuf.Int32Value) {}
 
-    //Return the number of clients registered on the server
-    rpc GetClientNum(google.protobuf.Empty) returns (google.protobuf.Int32Value) {}
-
     rpc GetEventConfidenceComputationConfig(EventConfidenceComputationConfigRequest) returns (EventConfidenceComputationConfig) {}
 
     rpc GetLeaderBoardComputationConfig(LeaderBoardComputationConfigRequest) returns (LeaderBoardComputationConfig) {}
