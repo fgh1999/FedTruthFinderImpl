@@ -5,5 +5,6 @@
         "sk_path": "config/tls/server.key",
         "pk_path": "config/tls/server.pem"
     },
-    "group_num": 3
+    "group_num": 3,
+    "connection_max_num_per_slave": 100
 }

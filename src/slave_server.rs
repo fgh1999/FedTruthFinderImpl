@@ -1,18 +1,18 @@
 tonic::include_proto!("algo");
-use tonic::{Request, Response, Status};
+use super::deamon::{
+    deamon_set::{DeamonOperations, DeamonSet},
+    forward_deamons::{ForwardDeamonSet, SummationOperations},
+    h_apostrophe_deamons::HApoDeamonSet,
+    h_deamons::{HChannelPayload, HDeamonSet},
+};
 use super::{
-    config::ClientConfig,
+    config::SlaveConfig,
     event::{Eid, Event, Judge},
     fmt_leader_board,
     id::{Gid, Id, Uid},
     ResponseResult,
 };
-use super::deamon::{
-    deamon_set::{DeamonOperations, DeamonSet},
-    forward_deamons::{ForwardDeamonSet, SummationOperations},
-    h_apostrophe_deamons::HApoDeamonSet,
-    h_deamons::{HChannelPayload, HDeamonSet},    
-};
+use tonic::{Request, Response, Status};
 
 use std::collections::{HashMap, HashSet};
 use std::convert::TryFrom;
@@ -29,14 +29,12 @@ use slog::{crit, debug, error, info, trace, warn, Logger};
 
 type ErrorRate = f64;
 
-#[derive(Debug)]
 pub struct SlaveServer {
-    config: ClientConfig,
+    config: SlaveConfig,
     distribution: WeightedIndex<ErrorRate>,
     shared: Arc<Shared>,
 }
 
-#[derive(Debug)]
 struct Shared {
     id: Id,
     sk: SecretKey,
@@ -50,6 +48,7 @@ struct Shared {
     h_apostrophe_deamons: HApoDeamonSet,
 
     logger: Logger,
+    connection_pool: mobc::Pool<MasterClientManager>,
 }
 
 #[derive(Debug)]
@@ -79,6 +78,37 @@ impl AlgoCore {
         AlgoCore {
             events: vec![],
             tau,
+        }
+    }
+}
+
+#[derive(Debug)]
+pub struct MasterClientManager {
+    server_url: String,
+}
+
+impl MasterClientManager {
+    pub fn new(server_url: String) -> Self {
+        Self { server_url }
+    }
+}
+
+#[mobc::async_trait]
+impl mobc::Manager for MasterClientManager {
+    type Connection = master_client::MasterClient<tonic::transport::Channel>;
+    type Error = Status;
+
+    async fn connect(&self) -> Result<Self::Connection, Self::Error> {
+        match master_client::MasterClient::connect(self.server_url.clone()).await {
+            Ok(connection) => Ok(connection),
+            Err(e) => Err(Status::unavailable(e.to_string()))
+        }
+    }
+
+    async fn check(&self, mut conn: Self::Connection) -> Result<Self::Connection, Self::Error> {
+        match conn.test_connection_alive(()).await {
+            Ok(_) => Ok(conn),
+            Err(e) => Err(e)
         }
     }
 }
@@ -263,7 +293,6 @@ impl slave_server::Slave for SlaveServer {
         }
     }
 
-    /// for test
     async fn handle(&self, req: Request<EventNotification>) -> ResponseResult<Uid> {
         let event_identifier = req.into_inner().identifier;
         info!(self.shared.logger, #"event", "received a new event"; "identifier" => event_identifier.clone());
@@ -309,6 +338,10 @@ impl slave_server::Slave for SlaveServer {
                 Err(Status::data_loss(format!("{}", e)))
             }
         }
+    }
+
+    async fn test_connection_alive(&self, _req: Request<()>) -> ResponseResult<()> {
+        Ok(Response::new(()))
     }
 }
 
@@ -363,12 +396,13 @@ impl EventConfidenceComputation for SlaveServer {
         }
 
         // fetch the config of this event confidence computation session from the server
-        let url = self.config.addrs.remote_addr.clone();
-        let mut client = master_client::MasterClient::connect(url.clone()).await?;
+        let mut client = self.shared.connection_pool.get().await?;
         let req = EventConfidenceComputationConfigRequest { eid: e.get_id() };
-        let process_config = client.get_event_confidence_computation_config(req).await?;
+        let process_config = client
+            .get_event_confidence_computation_config(req)
+            .await?
+            .into_inner();
         drop(client);
-        let process_config = process_config.get_ref();
         info!(self.shared.logger, #"event confidence computation", "figured out the payload pair";
             "eid" => e.get_id(),
         );
@@ -393,9 +427,7 @@ impl EventConfidenceComputation for SlaveServer {
                 return Err(anyhow::anyhow!("{} does not exist in EventConfidenceComputationConfig, while share.x equals to it", rx_uid));
             }
             let rx_pk = PublicKey::from_bytes(rx_pk.unwrap())?;
-            let mut rng = rand::thread_rng();
-            let encrypted_message = ecies::encrypt(&rx_pk, &message[..], &mut rng)?;
-            drop(rng);
+            let encrypted_message = ecies::encrypt(&rx_pk, &message[..], &mut rand::thread_rng())?;
 
             // dispatch shares
             let switch_req = RelayMessage {
@@ -405,14 +437,8 @@ impl EventConfidenceComputation for SlaveServer {
                 client_num: client_num as Uid,
                 encrypted_message,
             };
-            let algo_master_server_url = url.clone();
-            let handle = tokio::spawn(async move {
-                let mut client =
-                    master_client::MasterClient::connect(algo_master_server_url)
-                        .await
-                        .unwrap();
-                client.forward(switch_req).await.unwrap();
-            });
+            let mut client = self.shared.connection_pool.get().await?;
+            let handle = tokio::spawn(async move { client.forward(switch_req).await });
             relay_handles.push(handle);
         }
 
@@ -446,12 +472,13 @@ impl EventConfidenceComputation for SlaveServer {
             summation_pair,
             allowed_seconds: allowed_seconds_for_server,
         });
-        let mut client = master_client::MasterClient::connect(url).await?;
+        let mut client = self.shared.connection_pool.get().await?;
         let event_confidence = client.submit_summation(req).await?.into_inner();
         info!(self.shared.logger, #"event confidence computation", "fetched the confidence of the event from master";
             "eid" => e.get_id(),
             "confidence" => event_confidence,
         );
+        drop(client);
 
         // update inner state: add the new event with its confidence
         let mut e = e.clone();
@@ -553,9 +580,6 @@ impl TauComputation for SlaveServer {
 
 #[tonic::async_trait]
 pub trait TrustWorthinessAssessment {
-    /// TODO: needless
-    async fn get_client_n_snapshot_from_server(&self, eid: &Eid) -> anyhow::Result<Uid>;
-
     async fn get_group_num_from_server(&self) -> anyhow::Result<u8>;
 
     async fn share_tau_sequence(&self, eid: &Eid, group_n: u8, client_n: u8) -> anyhow::Result<()>;
@@ -592,24 +616,9 @@ fn generate_tau_sequence(tau: f64, group_n: usize) -> Vec<BigRational> {
 
 #[tonic::async_trait]
 impl TrustWorthinessAssessment for SlaveServer {
-    async fn get_client_n_snapshot_from_server(&self, eid: &Eid) -> anyhow::Result<Uid> {
-        let url = self.config.addrs.remote_addr.clone();
-        let mut client = master_client::MasterClient::connect(url.clone()).await?;
-        let eid = eid.clone();
-        let req = Request::new(LeaderBoardComputationConfigRequest { eid });
-        Ok(client
-            .get_leader_board_computation_config(req)
-            .await?
-            .into_inner()
-            .clients
-            .len() as Uid)
-    }
-
     async fn get_group_num_from_server(&self) -> anyhow::Result<u8> {
-        let url = self.config.addrs.remote_addr.clone();
-        let mut client = master_client::MasterClient::connect(url.clone()).await?;
-        let req = Request::new(());
-        let group_n = client.get_group_num(req).await?.into_inner();
+        let mut client = self.shared.connection_pool.get().await?;
+        let group_n = client.get_group_num((())).await?.into_inner();
         Ok(group_n as u8)
     }
 
@@ -620,8 +629,7 @@ impl TrustWorthinessAssessment for SlaveServer {
         let threshold = (group_n - 1) / 2 + 1; // TODO: check if `group_n` is odd
 
         // get configurations from server
-        let url = self.config.addrs.remote_addr.clone();
-        let mut client = master_client::MasterClient::connect(url.clone()).await?;
+        let mut client = self.shared.connection_pool.get().await?;
         let event_confidence_computation_config = client
             .get_event_confidence_computation_config(EventConfidenceComputationConfigRequest {
                 eid: eid.clone(),
@@ -634,6 +642,7 @@ impl TrustWorthinessAssessment for SlaveServer {
             })
             .await?
             .into_inner();
+        drop(client);
 
         // make shares
         let tau_sequence = generate_tau_sequence(tau, group_n as usize);
@@ -674,14 +683,9 @@ impl TrustWorthinessAssessment for SlaveServer {
                     topic_gid,
                     notification,
                 };
-                let server_url = url.clone();
 
-                let handle = tokio::spawn(async move {
-                    let mut client = master_client::MasterClient::connect(server_url)
-                        .await
-                        .unwrap();
-                    client.publish_tau_sequence(req).await.unwrap();
-                });
+                let mut client = self.shared.connection_pool.get().await?;
+                let handle = tokio::spawn(async move { client.publish_tau_sequence(req).await });
                 pub_handles.push(handle);
             }
         }
@@ -704,8 +708,7 @@ impl TrustWorthinessAssessment for SlaveServer {
         let uid = self.shared.id.get_uid();
 
         // get configurations from server
-        let url = self.config.addrs.remote_addr.clone();
-        let mut client = master_client::MasterClient::connect(url.clone()).await?;
+        let mut client = self.shared.connection_pool.get().await?;
         let event_confidence_computation_config = client
             .get_event_confidence_computation_config(EventConfidenceComputationConfigRequest {
                 eid: eid.clone(),
@@ -718,6 +721,7 @@ impl TrustWorthinessAssessment for SlaveServer {
             })
             .await?
             .into_inner();
+        drop(client);
 
         // PUB shares to the server
         let mut pub_handles = Vec::with_capacity(group_n as usize);
@@ -754,14 +758,9 @@ impl TrustWorthinessAssessment for SlaveServer {
                     topic_gid,
                     notification,
                 };
-                let server_url = url.clone();
 
-                let handle = tokio::spawn(async move {
-                    let mut client = master_client::MasterClient::connect(server_url)
-                        .await
-                        .unwrap();
-                    client.publish_r(req).await.unwrap();
-                });
+                let mut client = self.shared.connection_pool.get().await?;
+                let handle = tokio::spawn(async move { client.publish_r(req).await });
                 pub_handles.push(handle);
             }
         }
@@ -780,9 +779,8 @@ impl TrustWorthinessAssessment for SlaveServer {
         //! e.i. calling this method
 
         // get clients' pk
-        let mut client =
-            master_client::MasterClient::connect(self.config.addrs.remote_addr.clone())
-                .await?;
+        let mut client = self.shared.connection_pool.get().await?;
+
         let EventConfidenceComputationConfig {
             clients_pk,
             threshold: _,
@@ -814,7 +812,7 @@ impl TrustWorthinessAssessment for SlaveServer {
         // dispatch shares
         let tx_uid = self.shared.id.get_uid();
         let tx_gid = self.shared.id.get_gid();
-        let url = self.config.addrs.remote_addr.clone();
+        // let url = self.config.addrs.remote_addr.clone();
         let mut relay_handles = Vec::with_capacity(shares.len());
         for share in shares {
             let rx_uid = share.x as Uid;
@@ -839,13 +837,8 @@ impl TrustWorthinessAssessment for SlaveServer {
                 encrypted_message,
                 tx_gid,
             };
-            let server_url = url.clone();
-            let handle = tokio::spawn(async move {
-                let mut client = master_client::MasterClient::connect(server_url)
-                    .await
-                    .unwrap();
-                client.forward_h_share(switch_req).await.unwrap();
-            });
+            let mut client = self.shared.connection_pool.get().await?;
+            let handle = tokio::spawn(async move { client.forward_h_share(switch_req).await });
             relay_handles.push(handle);
         }
         // await **all** the forward processes
@@ -862,8 +855,7 @@ impl TrustWorthinessAssessment for SlaveServer {
         &self,
         eid: &Eid,
     ) -> anyhow::Result<(HashMap<Uid, Gid>, Uid, Gid)> {
-        let server_url = self.config.addrs.remote_addr.clone();
-        let mut client = master_client::MasterClient::connect(server_url).await?;
+        let mut client = self.shared.connection_pool.get().await?;
         let leader_board_computation_config = client
             .get_leader_board_computation_config(Request::new(
                 LeaderBoardComputationConfigRequest { eid: eid.clone() },
@@ -873,7 +865,7 @@ impl TrustWorthinessAssessment for SlaveServer {
 
         let clients = leader_board_computation_config.clients;
         let client_n = clients.len() as Uid;
-        let groups: HashSet<Gid> = clients.iter().map(|client| client.1).cloned().collect();
+        let groups: HashSet<Gid> = clients.values().cloned().collect();
         let group_n = groups.len() as Gid;
         Ok((clients, client_n, group_n))
     }
@@ -905,13 +897,12 @@ impl TrustWorthinessAssessment for SlaveServer {
             "eid" => eid.clone(),
         );
 
-        let server_url = self.config.addrs.remote_addr.clone();
-        let mut slave_server = master_client::MasterClient::connect(server_url).await?;
         let req = HApoShare {
             eid: eid.clone(),
             allowed_seconds,
             share: Vec::from(&h_apostrophe_share),
         };
+        let mut slave_server = self.shared.connection_pool.get().await?;
         let leader_board = slave_server.submit_h_apo_share(req).await?.into_inner();
         info!(self.shared.logger, #"trustworthiness assessment", "fetched leader-board from master";
             "eid" => eid.clone(),
@@ -936,7 +927,7 @@ pub trait SlaveServerUtil:
     async fn register_event(&self, event_identifier: String) -> anyhow::Result<Eid>;
 
     async fn build_slave_server<P: AsRef<std::path::Path> + Sync + Send>(
-        config: ClientConfig,
+        config: SlaveConfig,
         log_path: Option<P>,
     ) -> anyhow::Result<SlaveServer>;
 
@@ -970,8 +961,7 @@ impl SlaveServerUtil for SlaveServer {
     }
 
     async fn register_event(&self, event_identifier: String) -> anyhow::Result<Eid> {
-        let server_url = self.config.addrs.remote_addr.clone();
-        let mut client = master_client::MasterClient::connect(server_url).await?;
+        let mut client = self.shared.connection_pool.get().await?;
         let EventRegistrationResponse { eid } = client
             .find_or_register_event(Request::new(EventRegistrationRequest {
                 identifier: event_identifier,
@@ -982,7 +972,7 @@ impl SlaveServerUtil for SlaveServer {
     }
 
     async fn build_slave_server<P: AsRef<std::path::Path> + Sync + Send>(
-        config: ClientConfig,
+        config: SlaveConfig,
         log_path: Option<P>,
     ) -> anyhow::Result<Self> {
         let (sk, pk) = Self::generate_keypair();
@@ -991,7 +981,7 @@ impl SlaveServerUtil for SlaveServer {
         // register to get id(uid, gid)
         let server_url = config.addrs.remote_addr.clone();
         let mailbox_addr = config.addrs.mailbox_addr.clone();
-        let (id, group_n) = Self::register(server_url, mailbox_addr, pk).await?;
+        let (id, group_n) = Self::register(server_url.clone(), mailbox_addr, pk).await?;
 
         // construct a relay processor
         let forward_deamons = ForwardDeamonSet::new();
@@ -1029,6 +1019,14 @@ impl SlaveServerUtil for SlaveServer {
             }
         };
 
+        let master_client_manager = MasterClientManager::new(server_url);
+        let connection_pool = mobc::Pool::builder()
+            .max_open(config.connection_max_num)
+            .max_idle(config.connection_max_num)
+            // .get_timeout(None)
+            // .test_on_check_out(false) // TODO: into true after rewrite the check method of Manager trait
+            .build(master_client_manager);
+
         let shared = Shared {
             id,
             core,
@@ -1037,6 +1035,7 @@ impl SlaveServerUtil for SlaveServer {
             h_apostrophe_deamons,
             h_deamons,
             logger: logger.clone(),
+            connection_pool,
         };
         let shared = Arc::new(shared);
         info!(logger, #"new node", "node constructed");

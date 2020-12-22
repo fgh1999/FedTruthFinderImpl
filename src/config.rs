@@ -9,10 +9,11 @@ pub struct SecurityPath {
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
-pub struct ServerConfig {
+pub struct MasterConfig {
     pub addr: String,
     pub keys: SecurityPath,
     pub group_num: i32,
+    pub connection_max_num_per_slave: u64,
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
@@ -23,10 +24,11 @@ pub struct ClientAddrs {
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
-pub struct ClientConfig {
+pub struct SlaveConfig {
     pub addrs: ClientAddrs,
     pub error_rate: f64,
     pub keys: SecurityPath,
+    pub connection_max_num: u64,
 }
 
 enum ConfigPath {
@@ -35,12 +37,12 @@ enum ConfigPath {
 }
 
 enum Config {
-    Server(ServerConfig),
-    Client(ClientConfig),
+    Server(MasterConfig),
+    Client(SlaveConfig),
 }
 
 #[allow(dead_code)]
-pub fn load_client_config(path: &str) -> ClientConfig {
+pub fn load_client_config(path: &str) -> SlaveConfig {
     match load_and_parse_config(ConfigPath::Client(String::from(path))) {
         Config::Client(config) => config,
         _ => panic!(format!("{} does not point to a client config", &path)),
@@ -48,7 +50,7 @@ pub fn load_client_config(path: &str) -> ClientConfig {
 }
 
 #[allow(dead_code)]
-pub fn load_server_config(path: &str) -> ServerConfig {
+pub fn load_server_config(path: &str) -> MasterConfig {
     match load_and_parse_config(ConfigPath::Server(String::from(path))) {
         Config::Server(config) => config,
         _ => panic!(format!("{} does not point to a server config", path)),
@@ -59,12 +61,12 @@ fn load_and_parse_config(path: ConfigPath) -> Config {
     match path {
         ConfigPath::Client(path) => {
             let file = File::open(path).unwrap();
-            let decoded: ClientConfig = serde_json::from_reader(&file).unwrap();
+            let decoded: SlaveConfig = serde_json::from_reader(&file).unwrap();
             Config::Client(decoded)
         }
         ConfigPath::Server(path) => {
             let file = File::open(path).unwrap();
-            let decoded: ServerConfig = serde_json::from_reader(&file).unwrap();
+            let decoded: MasterConfig = serde_json::from_reader(&file).unwrap();
             Config::Server(decoded)
         }
     }

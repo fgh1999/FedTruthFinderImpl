@@ -9,5 +9,6 @@
         "pk_path": "config/tls/client1.pem",
         "ca_path": "config/tls/ca.pem"
     },
-    "error_rate": 0.25
+    "error_rate": 0.25,
+    "connection_max_num": 100
 }

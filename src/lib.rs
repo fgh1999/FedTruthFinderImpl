@@ -1,9 +1,9 @@
-pub mod slave_server;
-pub mod master_server;
 pub mod config;
+mod deamon;
 pub mod event;
 pub mod id;
-mod deamon;
+pub mod master_server;
+pub mod slave_server;
 
 use futures::Stream;
 use std::pin::Pin;

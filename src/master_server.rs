@@ -1,16 +1,16 @@
 tonic::include_proto!("algo");
-use super::{
-    event::{Eid, EidAssigner, Event, EventIdentifier, Judge},
-    fmt_leader_board,
-    id::{Gid, Id, Uid, UidAssigner},
-    ResponseResult,
-};
 use super::deamon::{
     deamon_error::DeamonError,
     deamon_set::{DeamonOperations, DeamonSet},
     leaderboard_deamons::*,
     summation_deamons::*,
-
+};
+use super::{
+    config::MasterConfig,
+    event::{Eid, EidAssigner, Event, EventIdentifier, Judge},
+    fmt_leader_board,
+    id::{Gid, Id, Uid, UidAssigner},
+    ResponseResult,
 };
 use sharks::{secret_type::Rational, Share};
 use slog::{crit, debug, error, info, trace, warn, Logger};
@@ -22,36 +22,38 @@ use tokio::sync::{mpsc, RwLock};
 use tonic::{Request, Response, Status};
 
 /// A master server instance
-#[derive(Debug)]
 pub struct MasterServer {
     shared: Arc<Shared>,
 }
 
 /// Shared fields among requests
-#[derive(Debug)]
 struct Shared {
     logger: Logger,
-    pub group_n: Gid, //number of groups
+    group_n: Gid, //number of groups
+    config: MasterConfig,
 
-    pub uid_assigner: UidAssigner,
-    pub clients: RwLock<HashMap<Uid, Arc<SlaveInfo>>>,
-    pub groups: RwLock<HashMap<Gid, Vec<Arc<SlaveInfo>>>>,
+    uid_assigner: UidAssigner,
+    clients: RwLock<HashMap<Uid, Arc<SlaveInfo>>>,
+    groups: RwLock<HashMap<Gid, Vec<Arc<SlaveInfo>>>>,
 
-    pub eid_assigner: EidAssigner,
-    pub events: RwLock<HashMap<EventIdentifier, Event>>,
+    eid_assigner: EidAssigner,
+    events: RwLock<HashMap<EventIdentifier, Event>>,
 
     /// stores the confidence of events that already figured out
-    pub event_confidence: RwLock<HashMap<Eid, f64>>,
+    event_confidence: RwLock<HashMap<Eid, f64>>,
 
     /// stores the ascending leader board of clients' trustworthiness.
     /// `Eid` indicates if this leader board is latest enough
-    pub leader_board: RwLock<(Eid, Vec<Uid>)>,
+    leader_board: RwLock<(Eid, Vec<Uid>)>,
 
     event_computation_configurations: RwLock<HashMap<Eid, EventConfidenceComputationConfig>>,
     trustworthiness_assessment_configurations: RwLock<HashMap<Eid, LeaderBoardComputationConfig>>,
     trustworthiness_assessment_notifier: mpsc::UnboundedSender<Eid>,
+
     summation_deamons: SummationDeamonSet,
     leaderboard_deamons: LeaderBoardDeamonSet,
+
+    connection_pools: RwLock<HashMap<SocketAddr, mobc::Pool<SlaveClientManager>>>,
 }
 
 /// A struct of slave inforamtion on the master side
@@ -91,15 +93,46 @@ impl Into<InitResponse> for SlaveInfo {
     }
 }
 
+#[derive(Debug)]
+pub struct SlaveClientManager {
+    mailbox_url: String,
+}
+
+impl SlaveClientManager {
+    pub fn new(mailbox_url: String) -> Self {
+        Self { mailbox_url }
+    }
+}
+
+#[mobc::async_trait]
+impl mobc::Manager for SlaveClientManager {
+    type Connection = slave_client::SlaveClient<tonic::transport::Channel>;
+    type Error = Status;
+
+    async fn connect(&self) -> Result<Self::Connection, Self::Error> {
+        match slave_client::SlaveClient::connect(self.mailbox_url.clone()).await {
+            Ok(connection) => Ok(connection),
+            Err(e) => Err(Status::unavailable(e.to_string()))
+        }
+    }
+
+    async fn check(&self, mut conn: Self::Connection) -> Result<Self::Connection, Self::Error> {
+        match conn.test_connection_alive(()).await {
+            Ok(_) => Ok(conn),
+            Err(e) => Err(e)
+        }
+    }
+}
 
 impl MasterServer {
-    pub fn new<L: Into<Logger>>(group_n: Gid, logger: L) -> Self {
+    pub fn new<L: Into<Logger>>(configuration: MasterConfig, logger: L) -> Self {
         let (trustworthiness_assessment_notifier, mut rx) = mpsc::unbounded_channel();
         let logger = logger.into();
 
         let shared = Arc::new(Shared {
             logger: logger.clone(),
-            group_n,
+            group_n: configuration.group_num.clone(), // TODO: into configuration
+            config: configuration,
             uid_assigner: UidAssigner::default(),
             clients: RwLock::new(HashMap::new()),
             groups: RwLock::new(HashMap::new()),
@@ -116,6 +149,8 @@ impl MasterServer {
 
             summation_deamons: DeamonSet::new(),
             leaderboard_deamons: DeamonSet::new(),
+
+            connection_pools: RwLock::new(HashMap::new()),
         });
 
         // start a deamon for selections
@@ -139,22 +174,23 @@ impl MasterServer {
                 let groups_r = shared_for_selection.groups.read().await;
                 for group in groups_r.values() {
                     // select a client
-                    let selected_client =
-                        selection_operations::select_from_group(group).await;
+                    let selected_client = selection_operations::select_from_group(group).await;
                     if selected_client.is_none() {
                         continue;
                     }
                     let selected_client = selected_client.unwrap();
 
                     let logger = logger4deamon.clone();
+                    let shared_for_group_sharing = shared_for_selection.clone();
                     let handle = tokio::spawn(async move {
-                        if let Err(e) = selection_operations::notify_to_group_share_r(
-                            eid,
-                            client_num,
-                            group_num,
-                            selected_client.clone(),
-                        )
-                        .await
+                        if let Err(e) = shared_for_group_sharing
+                            .notify_to_group_share_r(
+                                eid,
+                                client_num,
+                                group_num,
+                                selected_client.clone(),
+                            )
+                            .await
                         {
                             crit!(logger, #"selection", "failed to select to share r group-wisely";
                                 "eid" => eid,
@@ -167,13 +203,14 @@ impl MasterServer {
                             );
                         }
 
-                        if let Err(e) = selection_operations::notify_to_group_share_h_set(
-                            eid,
-                            client_num,
-                            group_num,
-                            selected_client.clone(),
-                        )
-                        .await
+                        if let Err(e) = shared_for_group_sharing
+                            .notify_to_group_share_h_set(
+                                eid,
+                                client_num,
+                                group_num,
+                                selected_client.clone(),
+                            )
+                            .await
                         {
                             crit!(logger, #"selection", "failed to select to share h set group-wisely";
                                 "eid" => eid,
@@ -217,7 +254,6 @@ impl MasterServer {
         }
     }
 }
-
 
 ///Interfaces to manage clients
 #[tonic::async_trait]
@@ -283,7 +319,10 @@ impl ClientManagement for MasterServer {
                 if !groups_w.contains_key(&client_gid) {
                     groups_w.insert(client_gid.clone(), Vec::new());
                 }
-                groups_w.get_mut(&client_gid).unwrap().push(new_client.clone());
+                groups_w
+                    .get_mut(&client_gid)
+                    .unwrap()
+                    .push(new_client.clone());
 
                 Some(new_client)
             }
@@ -346,8 +385,7 @@ impl ClientManagement for MasterServer {
     }
 }
 
-
-const NO_NEED_TO_PUB_EMPTY_NOTIFICATION: &str = "There's no need to publish a empty notification";
+const NO_NEED_TO_PUB_EMPTY_NOTIFICATION: &str = "There's no need to publish an empty notification";
 
 #[tonic::async_trait]
 impl master_server::Master for MasterServer {
@@ -358,6 +396,18 @@ impl master_server::Master for MasterServer {
             Ok(mailbox) => match self.add_client(&pk, &mailbox).await {
                 Some(new_one) => {
                     let all_clinets_n = self.get_all_client().await.len(); // TODO: provide a independent interface for count clients
+
+                    // construct corresponding connection pool
+                    let mailbox_url = format!("http://{}", new_one.mailbox);
+                    let connection_pool = SlaveClientManager::new(mailbox_url);
+                    let connection_pool = mobc::Pool::builder()
+                        .max_open(self.shared.config.connection_max_num_per_slave)
+                        .max_idle(self.shared.config.connection_max_num_per_slave)
+                        // .test_on_check_out(false)
+                        .build(connection_pool);
+                    let mut connection_pools_w = self.shared.connection_pools.write().await;
+                    connection_pools_w.insert(new_one.mailbox.clone(), connection_pool);
+
                     info!(self.shared.logger, "registration";
                         "new client" => %new_one,
                         "clients_n" => all_clinets_n,
@@ -417,8 +467,9 @@ impl master_server::Master for MasterServer {
 
         // connect & forward the message to it destination('rx_uid')
         if let Some(dst) = self.get_client_by_uid(&rx_uid).await {
-            let mailbox_uri = format!("http://{}", dst.mailbox);
-            if let Ok(mut client) = slave_client::SlaveClient::connect(mailbox_uri).await {
+            let connection_pools_r = self.shared.connection_pools.read().await;
+            let connection_pool = connection_pools_r.get(&dst.mailbox).unwrap();
+            if let Ok(mut client) = connection_pool.get().await {
                 client.notify_tau_sequence(notification).await
             } else {
                 Err(Status::failed_precondition(format!(
@@ -472,8 +523,9 @@ impl master_server::Master for MasterServer {
 
         // connect & forward the message to it destination('rx_uid')
         if let Some(dst) = self.get_client_by_uid(&rx_uid).await {
-            let mailbox_uri = format!("http://{}", dst.mailbox);
-            if let Ok(mut client) = slave_client::SlaveClient::connect(mailbox_uri).await {
+            let connection_pools_r = self.shared.connection_pools.read().await;
+            let connection_pool = connection_pools_r.get(&dst.mailbox).unwrap();
+            if let Ok(mut client) = connection_pool.get().await {
                 client.notify_r(notification).await
             } else {
                 Err(Status::failed_precondition(format!(
@@ -509,8 +561,9 @@ impl master_server::Master for MasterServer {
 
         // connect & forward the message to it destination('rx_uid')
         if let Some(dst) = self.get_client_by_uid(&message.rx_uid).await {
-            let mailbox_uri = format!("http://{}", dst.mailbox);
-            if let Ok(mut client) = slave_client::SlaveClient::connect(mailbox_uri).await {
+            let connection_pools_r = self.shared.connection_pools.read().await;
+            let connection_pool = connection_pools_r.get(&dst.mailbox).unwrap();
+            if let Ok(mut client) = connection_pool.get().await {
                 client.send_h_share(message).await
             } else {
                 Err(Status::failed_precondition(format!(
@@ -549,8 +602,9 @@ impl master_server::Master for MasterServer {
 
         // connect & forward the message to it destination('rx_uid')
         if let Some(dst) = self.get_client_by_uid(&message.rx_uid).await {
-            let mailbox_uri = format!("http://{}", dst.mailbox);
-            if let Ok(mut client) = slave_client::SlaveClient::connect(mailbox_uri).await {
+            let connection_pools_r = self.shared.connection_pools.read().await;
+            let connection_pool = connection_pools_r.get(&dst.mailbox).unwrap();
+            if let Ok(mut client) = connection_pool.get().await {
                 match client.forward(message.clone()).await {
                     Ok(ok) => {
                         trace!(self.shared.logger, #"forward", "message forward successed";
@@ -675,6 +729,7 @@ impl master_server::Master for MasterServer {
         } = req.into_inner();
         let eid = eid as Eid;
 
+        // TODO: 出现了"client_n inconsistency: given 0, while the existed is 6\"的问题
         let shared = self.shared.clone();
         // verify if the eid is valid, e.g. in range.
         if !shared
@@ -723,8 +778,9 @@ impl master_server::Master for MasterServer {
                                 // erase the buffered event_confidence_computation_configuration (eid)'s clients_pk
                                 // ** should not erase the buffered event_confidence_computation_configuration (eid)
                                 // ** cause we depends on it to verify preconditions
+                                // TODO: uncomment without new inconsistency bug
                                 // let mut config_w =
-                                    // shared.event_computation_configurations.write().await;
+                                //     shared.event_computation_configurations.write().await;
                                 // hold the write lock before updating shared.event_confidence to avoid some sync problems
 
                                 // update the leaderboard
@@ -734,6 +790,7 @@ impl master_server::Master for MasterServer {
                                 }
 
                                 // update after updating the confidence of event
+                                // TODO: uncomment without new inconsistency bug
                                 // config_w.get_mut(&eid).unwrap().clients_pk.clear();
 
                                 info!(self.shared.logger, "Leader board";
@@ -892,11 +949,14 @@ impl master_server::Master for MasterServer {
             .clone();
         Ok(Response::new(config))
     }
+
+    async fn test_connection_alive(&self, _req: Request<()>) -> ResponseResult<()> {
+        Ok(Response::new(()))
+    }
 }
 
-
 pub mod selection_operations {
-    use super::{slave_client, Arc, SlaveInfo, Eid, Gid, Request, Selection, Uid};
+    use super::{Arc, SlaveInfo};
 
     /// select one client from the given list
     pub async fn select_from_group(clients: &[Arc<SlaveInfo>]) -> Option<Arc<SlaveInfo>> {
@@ -906,9 +966,32 @@ pub mod selection_operations {
             Some(clients[0].clone())
         }
     }
+}
 
+#[tonic::async_trait]
+trait Notify2GroupShare {
     /// client_num should be consistent with the one in event_confidence_computation_config
-    pub async fn notify_to_group_share_r(
+    async fn notify_to_group_share_r(
+        &self,
+        eid: Eid,
+        client_num: Uid,
+        group_num: Gid,
+        selected_client: Arc<SlaveInfo>,
+    ) -> anyhow::Result<()>;
+
+    async fn notify_to_group_share_h_set(
+        &self,
+        eid: Eid,
+        client_num: Uid,
+        group_num: Gid,
+        selected_client: Arc<SlaveInfo>,
+    ) -> anyhow::Result<()>;
+}
+
+#[tonic::async_trait]
+impl Notify2GroupShare for Shared {
+    async fn notify_to_group_share_r(
+        &self,
         eid: Eid,
         client_num: Uid,
         group_num: Gid,
@@ -919,13 +1002,15 @@ pub mod selection_operations {
             client_num,
             group_num,
         });
-        let mailbox_uri = format!("http://{}", selected_client.mailbox);
-        let mut client = slave_client::SlaveClient::connect(mailbox_uri).await?;
+        let connection_pools_r = self.connection_pools.read().await;
+        let connection_pool = connection_pools_r.get(&selected_client.mailbox).unwrap();
+        let mut client = connection_pool.get().await?;
         client.select_to_share_r(req).await?;
         Ok(())
     }
 
-    pub async fn notify_to_group_share_h_set(
+    async fn notify_to_group_share_h_set(
+        &self,
         eid: Eid,
         client_num: Uid,
         group_num: Gid,
@@ -936,8 +1021,9 @@ pub mod selection_operations {
             client_num,
             group_num,
         };
-        let mailbox_uri = format!("http://{}", selected_client.mailbox);
-        let mut client = slave_client::SlaveClient::connect(mailbox_uri).await?;
+        let connection_pools_r = self.connection_pools.read().await;
+        let connection_pool = connection_pools_r.get(&selected_client.mailbox).unwrap();
+        let mut client = connection_pool.get().await?;
         client.select_to_share_h_set(req).await?;
         Ok(())
     }
