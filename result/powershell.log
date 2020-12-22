@@ -1,0 +1,1417 @@
+PS D:\playground> .\run_test.ps1 6 200
+
+
+    目录: D:\playground
+
+
+Mode                LastWriteTime         Length Name
+----                -------------         ------ ----
+d-----       2020/12/22     15:14                log
+Dec 22 15:14:09.326 INFO master configuration constructed, listening: [::1]:50050
+Dec 22 15:14:09.330 INFO slave configurations constructed, port list: 50051 50052 50053 50054 50055 50056
+Dec 22 15:14:09.342 INFO slave listener list constructed
+Launching master
+Launching slaves
+Start to broadcast raw events...
+Dec 22 15:14:18.045 INFO loaded raw event records, number of raw event records: 200
+Dec 22 15:14:18.049 INFO loaded listeners successfully, number of listeners: 6
+Dec 22 15:14:18.051 INFO publishing a new event, event_identifier: 1
+Dec 22 15:14:18.362 INFO event handled successfully, uid: 2, identifier: 1
+Dec 22 15:14:18.372 INFO event handled successfully, uid: 6, identifier: 1
+Dec 22 15:14:18.374 INFO event handled successfully, uid: 3, identifier: 1
+Dec 22 15:14:18.377 INFO event handled successfully, uid: 1, identifier: 1
+Dec 22 15:14:18.381 INFO event handled successfully, uid: 4, identifier: 1
+Dec 22 15:14:18.385 INFO event handled successfully, uid: 5, identifier: 1
+Dec 22 15:14:21.047 INFO publishing a new event, event_identifier: 2
+Dec 22 15:14:21.247 INFO event handled successfully, uid: 3, identifier: 2
+Dec 22 15:14:21.250 INFO event handled successfully, uid: 2, identifier: 2
+Dec 22 15:14:21.255 INFO event handled successfully, uid: 1, identifier: 2
+Dec 22 15:14:21.258 INFO event handled successfully, uid: 6, identifier: 2
+Dec 22 15:14:21.261 INFO event handled successfully, uid: 5, identifier: 2
+Dec 22 15:14:21.264 INFO event handled successfully, uid: 4, identifier: 2
+Dec 22 15:14:24.047 INFO publishing a new event, event_identifier: 3
+Dec 22 15:14:24.231 INFO event handled successfully, uid: 2, identifier: 3
+Dec 22 15:14:24.234 INFO event handled successfully, uid: 1, identifier: 3
+Dec 22 15:14:24.240 INFO event handled successfully, uid: 6, identifier: 3
+Dec 22 15:14:24.243 INFO event handled successfully, uid: 3, identifier: 3
+Dec 22 15:14:24.246 INFO event handled successfully, uid: 4, identifier: 3
+Dec 22 15:14:24.248 INFO event handled successfully, uid: 5, identifier: 3
+Dec 22 15:14:29.051 INFO publishing a new event, event_identifier: 4
+Dec 22 15:14:29.472 INFO event handled successfully, uid: 4, identifier: 4
+Dec 22 15:14:29.478 INFO event handled successfully, uid: 1, identifier: 4
+Dec 22 15:14:29.481 INFO event handled successfully, uid: 6, identifier: 4
+Dec 22 15:14:29.483 INFO event handled successfully, uid: 5, identifier: 4
+Dec 22 15:14:29.488 INFO event handled successfully, uid: 3, identifier: 4
+Dec 22 15:14:29.491 INFO event handled successfully, uid: 2, identifier: 4
+Dec 22 15:14:34.050 INFO publishing a new event, event_identifier: 5
+Dec 22 15:14:34.273 INFO event handled successfully, uid: 3, identifier: 5
+Dec 22 15:14:34.280 INFO event handled successfully, uid: 2, identifier: 5
+Dec 22 15:14:34.283 INFO event handled successfully, uid: 1, identifier: 5
+Dec 22 15:14:34.287 INFO event handled successfully, uid: 5, identifier: 5
+Dec 22 15:14:34.290 INFO event handled successfully, uid: 4, identifier: 5
+Dec 22 15:14:34.295 INFO event handled successfully, uid: 6, identifier: 5
+Dec 22 15:14:37.050 INFO publishing a new event, event_identifier: 6
+Dec 22 15:14:37.247 INFO event handled successfully, uid: 1, identifier: 6
+Dec 22 15:14:37.255 INFO event handled successfully, uid: 4, identifier: 6
+Dec 22 15:14:37.259 INFO event handled successfully, uid: 2, identifier: 6
+Dec 22 15:14:37.263 INFO event handled successfully, uid: 6, identifier: 6
+Dec 22 15:14:37.266 INFO event handled successfully, uid: 5, identifier: 6
+Dec 22 15:14:37.270 INFO event handled successfully, uid: 3, identifier: 6
+Dec 22 15:14:42.052 INFO publishing a new event, event_identifier: 7
+Dec 22 15:14:42.239 INFO event handled successfully, uid: 6, identifier: 7
+Dec 22 15:14:42.244 INFO event handled successfully, uid: 1, identifier: 7
+Dec 22 15:14:42.250 INFO event handled successfully, uid: 3, identifier: 7
+Dec 22 15:14:42.253 INFO event handled successfully, uid: 2, identifier: 7
+Dec 22 15:14:42.258 INFO event handled successfully, uid: 4, identifier: 7
+Dec 22 15:14:42.261 INFO event handled successfully, uid: 5, identifier: 7
+Dec 22 15:14:47.054 INFO publishing a new event, event_identifier: 8
+Dec 22 15:14:47.257 INFO event handled successfully, uid: 1, identifier: 8
+Dec 22 15:14:47.265 INFO event handled successfully, uid: 4, identifier: 8
+Dec 22 15:14:47.271 INFO event handled successfully, uid: 3, identifier: 8
+Dec 22 15:14:47.274 INFO event handled successfully, uid: 2, identifier: 8
+Dec 22 15:14:47.279 INFO event handled successfully, uid: 5, identifier: 8
+Dec 22 15:14:47.282 INFO event handled successfully, uid: 6, identifier: 8
+Dec 22 15:14:52.054 INFO publishing a new event, event_identifier: 9
+Dec 22 15:14:52.293 INFO event handled successfully, uid: 2, identifier: 9
+Dec 22 15:14:52.305 INFO event handled successfully, uid: 6, identifier: 9
+Dec 22 15:14:52.314 INFO event handled successfully, uid: 1, identifier: 9
+Dec 22 15:14:52.319 INFO event handled successfully, uid: 3, identifier: 9
+Dec 22 15:14:52.328 INFO event handled successfully, uid: 4, identifier: 9
+Dec 22 15:14:52.336 INFO event handled successfully, uid: 5, identifier: 9
+Dec 22 15:14:56.056 INFO publishing a new event, event_identifier: 10
+Dec 22 15:14:56.241 INFO event handled successfully, uid: 4, identifier: 10
+Dec 22 15:14:56.248 INFO event handled successfully, uid: 1, identifier: 10
+Dec 22 15:14:56.253 INFO event handled successfully, uid: 3, identifier: 10
+Dec 22 15:14:56.256 INFO event handled successfully, uid: 6, identifier: 10
+Dec 22 15:14:56.261 INFO event handled successfully, uid: 5, identifier: 10
+Dec 22 15:14:56.264 INFO event handled successfully, uid: 2, identifier: 10
+Dec 22 15:14:59.057 INFO publishing a new event, event_identifier: 11
+Dec 22 15:14:59.323 INFO event handled successfully, uid: 1, identifier: 11
+Dec 22 15:14:59.328 INFO event handled successfully, uid: 4, identifier: 11
+Dec 22 15:14:59.332 INFO event handled successfully, uid: 5, identifier: 11
+Dec 22 15:14:59.336 INFO event handled successfully, uid: 6, identifier: 11
+Dec 22 15:14:59.341 INFO event handled successfully, uid: 3, identifier: 11
+Dec 22 15:14:59.344 INFO event handled successfully, uid: 2, identifier: 11
+Dec 22 15:15:02.057 INFO publishing a new event, event_identifier: 12
+Dec 22 15:15:02.242 INFO event handled successfully, uid: 2, identifier: 12
+Dec 22 15:15:02.246 INFO event handled successfully, uid: 6, identifier: 12
+Dec 22 15:15:02.253 INFO event handled successfully, uid: 1, identifier: 12
+Dec 22 15:15:02.257 INFO event handled successfully, uid: 3, identifier: 12
+Dec 22 15:15:02.261 INFO event handled successfully, uid: 5, identifier: 12
+Dec 22 15:15:02.264 INFO event handled successfully, uid: 4, identifier: 12
+Dec 22 15:15:06.058 INFO publishing a new event, event_identifier: 13
+Dec 22 15:15:06.437 INFO event handled successfully, uid: 1, identifier: 13
+Dec 22 15:15:06.441 INFO event handled successfully, uid: 4, identifier: 13
+Dec 22 15:15:06.445 INFO event handled successfully, uid: 3, identifier: 13
+Dec 22 15:15:06.452 INFO event handled successfully, uid: 2, identifier: 13
+Dec 22 15:15:06.455 INFO event handled successfully, uid: 6, identifier: 13
+Dec 22 15:15:06.460 INFO event handled successfully, uid: 5, identifier: 13
+Dec 22 15:15:12.060 INFO publishing a new event, event_identifier: 14
+Dec 22 15:15:12.246 INFO event handled successfully, uid: 1, identifier: 14
+Dec 22 15:15:12.251 INFO event handled successfully, uid: 2, identifier: 14
+Dec 22 15:15:12.257 INFO event handled successfully, uid: 3, identifier: 14
+Dec 22 15:15:12.262 INFO event handled successfully, uid: 6, identifier: 14
+Dec 22 15:15:12.265 INFO event handled successfully, uid: 5, identifier: 14
+Dec 22 15:15:12.269 INFO event handled successfully, uid: 4, identifier: 14
+Dec 22 15:15:16.060 INFO publishing a new event, event_identifier: 15
+Dec 22 15:15:16.261 INFO event handled successfully, uid: 2, identifier: 15
+Dec 22 15:15:16.267 INFO event handled successfully, uid: 1, identifier: 15
+Dec 22 15:15:16.271 INFO event handled successfully, uid: 3, identifier: 15
+Dec 22 15:15:16.276 INFO event handled successfully, uid: 5, identifier: 15
+Dec 22 15:15:16.282 INFO event handled successfully, uid: 6, identifier: 15
+Dec 22 15:15:16.285 INFO event handled successfully, uid: 4, identifier: 15
+Dec 22 15:15:21.061 INFO publishing a new event, event_identifier: 16
+Dec 22 15:15:21.247 INFO event handled successfully, uid: 3, identifier: 16
+Dec 22 15:15:21.252 INFO event handled successfully, uid: 1, identifier: 16
+Dec 22 15:15:21.259 INFO event handled successfully, uid: 2, identifier: 16
+Dec 22 15:15:21.262 INFO event handled successfully, uid: 6, identifier: 16
+Dec 22 15:15:21.265 INFO event handled successfully, uid: 4, identifier: 16
+Dec 22 15:15:21.270 INFO event handled successfully, uid: 5, identifier: 16
+Dec 22 15:15:25.062 INFO publishing a new event, event_identifier: 17
+Dec 22 15:15:25.263 INFO event handled successfully, uid: 6, identifier: 17
+Dec 22 15:15:25.266 INFO event handled successfully, uid: 2, identifier: 17
+Dec 22 15:15:25.270 INFO event handled successfully, uid: 1, identifier: 17
+Dec 22 15:15:25.277 INFO event handled successfully, uid: 3, identifier: 17
+Dec 22 15:15:25.280 INFO event handled successfully, uid: 5, identifier: 17
+Dec 22 15:15:25.284 INFO event handled successfully, uid: 4, identifier: 17
+Dec 22 15:15:28.063 INFO publishing a new event, event_identifier: 18
+Dec 22 15:15:28.253 INFO event handled successfully, uid: 6, identifier: 18
+Dec 22 15:15:28.261 INFO event handled successfully, uid: 1, identifier: 18
+Dec 22 15:15:28.266 INFO event handled successfully, uid: 2, identifier: 18
+Dec 22 15:15:28.269 INFO event handled successfully, uid: 4, identifier: 18
+Dec 22 15:15:28.273 INFO event handled successfully, uid: 3, identifier: 18
+Dec 22 15:15:28.277 INFO event handled successfully, uid: 5, identifier: 18
+Dec 22 15:15:33.064 INFO publishing a new event, event_identifier: 19
+Dec 22 15:15:33.264 INFO event handled successfully, uid: 6, identifier: 19
+Dec 22 15:15:33.267 INFO event handled successfully, uid: 1, identifier: 19
+Dec 22 15:15:33.270 INFO event handled successfully, uid: 2, identifier: 19
+Dec 22 15:15:33.276 INFO event handled successfully, uid: 3, identifier: 19
+Dec 22 15:15:33.280 INFO event handled successfully, uid: 4, identifier: 19
+Dec 22 15:15:33.285 INFO event handled successfully, uid: 5, identifier: 19
+Dec 22 15:15:37.066 INFO publishing a new event, event_identifier: 20
+Dec 22 15:15:37.255 INFO event handled successfully, uid: 2, identifier: 20
+Dec 22 15:15:37.262 INFO event handled successfully, uid: 5, identifier: 20
+Dec 22 15:15:37.267 INFO event handled successfully, uid: 6, identifier: 20
+Dec 22 15:15:37.270 INFO event handled successfully, uid: 1, identifier: 20
+Dec 22 15:15:37.273 INFO event handled successfully, uid: 4, identifier: 20
+Dec 22 15:15:37.277 INFO event handled successfully, uid: 3, identifier: 20
+Dec 22 15:15:40.066 INFO publishing a new event, event_identifier: 21
+Dec 22 15:15:40.250 INFO event handled successfully, uid: 2, identifier: 21
+Dec 22 15:15:40.258 INFO event handled successfully, uid: 6, identifier: 21
+Dec 22 15:15:40.262 INFO event handled successfully, uid: 4, identifier: 21
+Dec 22 15:15:40.265 INFO event handled successfully, uid: 3, identifier: 21
+Dec 22 15:15:40.269 INFO event handled successfully, uid: 1, identifier: 21
+Dec 22 15:15:40.273 INFO event handled successfully, uid: 5, identifier: 21
+Dec 22 15:15:44.067 INFO publishing a new event, event_identifier: 22
+Dec 22 15:15:44.249 INFO event handled successfully, uid: 3, identifier: 22
+Dec 22 15:15:44.254 INFO event handled successfully, uid: 4, identifier: 22
+Dec 22 15:15:44.260 INFO event handled successfully, uid: 2, identifier: 22
+Dec 22 15:15:44.264 INFO event handled successfully, uid: 6, identifier: 22
+Dec 22 15:15:44.267 INFO event handled successfully, uid: 1, identifier: 22
+Dec 22 15:15:44.271 INFO event handled successfully, uid: 5, identifier: 22
+Dec 22 15:15:47.068 INFO publishing a new event, event_identifier: 23
+Dec 22 15:15:47.267 INFO event handled successfully, uid: 2, identifier: 23
+Dec 22 15:15:47.271 INFO event handled successfully, uid: 1, identifier: 23
+Dec 22 15:15:47.278 INFO event handled successfully, uid: 4, identifier: 23
+Dec 22 15:15:47.282 INFO event handled successfully, uid: 6, identifier: 23
+Dec 22 15:15:47.285 INFO event handled successfully, uid: 5, identifier: 23
+Dec 22 15:15:47.289 INFO event handled successfully, uid: 3, identifier: 23
+Dec 22 15:15:51.070 INFO publishing a new event, event_identifier: 24
+Dec 22 15:15:51.252 INFO event handled successfully, uid: 2, identifier: 24
+Dec 22 15:15:51.257 INFO event handled successfully, uid: 3, identifier: 24
+Dec 22 15:15:51.263 INFO event handled successfully, uid: 4, identifier: 24
+Dec 22 15:15:51.266 INFO event handled successfully, uid: 1, identifier: 24
+Dec 22 15:15:51.270 INFO event handled successfully, uid: 6, identifier: 24
+Dec 22 15:15:51.274 INFO event handled successfully, uid: 5, identifier: 24
+Dec 22 15:15:54.071 INFO publishing a new event, event_identifier: 25
+Dec 22 15:15:54.254 INFO event handled successfully, uid: 4, identifier: 25
+Dec 22 15:15:54.258 INFO event handled successfully, uid: 6, identifier: 25
+Dec 22 15:15:54.265 INFO event handled successfully, uid: 1, identifier: 25
+Dec 22 15:15:54.269 INFO event handled successfully, uid: 2, identifier: 25
+Dec 22 15:15:54.273 INFO event handled successfully, uid: 5, identifier: 25
+Dec 22 15:15:54.276 INFO event handled successfully, uid: 3, identifier: 25
+Dec 22 15:15:59.074 INFO publishing a new event, event_identifier: 26
+Dec 22 15:15:59.448 INFO event handled successfully, uid: 2, identifier: 26
+Dec 22 15:15:59.454 INFO event handled successfully, uid: 6, identifier: 26
+Dec 22 15:15:59.457 INFO event handled successfully, uid: 1, identifier: 26
+Dec 22 15:15:59.461 INFO event handled successfully, uid: 3, identifier: 26
+Dec 22 15:15:59.465 INFO event handled successfully, uid: 4, identifier: 26
+Dec 22 15:15:59.469 INFO event handled successfully, uid: 5, identifier: 26
+Dec 22 15:16:03.072 INFO publishing a new event, event_identifier: 27
+Dec 22 15:16:03.271 INFO event handled successfully, uid: 3, identifier: 27
+Dec 22 15:16:03.279 INFO event handled successfully, uid: 6, identifier: 27
+Dec 22 15:16:03.285 INFO event handled successfully, uid: 5, identifier: 27
+Dec 22 15:16:03.289 INFO event handled successfully, uid: 2, identifier: 27
+Dec 22 15:16:03.294 INFO event handled successfully, uid: 1, identifier: 27
+Dec 22 15:16:03.297 INFO event handled successfully, uid: 4, identifier: 27
+Dec 22 15:16:07.073 INFO publishing a new event, event_identifier: 28
+Dec 22 15:16:07.265 INFO event handled successfully, uid: 6, identifier: 28
+Dec 22 15:16:07.270 INFO event handled successfully, uid: 2, identifier: 28
+Dec 22 15:16:07.277 INFO event handled successfully, uid: 3, identifier: 28
+Dec 22 15:16:07.281 INFO event handled successfully, uid: 1, identifier: 28
+Dec 22 15:16:07.286 INFO event handled successfully, uid: 5, identifier: 28
+Dec 22 15:16:07.289 INFO event handled successfully, uid: 4, identifier: 28
+Dec 22 15:16:10.075 INFO publishing a new event, event_identifier: 29
+Dec 22 15:16:10.261 INFO event handled successfully, uid: 1, identifier: 29
+Dec 22 15:16:10.265 INFO event handled successfully, uid: 6, identifier: 29
+Dec 22 15:16:10.270 INFO event handled successfully, uid: 2, identifier: 29
+Dec 22 15:16:10.276 INFO event handled successfully, uid: 3, identifier: 29
+Dec 22 15:16:10.279 INFO event handled successfully, uid: 5, identifier: 29
+Dec 22 15:16:10.283 INFO event handled successfully, uid: 4, identifier: 29
+Dec 22 15:16:15.076 INFO publishing a new event, event_identifier: 30
+Dec 22 15:16:15.273 INFO event handled successfully, uid: 6, identifier: 30
+Dec 22 15:16:15.284 INFO event handled successfully, uid: 1, identifier: 30
+Dec 22 15:16:15.287 INFO event handled successfully, uid: 2, identifier: 30
+Dec 22 15:16:15.291 INFO event handled successfully, uid: 5, identifier: 30
+Dec 22 15:16:15.295 INFO event handled successfully, uid: 3, identifier: 30
+Dec 22 15:16:15.299 INFO event handled successfully, uid: 4, identifier: 30
+Dec 22 15:16:21.077 INFO publishing a new event, event_identifier: 31
+Dec 22 15:16:21.267 INFO event handled successfully, uid: 1, identifier: 31
+Dec 22 15:16:21.272 INFO event handled successfully, uid: 2, identifier: 31
+Dec 22 15:16:21.278 INFO event handled successfully, uid: 6, identifier: 31
+Dec 22 15:16:21.282 INFO event handled successfully, uid: 3, identifier: 31
+Dec 22 15:16:21.286 INFO event handled successfully, uid: 5, identifier: 31
+Dec 22 15:16:21.290 INFO event handled successfully, uid: 4, identifier: 31
+Dec 22 15:16:25.078 INFO publishing a new event, event_identifier: 32
+Dec 22 15:16:25.261 INFO event handled successfully, uid: 2, identifier: 32
+Dec 22 15:16:25.264 INFO event handled successfully, uid: 3, identifier: 32
+Dec 22 15:16:25.268 INFO event handled successfully, uid: 1, identifier: 32
+Dec 22 15:16:25.275 INFO event handled successfully, uid: 6, identifier: 32
+Dec 22 15:16:25.279 INFO event handled successfully, uid: 5, identifier: 32
+Dec 22 15:16:25.283 INFO event handled successfully, uid: 4, identifier: 32
+Dec 22 15:16:30.080 INFO publishing a new event, event_identifier: 33
+Dec 22 15:16:30.286 INFO event handled successfully, uid: 6, identifier: 33
+Dec 22 15:16:30.294 INFO event handled successfully, uid: 1, identifier: 33
+Dec 22 15:16:30.299 INFO event handled successfully, uid: 3, identifier: 33
+Dec 22 15:16:30.302 INFO event handled successfully, uid: 4, identifier: 33
+Dec 22 15:16:30.306 INFO event handled successfully, uid: 5, identifier: 33
+Dec 22 15:16:30.310 INFO event handled successfully, uid: 2, identifier: 33
+Dec 22 15:16:34.080 INFO publishing a new event, event_identifier: 34
+Dec 22 15:16:34.266 INFO event handled successfully, uid: 1, identifier: 34
+Dec 22 15:16:34.270 INFO event handled successfully, uid: 3, identifier: 34
+Dec 22 15:16:34.275 INFO event handled successfully, uid: 2, identifier: 34
+Dec 22 15:16:34.280 INFO event handled successfully, uid: 4, identifier: 34
+Dec 22 15:16:34.283 INFO event handled successfully, uid: 6, identifier: 34
+Dec 22 15:16:34.287 INFO event handled successfully, uid: 5, identifier: 34
+Dec 22 15:16:40.081 INFO publishing a new event, event_identifier: 35
+Dec 22 15:16:40.267 INFO event handled successfully, uid: 2, identifier: 35
+Dec 22 15:16:40.273 INFO event handled successfully, uid: 6, identifier: 35
+Dec 22 15:16:40.277 INFO event handled successfully, uid: 1, identifier: 35
+Dec 22 15:16:40.281 INFO event handled successfully, uid: 3, identifier: 35
+Dec 22 15:16:40.284 INFO event handled successfully, uid: 4, identifier: 35
+Dec 22 15:16:40.288 INFO event handled successfully, uid: 5, identifier: 35
+Dec 22 15:16:43.082 INFO publishing a new event, event_identifier: 36
+Dec 22 15:16:43.276 INFO event handled successfully, uid: 4, identifier: 36
+Dec 22 15:16:43.282 INFO event handled successfully, uid: 3, identifier: 36
+Dec 22 15:16:43.287 INFO event handled successfully, uid: 6, identifier: 36
+Dec 22 15:16:43.290 INFO event handled successfully, uid: 1, identifier: 36
+Dec 22 15:16:43.294 INFO event handled successfully, uid: 5, identifier: 36
+Dec 22 15:16:43.297 INFO event handled successfully, uid: 2, identifier: 36
+Dec 22 15:16:49.083 INFO publishing a new event, event_identifier: 37
+Dec 22 15:16:49.267 INFO event handled successfully, uid: 6, identifier: 37
+Dec 22 15:16:49.272 INFO event handled successfully, uid: 2, identifier: 37
+Dec 22 15:16:49.279 INFO event handled successfully, uid: 3, identifier: 37
+Dec 22 15:16:49.282 INFO event handled successfully, uid: 1, identifier: 37
+Dec 22 15:16:49.285 INFO event handled successfully, uid: 5, identifier: 37
+Dec 22 15:16:49.290 INFO event handled successfully, uid: 4, identifier: 37
+Dec 22 15:16:54.084 INFO publishing a new event, event_identifier: 38
+Dec 22 15:16:54.267 INFO event handled successfully, uid: 2, identifier: 38
+Dec 22 15:16:54.274 INFO event handled successfully, uid: 1, identifier: 38
+Dec 22 15:16:54.278 INFO event handled successfully, uid: 3, identifier: 38
+Dec 22 15:16:54.282 INFO event handled successfully, uid: 4, identifier: 38
+Dec 22 15:16:54.286 INFO event handled successfully, uid: 6, identifier: 38
+Dec 22 15:16:54.290 INFO event handled successfully, uid: 5, identifier: 38
+Dec 22 15:17:00.085 INFO publishing a new event, event_identifier: 39
+Dec 22 15:17:00.271 INFO event handled successfully, uid: 2, identifier: 39
+Dec 22 15:17:00.277 INFO event handled successfully, uid: 1, identifier: 39
+Dec 22 15:17:00.283 INFO event handled successfully, uid: 4, identifier: 39
+Dec 22 15:17:00.287 INFO event handled successfully, uid: 6, identifier: 39
+Dec 22 15:17:00.290 INFO event handled successfully, uid: 5, identifier: 39
+Dec 22 15:17:00.294 INFO event handled successfully, uid: 3, identifier: 39
+Dec 22 15:17:03.086 INFO publishing a new event, event_identifier: 40
+Dec 22 15:17:03.270 INFO event handled successfully, uid: 1, identifier: 40
+Dec 22 15:17:03.278 INFO event handled successfully, uid: 2, identifier: 40
+Dec 22 15:17:03.282 INFO event handled successfully, uid: 6, identifier: 40
+Dec 22 15:17:03.285 INFO event handled successfully, uid: 3, identifier: 40
+Dec 22 15:17:03.289 INFO event handled successfully, uid: 5, identifier: 40
+Dec 22 15:17:03.292 INFO event handled successfully, uid: 4, identifier: 40
+Dec 22 15:17:09.087 INFO publishing a new event, event_identifier: 41
+Dec 22 15:17:09.293 INFO event handled successfully, uid: 2, identifier: 41
+Dec 22 15:17:09.299 INFO event handled successfully, uid: 1, identifier: 41
+Dec 22 15:17:09.304 INFO event handled successfully, uid: 6, identifier: 41
+Dec 22 15:17:09.307 INFO event handled successfully, uid: 3, identifier: 41
+Dec 22 15:17:09.311 INFO event handled successfully, uid: 5, identifier: 41
+Dec 22 15:17:09.315 INFO event handled successfully, uid: 4, identifier: 41
+Dec 22 15:17:15.091 INFO publishing a new event, event_identifier: 42
+Dec 22 15:17:15.379 INFO event handled successfully, uid: 1, identifier: 42
+Dec 22 15:17:15.384 INFO event handled successfully, uid: 2, identifier: 42
+Dec 22 15:17:15.387 INFO event handled successfully, uid: 3, identifier: 42
+Dec 22 15:17:15.391 INFO event handled successfully, uid: 6, identifier: 42
+Dec 22 15:17:15.394 INFO event handled successfully, uid: 5, identifier: 42
+Dec 22 15:17:15.398 INFO event handled successfully, uid: 4, identifier: 42
+Dec 22 15:17:18.089 INFO publishing a new event, event_identifier: 43
+Dec 22 15:17:18.276 INFO event handled successfully, uid: 2, identifier: 43
+Dec 22 15:17:18.281 INFO event handled successfully, uid: 1, identifier: 43
+Dec 22 15:17:18.284 INFO event handled successfully, uid: 4, identifier: 43
+Dec 22 15:17:18.288 INFO event handled successfully, uid: 6, identifier: 43
+Dec 22 15:17:18.292 INFO event handled successfully, uid: 3, identifier: 43
+Dec 22 15:17:18.296 INFO event handled successfully, uid: 5, identifier: 43
+Dec 22 15:17:24.091 INFO publishing a new event, event_identifier: 44
+Dec 22 15:17:24.337 INFO event handled successfully, uid: 6, identifier: 44
+Dec 22 15:17:24.354 INFO event handled successfully, uid: 5, identifier: 44
+Dec 22 15:17:24.356 INFO event handled successfully, uid: 3, identifier: 44
+Dec 22 15:17:24.359 INFO event handled successfully, uid: 1, identifier: 44
+Dec 22 15:17:24.365 INFO event handled successfully, uid: 2, identifier: 44
+Dec 22 15:17:24.367 INFO event handled successfully, uid: 4, identifier: 44
+Dec 22 15:17:30.093 INFO publishing a new event, event_identifier: 45
+Dec 22 15:17:30.285 INFO event handled successfully, uid: 6, identifier: 45
+Dec 22 15:17:30.292 INFO event handled successfully, uid: 2, identifier: 45
+Dec 22 15:17:30.298 INFO event handled successfully, uid: 1, identifier: 45
+Dec 22 15:17:30.301 INFO event handled successfully, uid: 3, identifier: 45
+Dec 22 15:17:30.307 INFO event handled successfully, uid: 5, identifier: 45
+Dec 22 15:17:30.311 INFO event handled successfully, uid: 4, identifier: 45
+Dec 22 15:17:34.093 INFO publishing a new event, event_identifier: 46
+Dec 22 15:17:34.274 INFO event handled successfully, uid: 1, identifier: 46
+Dec 22 15:17:34.282 INFO event handled successfully, uid: 2, identifier: 46
+Dec 22 15:17:34.287 INFO event handled successfully, uid: 6, identifier: 46
+Dec 22 15:17:34.290 INFO event handled successfully, uid: 4, identifier: 46
+Dec 22 15:17:34.293 INFO event handled successfully, uid: 3, identifier: 46
+Dec 22 15:17:34.297 INFO event handled successfully, uid: 5, identifier: 46
+Dec 22 15:17:40.093 INFO publishing a new event, event_identifier: 47
+Dec 22 15:17:40.299 INFO event handled successfully, uid: 2, identifier: 47
+Dec 22 15:17:40.303 INFO event handled successfully, uid: 1, identifier: 47
+Dec 22 15:17:40.307 INFO event handled successfully, uid: 3, identifier: 47
+Dec 22 15:17:40.314 INFO event handled successfully, uid: 6, identifier: 47
+Dec 22 15:17:40.320 INFO event handled successfully, uid: 4, identifier: 47
+Dec 22 15:17:40.323 INFO event handled successfully, uid: 5, identifier: 47
+Dec 22 15:17:43.095 INFO publishing a new event, event_identifier: 48
+Dec 22 15:17:43.281 INFO event handled successfully, uid: 1, identifier: 48
+Dec 22 15:17:43.287 INFO event handled successfully, uid: 3, identifier: 48
+Dec 22 15:17:43.292 INFO event handled successfully, uid: 6, identifier: 48
+Dec 22 15:17:43.296 INFO event handled successfully, uid: 2, identifier: 48
+Dec 22 15:17:43.298 INFO event handled successfully, uid: 4, identifier: 48
+Dec 22 15:17:43.302 INFO event handled successfully, uid: 5, identifier: 48
+Dec 22 15:17:47.095 INFO publishing a new event, event_identifier: 49
+Dec 22 15:17:47.383 INFO event handled successfully, uid: 3, identifier: 49
+Dec 22 15:17:47.393 INFO event handled successfully, uid: 5, identifier: 49
+Dec 22 15:17:47.396 INFO event handled successfully, uid: 1, identifier: 49
+Dec 22 15:17:47.403 INFO event handled successfully, uid: 2, identifier: 49
+Dec 22 15:17:47.423 INFO event handled successfully, uid: 6, identifier: 49
+Dec 22 15:17:47.433 INFO event handled successfully, uid: 4, identifier: 49
+Dec 22 15:17:52.097 INFO publishing a new event, event_identifier: 50
+Dec 22 15:17:52.342 INFO event handled successfully, uid: 1, identifier: 50
+Dec 22 15:17:52.348 INFO event handled successfully, uid: 3, identifier: 50
+Dec 22 15:17:52.351 INFO event handled successfully, uid: 2, identifier: 50
+Dec 22 15:17:52.356 INFO event handled successfully, uid: 6, identifier: 50
+Dec 22 15:17:52.359 INFO event handled successfully, uid: 4, identifier: 50
+Dec 22 15:17:52.362 INFO event handled successfully, uid: 5, identifier: 50
+Dec 22 15:17:57.098 INFO publishing a new event, event_identifier: 51
+Dec 22 15:17:57.284 INFO event handled successfully, uid: 1, identifier: 51
+Dec 22 15:17:57.294 INFO event handled successfully, uid: 2, identifier: 51
+Dec 22 15:17:57.300 INFO event handled successfully, uid: 5, identifier: 51
+Dec 22 15:17:57.304 INFO event handled successfully, uid: 3, identifier: 51
+Dec 22 15:17:57.308 INFO event handled successfully, uid: 4, identifier: 51
+Dec 22 15:17:57.311 INFO event handled successfully, uid: 6, identifier: 51
+Dec 22 15:18:00.099 INFO publishing a new event, event_identifier: 52
+Dec 22 15:18:00.284 INFO event handled successfully, uid: 3, identifier: 52
+Dec 22 15:18:00.290 INFO event handled successfully, uid: 1, identifier: 52
+Dec 22 15:18:00.296 INFO event handled successfully, uid: 2, identifier: 52
+Dec 22 15:18:00.299 INFO event handled successfully, uid: 4, identifier: 52
+Dec 22 15:18:00.302 INFO event handled successfully, uid: 6, identifier: 52
+Dec 22 15:18:00.306 INFO event handled successfully, uid: 5, identifier: 52
+Dec 22 15:18:04.100 INFO publishing a new event, event_identifier: 53
+Dec 22 15:18:04.310 INFO event handled successfully, uid: 1, identifier: 53
+Dec 22 15:18:04.318 INFO event handled successfully, uid: 2, identifier: 53
+Dec 22 15:18:04.322 INFO event handled successfully, uid: 5, identifier: 53
+Dec 22 15:18:04.326 INFO event handled successfully, uid: 4, identifier: 53
+Dec 22 15:18:04.330 INFO event handled successfully, uid: 3, identifier: 53
+Dec 22 15:18:04.333 INFO event handled successfully, uid: 6, identifier: 53
+Dec 22 15:18:08.102 INFO publishing a new event, event_identifier: 54
+Dec 22 15:18:08.397 INFO event handled successfully, uid: 2, identifier: 54
+Dec 22 15:18:08.402 INFO event handled successfully, uid: 6, identifier: 54
+Dec 22 15:18:08.405 INFO event handled successfully, uid: 1, identifier: 54
+Dec 22 15:18:08.410 INFO event handled successfully, uid: 3, identifier: 54
+Dec 22 15:18:08.414 INFO event handled successfully, uid: 4, identifier: 54
+Dec 22 15:18:08.418 INFO event handled successfully, uid: 5, identifier: 54
+Dec 22 15:18:11.101 INFO publishing a new event, event_identifier: 55
+Dec 22 15:18:11.289 INFO event handled successfully, uid: 1, identifier: 55
+Dec 22 15:18:11.295 INFO event handled successfully, uid: 2, identifier: 55
+Dec 22 15:18:11.300 INFO event handled successfully, uid: 3, identifier: 55
+Dec 22 15:18:11.304 INFO event handled successfully, uid: 6, identifier: 55
+Dec 22 15:18:11.307 INFO event handled successfully, uid: 4, identifier: 55
+Dec 22 15:18:11.311 INFO event handled successfully, uid: 5, identifier: 55
+Dec 22 15:18:15.102 INFO publishing a new event, event_identifier: 56
+Dec 22 15:18:15.565 INFO event handled successfully, uid: 1, identifier: 56
+Dec 22 15:18:15.572 INFO event handled successfully, uid: 6, identifier: 56
+Dec 22 15:18:15.576 INFO event handled successfully, uid: 2, identifier: 56
+Dec 22 15:18:15.579 INFO event handled successfully, uid: 3, identifier: 56
+Dec 22 15:18:15.583 INFO event handled successfully, uid: 5, identifier: 56
+Dec 22 15:18:15.588 INFO event handled successfully, uid: 4, identifier: 56
+Dec 22 15:18:18.104 INFO publishing a new event, event_identifier: 57
+Dec 22 15:18:18.288 INFO event handled successfully, uid: 2, identifier: 57
+Dec 22 15:18:18.296 INFO event handled successfully, uid: 1, identifier: 57
+Dec 22 15:18:18.302 INFO event handled successfully, uid: 3, identifier: 57
+Dec 22 15:18:18.305 INFO event handled successfully, uid: 6, identifier: 57
+Dec 22 15:18:18.309 INFO event handled successfully, uid: 5, identifier: 57
+Dec 22 15:18:18.313 INFO event handled successfully, uid: 4, identifier: 57
+Dec 22 15:18:23.105 INFO publishing a new event, event_identifier: 58
+Dec 22 15:18:23.300 INFO event handled successfully, uid: 3, identifier: 58
+Dec 22 15:18:23.306 INFO event handled successfully, uid: 1, identifier: 58
+Dec 22 15:18:23.310 INFO event handled successfully, uid: 2, identifier: 58
+Dec 22 15:18:23.314 INFO event handled successfully, uid: 6, identifier: 58
+Dec 22 15:18:23.317 INFO event handled successfully, uid: 5, identifier: 58
+Dec 22 15:18:23.322 INFO event handled successfully, uid: 4, identifier: 58
+Dec 22 15:18:26.105 INFO publishing a new event, event_identifier: 59
+Dec 22 15:18:26.289 INFO event handled successfully, uid: 1, identifier: 59
+Dec 22 15:18:26.294 INFO event handled successfully, uid: 2, identifier: 59
+Dec 22 15:18:26.301 INFO event handled successfully, uid: 5, identifier: 59
+Dec 22 15:18:26.304 INFO event handled successfully, uid: 6, identifier: 59
+Dec 22 15:18:26.307 INFO event handled successfully, uid: 4, identifier: 59
+Dec 22 15:18:26.312 INFO event handled successfully, uid: 3, identifier: 59
+Dec 22 15:18:29.108 INFO publishing a new event, event_identifier: 60
+Dec 22 15:18:29.511 INFO event handled successfully, uid: 3, identifier: 60
+Dec 22 15:18:29.516 INFO event handled successfully, uid: 1, identifier: 60
+Dec 22 15:18:29.519 INFO event handled successfully, uid: 6, identifier: 60
+Dec 22 15:18:29.524 INFO event handled successfully, uid: 2, identifier: 60
+Dec 22 15:18:29.528 INFO event handled successfully, uid: 4, identifier: 60
+Dec 22 15:18:29.532 INFO event handled successfully, uid: 5, identifier: 60
+Dec 22 15:18:33.107 INFO publishing a new event, event_identifier: 61
+Dec 22 15:18:33.291 INFO event handled successfully, uid: 2, identifier: 61
+Dec 22 15:18:33.295 INFO event handled successfully, uid: 3, identifier: 61
+Dec 22 15:18:33.300 INFO event handled successfully, uid: 1, identifier: 61
+Dec 22 15:18:33.304 INFO event handled successfully, uid: 6, identifier: 61
+Dec 22 15:18:33.308 INFO event handled successfully, uid: 4, identifier: 61
+Dec 22 15:18:33.311 INFO event handled successfully, uid: 5, identifier: 61
+Dec 22 15:18:39.108 INFO publishing a new event, event_identifier: 62
+Dec 22 15:18:39.294 INFO event handled successfully, uid: 2, identifier: 62
+Dec 22 15:18:39.297 INFO event handled successfully, uid: 3, identifier: 62
+Dec 22 15:18:39.301 INFO event handled successfully, uid: 1, identifier: 62
+Dec 22 15:18:39.308 INFO event handled successfully, uid: 4, identifier: 62
+Dec 22 15:18:39.312 INFO event handled successfully, uid: 6, identifier: 62
+Dec 22 15:18:39.316 INFO event handled successfully, uid: 5, identifier: 62
+Dec 22 15:18:42.111 INFO publishing a new event, event_identifier: 63
+Dec 22 15:18:42.297 INFO event handled successfully, uid: 2, identifier: 63
+Dec 22 15:18:42.301 INFO event handled successfully, uid: 1, identifier: 63
+Dec 22 15:18:42.305 INFO event handled successfully, uid: 6, identifier: 63
+Dec 22 15:18:42.309 INFO event handled successfully, uid: 4, identifier: 63
+Dec 22 15:18:42.313 INFO event handled successfully, uid: 3, identifier: 63
+Dec 22 15:18:42.317 INFO event handled successfully, uid: 5, identifier: 63
+Dec 22 15:18:45.111 INFO publishing a new event, event_identifier: 64
+Dec 22 15:18:45.297 INFO event handled successfully, uid: 2, identifier: 64
+Dec 22 15:18:45.305 INFO event handled successfully, uid: 6, identifier: 64
+Dec 22 15:18:45.309 INFO event handled successfully, uid: 4, identifier: 64
+Dec 22 15:18:45.312 INFO event handled successfully, uid: 5, identifier: 64
+Dec 22 15:18:45.315 INFO event handled successfully, uid: 1, identifier: 64
+Dec 22 15:18:45.322 INFO event handled successfully, uid: 3, identifier: 64
+Dec 22 15:18:48.111 INFO publishing a new event, event_identifier: 65
+Dec 22 15:18:48.302 INFO event handled successfully, uid: 1, identifier: 65
+Dec 22 15:18:48.312 INFO event handled successfully, uid: 4, identifier: 65
+Dec 22 15:18:48.316 INFO event handled successfully, uid: 6, identifier: 65
+Dec 22 15:18:48.320 INFO event handled successfully, uid: 2, identifier: 65
+Dec 22 15:18:48.324 INFO event handled successfully, uid: 3, identifier: 65
+Dec 22 15:18:48.328 INFO event handled successfully, uid: 5, identifier: 65
+Dec 22 15:18:53.113 INFO publishing a new event, event_identifier: 66
+Dec 22 15:18:53.325 INFO event handled successfully, uid: 6, identifier: 66
+Dec 22 15:18:53.331 INFO event handled successfully, uid: 4, identifier: 66
+Dec 22 15:18:53.336 INFO event handled successfully, uid: 2, identifier: 66
+Dec 22 15:18:53.339 INFO event handled successfully, uid: 5, identifier: 66
+Dec 22 15:18:53.343 INFO event handled successfully, uid: 1, identifier: 66
+Dec 22 15:18:53.347 INFO event handled successfully, uid: 3, identifier: 66
+Dec 22 15:18:56.115 INFO publishing a new event, event_identifier: 67
+Dec 22 15:18:56.395 INFO event handled successfully, uid: 2, identifier: 67
+Dec 22 15:18:56.404 INFO event handled successfully, uid: 1, identifier: 67
+Dec 22 15:18:56.409 INFO event handled successfully, uid: 6, identifier: 67
+Dec 22 15:18:56.411 INFO event handled successfully, uid: 3, identifier: 67
+Dec 22 15:18:56.417 INFO event handled successfully, uid: 4, identifier: 67
+Dec 22 15:18:56.421 INFO event handled successfully, uid: 5, identifier: 67
+Dec 22 15:19:02.114 INFO publishing a new event, event_identifier: 68
+Dec 22 15:19:02.344 INFO event handled successfully, uid: 6, identifier: 68
+Dec 22 15:19:02.351 INFO event handled successfully, uid: 2, identifier: 68
+Dec 22 15:19:02.355 INFO event handled successfully, uid: 3, identifier: 68
+Dec 22 15:19:02.358 INFO event handled successfully, uid: 1, identifier: 68
+Dec 22 15:19:02.361 INFO event handled successfully, uid: 4, identifier: 68
+Dec 22 15:19:02.366 INFO event handled successfully, uid: 5, identifier: 68
+Dec 22 15:19:07.115 INFO publishing a new event, event_identifier: 69
+Dec 22 15:19:07.309 INFO event handled successfully, uid: 6, identifier: 69
+Dec 22 15:19:07.313 INFO event handled successfully, uid: 2, identifier: 69
+Dec 22 15:19:07.317 INFO event handled successfully, uid: 1, identifier: 69
+Dec 22 15:19:07.322 INFO event handled successfully, uid: 3, identifier: 69
+Dec 22 15:19:07.325 INFO event handled successfully, uid: 4, identifier: 69
+Dec 22 15:19:07.328 INFO event handled successfully, uid: 5, identifier: 69
+Dec 22 15:19:10.117 INFO publishing a new event, event_identifier: 70
+Dec 22 15:19:10.309 INFO event handled successfully, uid: 2, identifier: 70
+Dec 22 15:19:10.316 INFO event handled successfully, uid: 1, identifier: 70
+Dec 22 15:19:10.321 INFO event handled successfully, uid: 3, identifier: 70
+Dec 22 15:19:10.324 INFO event handled successfully, uid: 6, identifier: 70
+Dec 22 15:19:10.328 INFO event handled successfully, uid: 5, identifier: 70
+Dec 22 15:19:10.333 INFO event handled successfully, uid: 4, identifier: 70
+Dec 22 15:19:16.126 INFO publishing a new event, event_identifier: 71
+Dec 22 15:19:16.580 INFO event handled successfully, uid: 1, identifier: 71
+Dec 22 15:19:16.584 INFO event handled successfully, uid: 2, identifier: 71
+Dec 22 15:19:16.588 INFO event handled successfully, uid: 3, identifier: 71
+Dec 22 15:19:16.593 INFO event handled successfully, uid: 4, identifier: 71
+Dec 22 15:19:16.596 INFO event handled successfully, uid: 6, identifier: 71
+Dec 22 15:19:16.601 INFO event handled successfully, uid: 5, identifier: 71
+Dec 22 15:19:19.123 INFO publishing a new event, event_identifier: 72
+Dec 22 15:19:19.389 INFO event handled successfully, uid: 3, identifier: 72
+Dec 22 15:19:19.396 INFO event handled successfully, uid: 5, identifier: 72
+Dec 22 15:19:19.401 INFO event handled successfully, uid: 2, identifier: 72
+Dec 22 15:19:19.405 INFO event handled successfully, uid: 1, identifier: 72
+Dec 22 15:19:19.410 INFO event handled successfully, uid: 4, identifier: 72
+Dec 22 15:19:19.416 INFO event handled successfully, uid: 6, identifier: 72
+Dec 22 15:19:22.125 INFO publishing a new event, event_identifier: 73
+Dec 22 15:19:22.481 INFO event handled successfully, uid: 1, identifier: 73
+Dec 22 15:19:22.488 INFO event handled successfully, uid: 3, identifier: 73
+Dec 22 15:19:22.493 INFO event handled successfully, uid: 2, identifier: 73
+Dec 22 15:19:22.497 INFO event handled successfully, uid: 6, identifier: 73
+Dec 22 15:19:22.501 INFO event handled successfully, uid: 5, identifier: 73
+Dec 22 15:19:22.505 INFO event handled successfully, uid: 4, identifier: 73
+Dec 22 15:19:28.126 INFO publishing a new event, event_identifier: 74
+Dec 22 15:19:28.510 INFO event handled successfully, uid: 2, identifier: 74
+Dec 22 15:19:28.520 INFO event handled successfully, uid: 1, identifier: 74
+Dec 22 15:19:28.526 INFO event handled successfully, uid: 6, identifier: 74
+Dec 22 15:19:28.530 INFO event handled successfully, uid: 4, identifier: 74
+Dec 22 15:19:28.534 INFO event handled successfully, uid: 3, identifier: 74
+Dec 22 15:19:28.537 INFO event handled successfully, uid: 5, identifier: 74
+Dec 22 15:19:34.127 INFO publishing a new event, event_identifier: 75
+Dec 22 15:19:34.309 INFO event handled successfully, uid: 1, identifier: 75
+Dec 22 15:19:34.314 INFO event handled successfully, uid: 3, identifier: 75
+Dec 22 15:19:34.317 INFO event handled successfully, uid: 4, identifier: 75
+Dec 22 15:19:34.323 INFO event handled successfully, uid: 6, identifier: 75
+Dec 22 15:19:34.327 INFO event handled successfully, uid: 2, identifier: 75
+Dec 22 15:19:34.332 INFO event handled successfully, uid: 5, identifier: 75
+Dec 22 15:19:37.128 INFO publishing a new event, event_identifier: 76
+Dec 22 15:19:37.319 INFO event handled successfully, uid: 2, identifier: 76
+Dec 22 15:19:37.326 INFO event handled successfully, uid: 4, identifier: 76
+Dec 22 15:19:37.330 INFO event handled successfully, uid: 1, identifier: 76
+Dec 22 15:19:37.333 INFO event handled successfully, uid: 3, identifier: 76
+Dec 22 15:19:37.337 INFO event handled successfully, uid: 6, identifier: 76
+Dec 22 15:19:37.341 INFO event handled successfully, uid: 5, identifier: 76
+Dec 22 15:19:43.131 INFO publishing a new event, event_identifier: 77
+Dec 22 15:19:43.313 INFO event handled successfully, uid: 6, identifier: 77
+Dec 22 15:19:43.319 INFO event handled successfully, uid: 1, identifier: 77
+Dec 22 15:19:43.325 INFO event handled successfully, uid: 2, identifier: 77
+Dec 22 15:19:43.328 INFO event handled successfully, uid: 3, identifier: 77
+Dec 22 15:19:43.331 INFO event handled successfully, uid: 4, identifier: 77
+Dec 22 15:19:43.336 INFO event handled successfully, uid: 5, identifier: 77
+Dec 22 15:19:48.131 INFO publishing a new event, event_identifier: 78
+Dec 22 15:19:48.337 INFO event handled successfully, uid: 2, identifier: 78
+Dec 22 15:19:48.341 INFO event handled successfully, uid: 1, identifier: 78
+Dec 22 15:19:48.345 INFO event handled successfully, uid: 6, identifier: 78
+Dec 22 15:19:48.359 INFO event handled successfully, uid: 4, identifier: 78
+Dec 22 15:19:48.363 INFO event handled successfully, uid: 3, identifier: 78
+Dec 22 15:19:48.370 INFO event handled successfully, uid: 5, identifier: 78
+Dec 22 15:19:52.133 INFO publishing a new event, event_identifier: 79
+Dec 22 15:19:52.320 INFO event handled successfully, uid: 6, identifier: 79
+Dec 22 15:19:52.323 INFO event handled successfully, uid: 1, identifier: 79
+Dec 22 15:19:52.326 INFO event handled successfully, uid: 3, identifier: 79
+Dec 22 15:19:52.330 INFO event handled successfully, uid: 2, identifier: 79
+Dec 22 15:19:52.333 INFO event handled successfully, uid: 5, identifier: 79
+Dec 22 15:19:52.336 INFO event handled successfully, uid: 4, identifier: 79
+Dec 22 15:19:55.133 INFO publishing a new event, event_identifier: 80
+Dec 22 15:19:55.353 INFO event handled successfully, uid: 2, identifier: 80
+Dec 22 15:19:55.359 INFO event handled successfully, uid: 1, identifier: 80
+Dec 22 15:19:55.365 INFO event handled successfully, uid: 6, identifier: 80
+Dec 22 15:19:55.367 INFO event handled successfully, uid: 3, identifier: 80
+Dec 22 15:19:55.370 INFO event handled successfully, uid: 4, identifier: 80
+Dec 22 15:19:55.373 INFO event handled successfully, uid: 5, identifier: 80
+Dec 22 15:20:00.133 INFO publishing a new event, event_identifier: 81
+Dec 22 15:20:00.315 INFO event handled successfully, uid: 6, identifier: 81
+Dec 22 15:20:00.320 INFO event handled successfully, uid: 3, identifier: 81
+Dec 22 15:20:00.324 INFO event handled successfully, uid: 1, identifier: 81
+Dec 22 15:20:00.327 INFO event handled successfully, uid: 2, identifier: 81
+Dec 22 15:20:00.329 INFO event handled successfully, uid: 5, identifier: 81
+Dec 22 15:20:00.333 INFO event handled successfully, uid: 4, identifier: 81
+Dec 22 15:20:03.136 INFO publishing a new event, event_identifier: 82
+Dec 22 15:20:03.462 INFO event handled successfully, uid: 3, identifier: 82
+Dec 22 15:20:03.466 INFO event handled successfully, uid: 6, identifier: 82
+Dec 22 15:20:03.469 INFO event handled successfully, uid: 1, identifier: 82
+Dec 22 15:20:03.471 INFO event handled successfully, uid: 4, identifier: 82
+Dec 22 15:20:03.475 INFO event handled successfully, uid: 5, identifier: 82
+Dec 22 15:20:03.478 INFO event handled successfully, uid: 2, identifier: 82
+Dec 22 15:20:08.137 INFO publishing a new event, event_identifier: 83
+Dec 22 15:20:08.341 INFO event handled successfully, uid: 1, identifier: 83
+Dec 22 15:20:08.344 INFO event handled successfully, uid: 6, identifier: 83
+Dec 22 15:20:08.347 INFO event handled successfully, uid: 4, identifier: 83
+Dec 22 15:20:08.351 INFO event handled successfully, uid: 2, identifier: 83
+Dec 22 15:20:08.355 INFO event handled successfully, uid: 3, identifier: 83
+Dec 22 15:20:08.358 INFO event handled successfully, uid: 5, identifier: 83
+Dec 22 15:20:14.136 INFO publishing a new event, event_identifier: 84
+Dec 22 15:20:14.327 INFO event handled successfully, uid: 4, identifier: 84
+Dec 22 15:20:14.332 INFO event handled successfully, uid: 1, identifier: 84
+Dec 22 15:20:14.335 INFO event handled successfully, uid: 2, identifier: 84
+Dec 22 15:20:14.340 INFO event handled successfully, uid: 3, identifier: 84
+Dec 22 15:20:14.344 INFO event handled successfully, uid: 5, identifier: 84
+Dec 22 15:20:14.349 INFO event handled successfully, uid: 6, identifier: 84
+Dec 22 15:20:18.137 INFO publishing a new event, event_identifier: 85
+Dec 22 15:20:18.319 INFO event handled successfully, uid: 2, identifier: 85
+Dec 22 15:20:18.327 INFO event handled successfully, uid: 1, identifier: 85
+Dec 22 15:20:18.333 INFO event handled successfully, uid: 3, identifier: 85
+Dec 22 15:20:18.336 INFO event handled successfully, uid: 4, identifier: 85
+Dec 22 15:20:18.340 INFO event handled successfully, uid: 5, identifier: 85
+Dec 22 15:20:18.344 INFO event handled successfully, uid: 6, identifier: 85
+Dec 22 15:20:24.138 INFO publishing a new event, event_identifier: 86
+Dec 22 15:20:24.322 INFO event handled successfully, uid: 6, identifier: 86
+Dec 22 15:20:24.329 INFO event handled successfully, uid: 1, identifier: 86
+Dec 22 15:20:24.332 INFO event handled successfully, uid: 3, identifier: 86
+Dec 22 15:20:24.336 INFO event handled successfully, uid: 2, identifier: 86
+Dec 22 15:20:24.339 INFO event handled successfully, uid: 5, identifier: 86
+Dec 22 15:20:24.344 INFO event handled successfully, uid: 4, identifier: 86
+Dec 22 15:20:29.139 INFO publishing a new event, event_identifier: 87
+Dec 22 15:20:29.333 INFO event handled successfully, uid: 1, identifier: 87
+Dec 22 15:20:29.340 INFO event handled successfully, uid: 2, identifier: 87
+Dec 22 15:20:29.347 INFO event handled successfully, uid: 4, identifier: 87
+Dec 22 15:20:29.352 INFO event handled successfully, uid: 3, identifier: 87
+Dec 22 15:20:29.356 INFO event handled successfully, uid: 6, identifier: 87
+Dec 22 15:20:29.360 INFO event handled successfully, uid: 5, identifier: 87
+Dec 22 15:20:34.142 INFO publishing a new event, event_identifier: 88
+Dec 22 15:20:34.349 INFO event handled successfully, uid: 6, identifier: 88
+Dec 22 15:20:34.354 INFO event handled successfully, uid: 4, identifier: 88
+Dec 22 15:20:34.357 INFO event handled successfully, uid: 2, identifier: 88
+Dec 22 15:20:34.362 INFO event handled successfully, uid: 1, identifier: 88
+Dec 22 15:20:34.366 INFO event handled successfully, uid: 5, identifier: 88
+Dec 22 15:20:34.371 INFO event handled successfully, uid: 3, identifier: 88
+Dec 22 15:20:39.141 INFO publishing a new event, event_identifier: 89
+Dec 22 15:20:39.358 INFO event handled successfully, uid: 4, identifier: 89
+Dec 22 15:20:39.362 INFO event handled successfully, uid: 3, identifier: 89
+Dec 22 15:20:39.365 INFO event handled successfully, uid: 2, identifier: 89
+Dec 22 15:20:39.374 INFO event handled successfully, uid: 5, identifier: 89
+Dec 22 15:20:39.378 INFO event handled successfully, uid: 1, identifier: 89
+Dec 22 15:20:39.382 INFO event handled successfully, uid: 6, identifier: 89
+Dec 22 15:20:44.143 INFO publishing a new event, event_identifier: 90
+Dec 22 15:20:44.327 INFO event handled successfully, uid: 6, identifier: 90
+Dec 22 15:20:44.333 INFO event handled successfully, uid: 4, identifier: 90
+Dec 22 15:20:44.338 INFO event handled successfully, uid: 1, identifier: 90
+Dec 22 15:20:44.343 INFO event handled successfully, uid: 2, identifier: 90
+Dec 22 15:20:44.346 INFO event handled successfully, uid: 3, identifier: 90
+Dec 22 15:20:44.350 INFO event handled successfully, uid: 5, identifier: 90
+Dec 22 15:20:50.143 INFO publishing a new event, event_identifier: 91
+Dec 22 15:20:50.330 INFO event handled successfully, uid: 1, identifier: 91
+Dec 22 15:20:50.337 INFO event handled successfully, uid: 3, identifier: 91
+Dec 22 15:20:50.342 INFO event handled successfully, uid: 4, identifier: 91
+Dec 22 15:20:50.346 INFO event handled successfully, uid: 2, identifier: 91
+Dec 22 15:20:50.351 INFO event handled successfully, uid: 6, identifier: 91
+Dec 22 15:20:50.356 INFO event handled successfully, uid: 5, identifier: 91
+Dec 22 15:20:56.144 INFO publishing a new event, event_identifier: 92
+Dec 22 15:20:56.421 INFO event handled successfully, uid: 1, identifier: 92
+Dec 22 15:20:56.426 INFO event handled successfully, uid: 3, identifier: 92
+Dec 22 15:20:56.429 INFO event handled successfully, uid: 2, identifier: 92
+Dec 22 15:20:56.433 INFO event handled successfully, uid: 4, identifier: 92
+Dec 22 15:20:56.436 INFO event handled successfully, uid: 5, identifier: 92
+Dec 22 15:20:56.440 INFO event handled successfully, uid: 6, identifier: 92
+Dec 22 15:21:02.146 INFO publishing a new event, event_identifier: 93
+Dec 22 15:21:02.330 INFO event handled successfully, uid: 2, identifier: 93
+Dec 22 15:21:02.337 INFO event handled successfully, uid: 5, identifier: 93
+Dec 22 15:21:02.342 INFO event handled successfully, uid: 6, identifier: 93
+Dec 22 15:21:02.345 INFO event handled successfully, uid: 3, identifier: 93
+Dec 22 15:21:02.351 INFO event handled successfully, uid: 1, identifier: 93
+Dec 22 15:21:02.355 INFO event handled successfully, uid: 4, identifier: 93
+Dec 22 15:21:05.147 INFO publishing a new event, event_identifier: 94
+Dec 22 15:21:05.567 INFO event handled successfully, uid: 2, identifier: 94
+Dec 22 15:21:05.579 INFO event handled successfully, uid: 1, identifier: 94
+Dec 22 15:21:05.583 INFO event handled successfully, uid: 4, identifier: 94
+Dec 22 15:21:05.585 INFO event handled successfully, uid: 6, identifier: 94
+Dec 22 15:21:05.590 INFO event handled successfully, uid: 5, identifier: 94
+Dec 22 15:21:05.593 INFO event handled successfully, uid: 3, identifier: 94
+Dec 22 15:21:09.148 INFO publishing a new event, event_identifier: 95
+Dec 22 15:21:09.325 INFO event handled successfully, uid: 6, identifier: 95
+Dec 22 15:21:09.335 INFO event handled successfully, uid: 2, identifier: 95
+Dec 22 15:21:09.341 INFO event handled successfully, uid: 1, identifier: 95
+Dec 22 15:21:09.346 INFO event handled successfully, uid: 3, identifier: 95
+Dec 22 15:21:09.350 INFO event handled successfully, uid: 4, identifier: 95
+Dec 22 15:21:09.355 INFO event handled successfully, uid: 5, identifier: 95
+Dec 22 15:21:12.148 INFO publishing a new event, event_identifier: 96
+Dec 22 15:21:12.366 INFO event handled successfully, uid: 2, identifier: 96
+Dec 22 15:21:12.379 INFO event handled successfully, uid: 6, identifier: 96
+Dec 22 15:21:12.388 INFO event handled successfully, uid: 3, identifier: 96
+Dec 22 15:21:12.393 INFO event handled successfully, uid: 1, identifier: 96
+Dec 22 15:21:12.400 INFO event handled successfully, uid: 5, identifier: 96
+Dec 22 15:21:12.405 INFO event handled successfully, uid: 4, identifier: 96
+Dec 22 15:21:16.149 INFO publishing a new event, event_identifier: 97
+Dec 22 15:21:16.340 INFO event handled successfully, uid: 2, identifier: 97
+Dec 22 15:21:16.351 INFO event handled successfully, uid: 1, identifier: 97
+Dec 22 15:21:16.355 INFO event handled successfully, uid: 6, identifier: 97
+Dec 22 15:21:16.358 INFO event handled successfully, uid: 4, identifier: 97
+Dec 22 15:21:16.363 INFO event handled successfully, uid: 5, identifier: 97
+Dec 22 15:21:16.366 INFO event handled successfully, uid: 3, identifier: 97
+Dec 22 15:21:19.151 INFO publishing a new event, event_identifier: 98
+Dec 22 15:21:19.444 INFO event handled successfully, uid: 3, identifier: 98
+Dec 22 15:21:19.448 INFO event handled successfully, uid: 6, identifier: 98
+Dec 22 15:21:19.451 INFO event handled successfully, uid: 2, identifier: 98
+Dec 22 15:21:19.465 INFO event handled successfully, uid: 1, identifier: 98
+Dec 22 15:21:19.470 INFO event handled successfully, uid: 5, identifier: 98
+Dec 22 15:21:19.473 INFO event handled successfully, uid: 4, identifier: 98
+Dec 22 15:21:25.152 INFO publishing a new event, event_identifier: 99
+Dec 22 15:21:25.337 INFO event handled successfully, uid: 2, identifier: 99
+Dec 22 15:21:25.342 INFO event handled successfully, uid: 1, identifier: 99
+Dec 22 15:21:25.349 INFO event handled successfully, uid: 6, identifier: 99
+Dec 22 15:21:25.354 INFO event handled successfully, uid: 3, identifier: 99
+Dec 22 15:21:25.358 INFO event handled successfully, uid: 5, identifier: 99
+Dec 22 15:21:25.361 INFO event handled successfully, uid: 4, identifier: 99
+Dec 22 15:21:30.152 INFO publishing a new event, event_identifier: 100
+Dec 22 15:21:30.334 INFO event handled successfully, uid: 2, identifier: 100
+Dec 22 15:21:30.338 INFO event handled successfully, uid: 6, identifier: 100
+Dec 22 15:21:30.347 INFO event handled successfully, uid: 1, identifier: 100
+Dec 22 15:21:30.350 INFO event handled successfully, uid: 3, identifier: 100
+Dec 22 15:21:30.355 INFO event handled successfully, uid: 4, identifier: 100
+Dec 22 15:21:30.359 INFO event handled successfully, uid: 5, identifier: 100
+Dec 22 15:21:34.154 INFO publishing a new event, event_identifier: 101
+Dec 22 15:21:34.378 INFO event handled successfully, uid: 1, identifier: 101
+Dec 22 15:21:34.382 INFO event handled successfully, uid: 4, identifier: 101
+Dec 22 15:21:34.386 INFO event handled successfully, uid: 6, identifier: 101
+Dec 22 15:21:34.393 INFO event handled successfully, uid: 2, identifier: 101
+Dec 22 15:21:34.397 INFO event handled successfully, uid: 3, identifier: 101
+Dec 22 15:21:34.400 INFO event handled successfully, uid: 5, identifier: 101
+Dec 22 15:21:40.165 INFO publishing a new event, event_identifier: 102
+Dec 22 15:21:41.032 INFO event handled successfully, uid: 2, identifier: 102
+Dec 22 15:21:41.042 INFO event handled successfully, uid: 6, identifier: 102
+Dec 22 15:21:41.045 INFO event handled successfully, uid: 3, identifier: 102
+Dec 22 15:21:41.048 INFO event handled successfully, uid: 4, identifier: 102
+Dec 22 15:21:41.050 INFO event handled successfully, uid: 1, identifier: 102
+Dec 22 15:21:41.054 INFO event handled successfully, uid: 5, identifier: 102
+Dec 22 15:21:45.161 INFO publishing a new event, event_identifier: 103
+Dec 22 15:21:45.351 INFO event handled successfully, uid: 6, identifier: 103
+Dec 22 15:21:45.355 INFO event handled successfully, uid: 3, identifier: 103
+Dec 22 15:21:45.358 INFO event handled successfully, uid: 1, identifier: 103
+Dec 22 15:21:45.361 INFO event handled successfully, uid: 4, identifier: 103
+Dec 22 15:21:45.365 INFO event handled successfully, uid: 2, identifier: 103
+Dec 22 15:21:45.369 INFO event handled successfully, uid: 5, identifier: 103
+Dec 22 15:21:51.161 INFO publishing a new event, event_identifier: 104
+Dec 22 15:21:51.572 INFO event handled successfully, uid: 4, identifier: 104
+Dec 22 15:21:51.579 INFO event handled successfully, uid: 2, identifier: 104
+Dec 22 15:21:51.582 INFO event handled successfully, uid: 3, identifier: 104
+Dec 22 15:21:51.584 INFO event handled successfully, uid: 1, identifier: 104
+Dec 22 15:21:51.587 INFO event handled successfully, uid: 5, identifier: 104
+Dec 22 15:21:51.590 INFO event handled successfully, uid: 6, identifier: 104
+Dec 22 15:21:54.164 INFO publishing a new event, event_identifier: 105
+Dec 22 15:21:54.694 INFO event handled successfully, uid: 1, identifier: 105
+Dec 22 15:21:54.700 INFO event handled successfully, uid: 6, identifier: 105
+Dec 22 15:21:54.703 INFO event handled successfully, uid: 3, identifier: 105
+Dec 22 15:21:54.706 INFO event handled successfully, uid: 5, identifier: 105
+Dec 22 15:21:54.709 INFO event handled successfully, uid: 4, identifier: 105
+Dec 22 15:21:54.713 INFO event handled successfully, uid: 2, identifier: 105
+Dec 22 15:21:58.165 INFO publishing a new event, event_identifier: 106
+Dec 22 15:21:58.787 INFO event handled successfully, uid: 3, identifier: 106
+Dec 22 15:21:58.795 INFO event handled successfully, uid: 5, identifier: 106
+Dec 22 15:21:58.798 INFO event handled successfully, uid: 1, identifier: 106
+Dec 22 15:21:58.801 INFO event handled successfully, uid: 2, identifier: 106
+Dec 22 15:21:58.803 INFO event handled successfully, uid: 4, identifier: 106
+Dec 22 15:21:58.806 INFO event handled successfully, uid: 6, identifier: 106
+Dec 22 15:22:04.164 INFO publishing a new event, event_identifier: 107
+Dec 22 15:22:04.438 INFO event handled successfully, uid: 2, identifier: 107
+Dec 22 15:22:04.446 INFO event handled successfully, uid: 4, identifier: 107
+Dec 22 15:22:04.449 INFO event handled successfully, uid: 3, identifier: 107
+Dec 22 15:22:04.452 INFO event handled successfully, uid: 6, identifier: 107
+Dec 22 15:22:04.455 INFO event handled successfully, uid: 1, identifier: 107
+Dec 22 15:22:04.459 INFO event handled successfully, uid: 5, identifier: 107
+Dec 22 15:22:08.165 INFO publishing a new event, event_identifier: 108
+Dec 22 15:22:08.450 INFO event handled successfully, uid: 6, identifier: 108
+Dec 22 15:22:08.466 INFO event handled successfully, uid: 3, identifier: 108
+Dec 22 15:22:08.471 INFO event handled successfully, uid: 4, identifier: 108
+Dec 22 15:22:08.475 INFO event handled successfully, uid: 5, identifier: 108
+Dec 22 15:22:08.478 INFO event handled successfully, uid: 2, identifier: 108
+Dec 22 15:22:08.480 INFO event handled successfully, uid: 1, identifier: 108
+Dec 22 15:22:13.166 INFO publishing a new event, event_identifier: 109
+Dec 22 15:22:13.342 INFO event handled successfully, uid: 3, identifier: 109
+Dec 22 15:22:13.350 INFO event handled successfully, uid: 1, identifier: 109
+Dec 22 15:22:13.354 INFO event handled successfully, uid: 4, identifier: 109
+Dec 22 15:22:13.357 INFO event handled successfully, uid: 6, identifier: 109
+Dec 22 15:22:13.359 INFO event handled successfully, uid: 2, identifier: 109
+Dec 22 15:22:13.361 INFO event handled successfully, uid: 5, identifier: 109
+Dec 22 15:22:16.168 INFO publishing a new event, event_identifier: 110
+Dec 22 15:22:16.363 INFO event handled successfully, uid: 3, identifier: 110
+Dec 22 15:22:16.372 INFO event handled successfully, uid: 4, identifier: 110
+Dec 22 15:22:16.377 INFO event handled successfully, uid: 1, identifier: 110
+Dec 22 15:22:16.380 INFO event handled successfully, uid: 2, identifier: 110
+Dec 22 15:22:16.384 INFO event handled successfully, uid: 6, identifier: 110
+Dec 22 15:22:16.387 INFO event handled successfully, uid: 5, identifier: 110
+Dec 22 15:22:21.168 INFO publishing a new event, event_identifier: 111
+Dec 22 15:22:21.348 INFO event handled successfully, uid: 1, identifier: 111
+Dec 22 15:22:21.352 INFO event handled successfully, uid: 2, identifier: 111
+Dec 22 15:22:21.355 INFO event handled successfully, uid: 6, identifier: 111
+Dec 22 15:22:21.361 INFO event handled successfully, uid: 3, identifier: 111
+Dec 22 15:22:21.364 INFO event handled successfully, uid: 4, identifier: 111
+Dec 22 15:22:21.367 INFO event handled successfully, uid: 5, identifier: 111
+Dec 22 15:22:26.169 INFO publishing a new event, event_identifier: 112
+Dec 22 15:22:26.353 INFO event handled successfully, uid: 1, identifier: 112
+Dec 22 15:22:26.358 INFO event handled successfully, uid: 5, identifier: 112
+Dec 22 15:22:26.363 INFO event handled successfully, uid: 4, identifier: 112
+Dec 22 15:22:26.366 INFO event handled successfully, uid: 2, identifier: 112
+Dec 22 15:22:26.369 INFO event handled successfully, uid: 3, identifier: 112
+Dec 22 15:22:26.372 INFO event handled successfully, uid: 6, identifier: 112
+Dec 22 15:22:30.171 INFO publishing a new event, event_identifier: 113
+Dec 22 15:22:30.401 INFO event handled successfully, uid: 1, identifier: 113
+Dec 22 15:22:30.405 INFO event handled successfully, uid: 3, identifier: 113
+Dec 22 15:22:30.407 INFO event handled successfully, uid: 2, identifier: 113
+Dec 22 15:22:30.413 INFO event handled successfully, uid: 4, identifier: 113
+Dec 22 15:22:30.416 INFO event handled successfully, uid: 6, identifier: 113
+Dec 22 15:22:30.418 INFO event handled successfully, uid: 5, identifier: 113
+Dec 22 15:22:36.172 INFO publishing a new event, event_identifier: 114
+Dec 22 15:22:36.360 INFO event handled successfully, uid: 2, identifier: 114
+Dec 22 15:22:36.367 INFO event handled successfully, uid: 1, identifier: 114
+Dec 22 15:22:36.370 INFO event handled successfully, uid: 3, identifier: 114
+Dec 22 15:22:36.373 INFO event handled successfully, uid: 6, identifier: 114
+Dec 22 15:22:36.376 INFO event handled successfully, uid: 5, identifier: 114
+Dec 22 15:22:36.378 INFO event handled successfully, uid: 4, identifier: 114
+Dec 22 15:22:39.172 INFO publishing a new event, event_identifier: 115
+Dec 22 15:22:39.373 INFO event handled successfully, uid: 2, identifier: 115
+Dec 22 15:22:39.381 INFO event handled successfully, uid: 1, identifier: 115
+Dec 22 15:22:39.385 INFO event handled successfully, uid: 3, identifier: 115
+Dec 22 15:22:39.388 INFO event handled successfully, uid: 5, identifier: 115
+Dec 22 15:22:39.391 INFO event handled successfully, uid: 4, identifier: 115
+Dec 22 15:22:39.393 INFO event handled successfully, uid: 6, identifier: 115
+Dec 22 15:22:42.174 INFO publishing a new event, event_identifier: 116
+Dec 22 15:22:42.390 INFO event handled successfully, uid: 2, identifier: 116
+Dec 22 15:22:42.393 INFO event handled successfully, uid: 3, identifier: 116
+Dec 22 15:22:42.396 INFO event handled successfully, uid: 6, identifier: 116
+Dec 22 15:22:42.404 INFO event handled successfully, uid: 1, identifier: 116
+Dec 22 15:22:42.412 INFO event handled successfully, uid: 4, identifier: 116
+Dec 22 15:22:42.421 INFO event handled successfully, uid: 5, identifier: 116
+Dec 22 15:22:46.174 INFO publishing a new event, event_identifier: 117
+Dec 22 15:22:46.376 INFO event handled successfully, uid: 6, identifier: 117
+Dec 22 15:22:46.383 INFO event handled successfully, uid: 2, identifier: 117
+Dec 22 15:22:46.387 INFO event handled successfully, uid: 1, identifier: 117
+Dec 22 15:22:46.390 INFO event handled successfully, uid: 4, identifier: 117
+Dec 22 15:22:46.393 INFO event handled successfully, uid: 3, identifier: 117
+Dec 22 15:22:46.395 INFO event handled successfully, uid: 5, identifier: 117
+Dec 22 15:22:51.175 INFO publishing a new event, event_identifier: 118
+Dec 22 15:22:51.371 INFO event handled successfully, uid: 1, identifier: 118
+Dec 22 15:22:51.380 INFO event handled successfully, uid: 3, identifier: 118
+Dec 22 15:22:51.383 INFO event handled successfully, uid: 2, identifier: 118
+Dec 22 15:22:51.386 INFO event handled successfully, uid: 5, identifier: 118
+Dec 22 15:22:51.388 INFO event handled successfully, uid: 4, identifier: 118
+Dec 22 15:22:51.391 INFO event handled successfully, uid: 6, identifier: 118
+Dec 22 15:22:54.176 INFO publishing a new event, event_identifier: 119
+Dec 22 15:22:54.365 INFO event handled successfully, uid: 6, identifier: 119
+Dec 22 15:22:54.372 INFO event handled successfully, uid: 1, identifier: 119
+Dec 22 15:22:54.376 INFO event handled successfully, uid: 2, identifier: 119
+Dec 22 15:22:54.381 INFO event handled successfully, uid: 3, identifier: 119
+Dec 22 15:22:54.385 INFO event handled successfully, uid: 4, identifier: 119
+Dec 22 15:22:54.388 INFO event handled successfully, uid: 5, identifier: 119
+Dec 22 15:22:58.178 INFO publishing a new event, event_identifier: 120
+Dec 22 15:22:58.611 INFO event handled successfully, uid: 1, identifier: 120
+Dec 22 15:22:58.625 INFO event handled successfully, uid: 2, identifier: 120
+Dec 22 15:22:58.628 INFO event handled successfully, uid: 5, identifier: 120
+Dec 22 15:22:58.633 INFO event handled successfully, uid: 6, identifier: 120
+Dec 22 15:22:58.639 INFO event handled successfully, uid: 3, identifier: 120
+Dec 22 15:22:58.645 INFO event handled successfully, uid: 4, identifier: 120
+Dec 22 15:23:02.180 INFO publishing a new event, event_identifier: 121
+Dec 22 15:23:02.380 INFO event handled successfully, uid: 1, identifier: 121
+Dec 22 15:23:02.385 INFO event handled successfully, uid: 2, identifier: 121
+Dec 22 15:23:02.388 INFO event handled successfully, uid: 6, identifier: 121
+Dec 22 15:23:02.391 INFO event handled successfully, uid: 3, identifier: 121
+Dec 22 15:23:02.394 INFO event handled successfully, uid: 4, identifier: 121
+Dec 22 15:23:02.397 INFO event handled successfully, uid: 5, identifier: 121
+Dec 22 15:23:05.180 INFO publishing a new event, event_identifier: 122
+Dec 22 15:23:05.361 INFO event handled successfully, uid: 2, identifier: 122
+Dec 22 15:23:05.368 INFO event handled successfully, uid: 3, identifier: 122
+Dec 22 15:23:05.372 INFO event handled successfully, uid: 1, identifier: 122
+Dec 22 15:23:05.376 INFO event handled successfully, uid: 4, identifier: 122
+Dec 22 15:23:05.378 INFO event handled successfully, uid: 5, identifier: 122
+Dec 22 15:23:05.381 INFO event handled successfully, uid: 6, identifier: 122
+Dec 22 15:23:09.182 INFO publishing a new event, event_identifier: 123
+Dec 22 15:23:09.401 INFO event handled successfully, uid: 2, identifier: 123
+Dec 22 15:23:09.408 INFO event handled successfully, uid: 1, identifier: 123
+Dec 22 15:23:09.413 INFO event handled successfully, uid: 6, identifier: 123
+Dec 22 15:23:09.415 INFO event handled successfully, uid: 5, identifier: 123
+Dec 22 15:23:09.418 INFO event handled successfully, uid: 3, identifier: 123
+Dec 22 15:23:09.421 INFO event handled successfully, uid: 4, identifier: 123
+Dec 22 15:23:14.182 INFO publishing a new event, event_identifier: 124
+Dec 22 15:23:14.595 INFO event handled successfully, uid: 3, identifier: 124
+Dec 22 15:23:14.598 INFO event handled successfully, uid: 1, identifier: 124
+Dec 22 15:23:14.602 INFO event handled successfully, uid: 6, identifier: 124
+Dec 22 15:23:14.608 INFO event handled successfully, uid: 2, identifier: 124
+Dec 22 15:23:14.611 INFO event handled successfully, uid: 4, identifier: 124
+Dec 22 15:23:14.614 INFO event handled successfully, uid: 5, identifier: 124
+Dec 22 15:23:19.185 INFO publishing a new event, event_identifier: 125
+Dec 22 15:23:19.430 INFO event handled successfully, uid: 1, identifier: 125
+Dec 22 15:23:19.437 INFO event handled successfully, uid: 6, identifier: 125
+Dec 22 15:23:19.446 INFO event handled successfully, uid: 2, identifier: 125
+Dec 22 15:23:19.454 INFO event handled successfully, uid: 3, identifier: 125
+Dec 22 15:23:19.463 INFO event handled successfully, uid: 5, identifier: 125
+Dec 22 15:23:19.472 INFO event handled successfully, uid: 4, identifier: 125
+Dec 22 15:23:24.185 INFO publishing a new event, event_identifier: 126
+Dec 22 15:23:24.403 INFO event handled successfully, uid: 1, identifier: 126
+Dec 22 15:23:24.407 INFO event handled successfully, uid: 2, identifier: 126
+Dec 22 15:23:24.409 INFO event handled successfully, uid: 4, identifier: 126
+Dec 22 15:23:24.413 INFO event handled successfully, uid: 3, identifier: 126
+Dec 22 15:23:24.421 INFO event handled successfully, uid: 6, identifier: 126
+Dec 22 15:23:24.427 INFO event handled successfully, uid: 5, identifier: 126
+Dec 22 15:23:29.185 INFO publishing a new event, event_identifier: 127
+Dec 22 15:23:29.508 INFO event handled successfully, uid: 6, identifier: 127
+Dec 22 15:23:29.519 INFO event handled successfully, uid: 1, identifier: 127
+Dec 22 15:23:29.522 INFO event handled successfully, uid: 3, identifier: 127
+Dec 22 15:23:29.527 INFO event handled successfully, uid: 2, identifier: 127
+Dec 22 15:23:29.529 INFO event handled successfully, uid: 4, identifier: 127
+Dec 22 15:23:29.532 INFO event handled successfully, uid: 5, identifier: 127
+Dec 22 15:23:33.186 INFO publishing a new event, event_identifier: 128
+Dec 22 15:23:33.494 INFO event handled successfully, uid: 2, identifier: 128
+Dec 22 15:23:33.501 INFO event handled successfully, uid: 3, identifier: 128
+Dec 22 15:23:33.508 INFO event handled successfully, uid: 1, identifier: 128
+Dec 22 15:23:33.513 INFO event handled successfully, uid: 5, identifier: 128
+Dec 22 15:23:33.516 INFO event handled successfully, uid: 6, identifier: 128
+Dec 22 15:23:33.523 INFO event handled successfully, uid: 4, identifier: 128
+Dec 22 15:23:39.186 INFO publishing a new event, event_identifier: 129
+Dec 22 15:23:39.399 INFO event handled successfully, uid: 1, identifier: 129
+Dec 22 15:23:39.406 INFO event handled successfully, uid: 2, identifier: 129
+Dec 22 15:23:39.409 INFO event handled successfully, uid: 3, identifier: 129
+Dec 22 15:23:39.412 INFO event handled successfully, uid: 5, identifier: 129
+Dec 22 15:23:39.415 INFO event handled successfully, uid: 6, identifier: 129
+Dec 22 15:23:39.419 INFO event handled successfully, uid: 4, identifier: 129
+Dec 22 15:23:44.187 INFO publishing a new event, event_identifier: 130
+Dec 22 15:23:44.429 INFO event handled successfully, uid: 1, identifier: 130
+Dec 22 15:23:44.436 INFO event handled successfully, uid: 6, identifier: 130
+Dec 22 15:23:44.438 INFO event handled successfully, uid: 3, identifier: 130
+Dec 22 15:23:44.442 INFO event handled successfully, uid: 2, identifier: 130
+Dec 22 15:23:44.447 INFO event handled successfully, uid: 4, identifier: 130
+Dec 22 15:23:44.450 INFO event handled successfully, uid: 5, identifier: 130
+Dec 22 15:23:49.190 INFO publishing a new event, event_identifier: 131
+Dec 22 15:23:49.394 INFO event handled successfully, uid: 1, identifier: 131
+Dec 22 15:23:49.397 INFO event handled successfully, uid: 6, identifier: 131
+Dec 22 15:23:49.400 INFO event handled successfully, uid: 3, identifier: 131
+Dec 22 15:23:49.402 INFO event handled successfully, uid: 5, identifier: 131
+Dec 22 15:23:49.404 INFO event handled successfully, uid: 4, identifier: 131
+Dec 22 15:23:49.408 INFO event handled successfully, uid: 2, identifier: 131
+Dec 22 15:23:55.190 INFO publishing a new event, event_identifier: 132
+Dec 22 15:23:55.603 INFO event handled successfully, uid: 1, identifier: 132
+Dec 22 15:23:55.618 INFO event handled successfully, uid: 2, identifier: 132
+Dec 22 15:23:55.621 INFO event handled successfully, uid: 3, identifier: 132
+Dec 22 15:23:55.624 INFO event handled successfully, uid: 5, identifier: 132
+Dec 22 15:23:55.626 INFO event handled successfully, uid: 4, identifier: 132
+Dec 22 15:23:55.628 INFO event handled successfully, uid: 6, identifier: 132
+Dec 22 15:23:59.192 INFO publishing a new event, event_identifier: 133
+Dec 22 15:23:59.419 INFO event handled successfully, uid: 1, identifier: 133
+Dec 22 15:23:59.424 INFO event handled successfully, uid: 4, identifier: 133
+Dec 22 15:23:59.427 INFO event handled successfully, uid: 3, identifier: 133
+Dec 22 15:23:59.430 INFO event handled successfully, uid: 2, identifier: 133
+Dec 22 15:23:59.433 INFO event handled successfully, uid: 5, identifier: 133
+Dec 22 15:23:59.436 INFO event handled successfully, uid: 6, identifier: 133
+Dec 22 15:24:02.191 INFO publishing a new event, event_identifier: 134
+Dec 22 15:24:02.377 INFO event handled successfully, uid: 6, identifier: 134
+Dec 22 15:24:02.384 INFO event handled successfully, uid: 2, identifier: 134
+Dec 22 15:24:02.387 INFO event handled successfully, uid: 1, identifier: 134
+Dec 22 15:24:02.390 INFO event handled successfully, uid: 5, identifier: 134
+Dec 22 15:24:02.393 INFO event handled successfully, uid: 3, identifier: 134
+Dec 22 15:24:02.395 INFO event handled successfully, uid: 4, identifier: 134
+Dec 22 15:24:08.192 INFO publishing a new event, event_identifier: 135
+Dec 22 15:24:08.381 INFO event handled successfully, uid: 2, identifier: 135
+Dec 22 15:24:08.384 INFO event handled successfully, uid: 6, identifier: 135
+Dec 22 15:24:08.387 INFO event handled successfully, uid: 3, identifier: 135
+Dec 22 15:24:08.390 INFO event handled successfully, uid: 1, identifier: 135
+Dec 22 15:24:08.393 INFO event handled successfully, uid: 4, identifier: 135
+Dec 22 15:24:08.396 INFO event handled successfully, uid: 5, identifier: 135
+Dec 22 15:24:12.195 INFO publishing a new event, event_identifier: 136
+Dec 22 15:24:12.554 INFO event handled successfully, uid: 1, identifier: 136
+Dec 22 15:24:12.561 INFO event handled successfully, uid: 4, identifier: 136
+Dec 22 15:24:12.564 INFO event handled successfully, uid: 2, identifier: 136
+Dec 22 15:24:12.567 INFO event handled successfully, uid: 6, identifier: 136
+Dec 22 15:24:12.570 INFO event handled successfully, uid: 3, identifier: 136
+Dec 22 15:24:12.573 INFO event handled successfully, uid: 5, identifier: 136
+Dec 22 15:24:15.196 INFO publishing a new event, event_identifier: 137
+Dec 22 15:24:15.415 INFO event handled successfully, uid: 2, identifier: 137
+Dec 22 15:24:15.422 INFO event handled successfully, uid: 3, identifier: 137
+Dec 22 15:24:15.426 INFO event handled successfully, uid: 1, identifier: 137
+Dec 22 15:24:15.429 INFO event handled successfully, uid: 6, identifier: 137
+Dec 22 15:24:15.432 INFO event handled successfully, uid: 5, identifier: 137
+Dec 22 15:24:15.434 INFO event handled successfully, uid: 4, identifier: 137
+Dec 22 15:24:18.196 INFO publishing a new event, event_identifier: 138
+Dec 22 15:24:18.411 INFO event handled successfully, uid: 3, identifier: 138
+Dec 22 15:24:18.415 INFO event handled successfully, uid: 1, identifier: 138
+Dec 22 15:24:18.419 INFO event handled successfully, uid: 2, identifier: 138
+Dec 22 15:24:18.423 INFO event handled successfully, uid: 5, identifier: 138
+Dec 22 15:24:18.426 INFO event handled successfully, uid: 6, identifier: 138
+Dec 22 15:24:18.428 INFO event handled successfully, uid: 4, identifier: 138
+Dec 22 15:24:22.196 INFO publishing a new event, event_identifier: 139
+Dec 22 15:24:22.377 INFO event handled successfully, uid: 1, identifier: 139
+Dec 22 15:24:22.387 INFO event handled successfully, uid: 6, identifier: 139
+Dec 22 15:24:22.390 INFO event handled successfully, uid: 4, identifier: 139
+Dec 22 15:24:22.392 INFO event handled successfully, uid: 3, identifier: 139
+Dec 22 15:24:22.395 INFO event handled successfully, uid: 2, identifier: 139
+Dec 22 15:24:22.397 INFO event handled successfully, uid: 5, identifier: 139
+Dec 22 15:24:26.198 INFO publishing a new event, event_identifier: 140
+Dec 22 15:24:26.443 INFO event handled successfully, uid: 2, identifier: 140
+Dec 22 15:24:26.448 INFO event handled successfully, uid: 1, identifier: 140
+Dec 22 15:24:26.451 INFO event handled successfully, uid: 3, identifier: 140
+Dec 22 15:24:26.454 INFO event handled successfully, uid: 6, identifier: 140
+Dec 22 15:24:26.456 INFO event handled successfully, uid: 4, identifier: 140
+Dec 22 15:24:26.459 INFO event handled successfully, uid: 5, identifier: 140
+Dec 22 15:24:32.198 INFO publishing a new event, event_identifier: 141
+Dec 22 15:24:32.406 INFO event handled successfully, uid: 6, identifier: 141
+Dec 22 15:24:32.412 INFO event handled successfully, uid: 2, identifier: 141
+Dec 22 15:24:32.415 INFO event handled successfully, uid: 1, identifier: 141
+Dec 22 15:24:32.418 INFO event handled successfully, uid: 4, identifier: 141
+Dec 22 15:24:32.421 INFO event handled successfully, uid: 3, identifier: 141
+Dec 22 15:24:32.424 INFO event handled successfully, uid: 5, identifier: 141
+Dec 22 15:24:36.199 INFO publishing a new event, event_identifier: 142
+Dec 22 15:24:36.379 INFO event handled successfully, uid: 1, identifier: 142
+Dec 22 15:24:36.388 INFO event handled successfully, uid: 3, identifier: 142
+Dec 22 15:24:36.391 INFO event handled successfully, uid: 6, identifier: 142
+Dec 22 15:24:36.394 INFO event handled successfully, uid: 2, identifier: 142
+Dec 22 15:24:36.396 INFO event handled successfully, uid: 5, identifier: 142
+Dec 22 15:24:36.399 INFO event handled successfully, uid: 4, identifier: 142
+Dec 22 15:24:39.200 INFO publishing a new event, event_identifier: 143
+Dec 22 15:24:39.403 INFO event handled successfully, uid: 1, identifier: 143
+Dec 22 15:24:39.411 INFO event handled successfully, uid: 2, identifier: 143
+Dec 22 15:24:39.416 INFO event handled successfully, uid: 5, identifier: 143
+Dec 22 15:24:39.419 INFO event handled successfully, uid: 4, identifier: 143
+Dec 22 15:24:39.422 INFO event handled successfully, uid: 6, identifier: 143
+Dec 22 15:24:39.425 INFO event handled successfully, uid: 3, identifier: 143
+Dec 22 15:24:45.201 INFO publishing a new event, event_identifier: 144
+Dec 22 15:24:45.407 INFO event handled successfully, uid: 3, identifier: 144
+Dec 22 15:24:45.414 INFO event handled successfully, uid: 2, identifier: 144
+Dec 22 15:24:45.418 INFO event handled successfully, uid: 1, identifier: 144
+Dec 22 15:24:45.421 INFO event handled successfully, uid: 4, identifier: 144
+Dec 22 15:24:45.423 INFO event handled successfully, uid: 6, identifier: 144
+Dec 22 15:24:45.426 INFO event handled successfully, uid: 5, identifier: 144
+Dec 22 15:24:49.203 INFO publishing a new event, event_identifier: 145
+Dec 22 15:24:49.467 INFO event handled successfully, uid: 2, identifier: 145
+Dec 22 15:24:49.474 INFO event handled successfully, uid: 6, identifier: 145
+Dec 22 15:24:49.477 INFO event handled successfully, uid: 1, identifier: 145
+Dec 22 15:24:49.480 INFO event handled successfully, uid: 3, identifier: 145
+Dec 22 15:24:49.483 INFO event handled successfully, uid: 5, identifier: 145
+Dec 22 15:24:49.485 INFO event handled successfully, uid: 4, identifier: 145
+Dec 22 15:24:52.203 INFO publishing a new event, event_identifier: 146
+Dec 22 15:24:52.445 INFO event handled successfully, uid: 1, identifier: 146
+Dec 22 15:24:52.450 INFO event handled successfully, uid: 5, identifier: 146
+Dec 22 15:24:52.455 INFO event handled successfully, uid: 2, identifier: 146
+Dec 22 15:24:52.458 INFO event handled successfully, uid: 4, identifier: 146
+Dec 22 15:24:52.463 INFO event handled successfully, uid: 3, identifier: 146
+Dec 22 15:24:52.466 INFO event handled successfully, uid: 6, identifier: 146
+Dec 22 15:24:57.204 INFO publishing a new event, event_identifier: 147
+Dec 22 15:24:57.433 INFO event handled successfully, uid: 6, identifier: 147
+Dec 22 15:24:57.442 INFO event handled successfully, uid: 1, identifier: 147
+Dec 22 15:24:57.445 INFO event handled successfully, uid: 3, identifier: 147
+Dec 22 15:24:57.448 INFO event handled successfully, uid: 4, identifier: 147
+Dec 22 15:24:57.451 INFO event handled successfully, uid: 2, identifier: 147
+Dec 22 15:24:57.454 INFO event handled successfully, uid: 5, identifier: 147
+Dec 22 15:25:01.206 INFO publishing a new event, event_identifier: 148
+Dec 22 15:25:01.392 INFO event handled successfully, uid: 2, identifier: 148
+Dec 22 15:25:01.396 INFO event handled successfully, uid: 3, identifier: 148
+Dec 22 15:25:01.400 INFO event handled successfully, uid: 1, identifier: 148
+Dec 22 15:25:01.405 INFO event handled successfully, uid: 4, identifier: 148
+Dec 22 15:25:01.408 INFO event handled successfully, uid: 5, identifier: 148
+Dec 22 15:25:01.411 INFO event handled successfully, uid: 6, identifier: 148
+Dec 22 15:25:04.206 INFO publishing a new event, event_identifier: 149
+Dec 22 15:25:04.431 INFO event handled successfully, uid: 3, identifier: 149
+Dec 22 15:25:04.437 INFO event handled successfully, uid: 6, identifier: 149
+Dec 22 15:25:04.440 INFO event handled successfully, uid: 1, identifier: 149
+Dec 22 15:25:04.443 INFO event handled successfully, uid: 5, identifier: 149
+Dec 22 15:25:04.446 INFO event handled successfully, uid: 2, identifier: 149
+Dec 22 15:25:04.449 INFO event handled successfully, uid: 4, identifier: 149
+Dec 22 15:25:09.207 INFO publishing a new event, event_identifier: 150
+Dec 22 15:25:09.623 INFO event handled successfully, uid: 1, identifier: 150
+Dec 22 15:25:09.637 INFO event handled successfully, uid: 2, identifier: 150
+Dec 22 15:25:09.642 INFO event handled successfully, uid: 6, identifier: 150
+Dec 22 15:25:09.647 INFO event handled successfully, uid: 4, identifier: 150
+Dec 22 15:25:09.650 INFO event handled successfully, uid: 5, identifier: 150
+Dec 22 15:25:09.653 INFO event handled successfully, uid: 3, identifier: 150
+Dec 22 15:25:12.208 INFO publishing a new event, event_identifier: 151
+Dec 22 15:25:12.423 INFO event handled successfully, uid: 2, identifier: 151
+Dec 22 15:25:12.435 INFO event handled successfully, uid: 1, identifier: 151
+Dec 22 15:25:12.439 INFO event handled successfully, uid: 4, identifier: 151
+Dec 22 15:25:12.445 INFO event handled successfully, uid: 3, identifier: 151
+Dec 22 15:25:12.448 INFO event handled successfully, uid: 6, identifier: 151
+Dec 22 15:25:12.451 INFO event handled successfully, uid: 5, identifier: 151
+Dec 22 15:25:18.209 INFO publishing a new event, event_identifier: 152
+Dec 22 15:25:18.406 INFO event handled successfully, uid: 1, identifier: 152
+Dec 22 15:25:18.410 INFO event handled successfully, uid: 2, identifier: 152
+Dec 22 15:25:18.414 INFO event handled successfully, uid: 3, identifier: 152
+Dec 22 15:25:18.419 INFO event handled successfully, uid: 5, identifier: 152
+Dec 22 15:25:18.421 INFO event handled successfully, uid: 6, identifier: 152
+Dec 22 15:25:18.424 INFO event handled successfully, uid: 4, identifier: 152
+Dec 22 15:25:24.213 INFO publishing a new event, event_identifier: 153
+Dec 22 15:25:24.625 INFO event handled successfully, uid: 2, identifier: 153
+Dec 22 15:25:24.633 INFO event handled successfully, uid: 6, identifier: 153
+Dec 22 15:25:24.636 INFO event handled successfully, uid: 4, identifier: 153
+Dec 22 15:25:24.639 INFO event handled successfully, uid: 3, identifier: 153
+Dec 22 15:25:24.641 INFO event handled successfully, uid: 1, identifier: 153
+Dec 22 15:25:24.644 INFO event handled successfully, uid: 5, identifier: 153
+Dec 22 15:25:27.212 INFO publishing a new event, event_identifier: 154
+Dec 22 15:25:27.397 INFO event handled successfully, uid: 3, identifier: 154
+Dec 22 15:25:27.405 INFO event handled successfully, uid: 1, identifier: 154
+Dec 22 15:25:27.407 INFO event handled successfully, uid: 6, identifier: 154
+Dec 22 15:25:27.410 INFO event handled successfully, uid: 5, identifier: 154
+Dec 22 15:25:27.413 INFO event handled successfully, uid: 2, identifier: 154
+Dec 22 15:25:27.416 INFO event handled successfully, uid: 4, identifier: 154
+Dec 22 15:25:31.214 INFO publishing a new event, event_identifier: 155
+Dec 22 15:25:31.617 INFO event handled successfully, uid: 6, identifier: 155
+Dec 22 15:25:31.623 INFO event handled successfully, uid: 2, identifier: 155
+Dec 22 15:25:31.625 INFO event handled successfully, uid: 1, identifier: 155
+Dec 22 15:25:31.628 INFO event handled successfully, uid: 3, identifier: 155
+Dec 22 15:25:31.631 INFO event handled successfully, uid: 5, identifier: 155
+Dec 22 15:25:31.633 INFO event handled successfully, uid: 4, identifier: 155
+Dec 22 15:25:37.215 INFO publishing a new event, event_identifier: 156
+Dec 22 15:25:37.430 INFO event handled successfully, uid: 6, identifier: 156
+Dec 22 15:25:37.438 INFO event handled successfully, uid: 1, identifier: 156
+Dec 22 15:25:37.441 INFO event handled successfully, uid: 2, identifier: 156
+Dec 22 15:25:37.444 INFO event handled successfully, uid: 4, identifier: 156
+Dec 22 15:25:37.447 INFO event handled successfully, uid: 5, identifier: 156
+Dec 22 15:25:37.450 INFO event handled successfully, uid: 3, identifier: 156
+Dec 22 15:25:42.215 INFO publishing a new event, event_identifier: 157
+Dec 22 15:25:42.403 INFO event handled successfully, uid: 6, identifier: 157
+Dec 22 15:25:42.410 INFO event handled successfully, uid: 1, identifier: 157
+Dec 22 15:25:42.414 INFO event handled successfully, uid: 2, identifier: 157
+Dec 22 15:25:42.417 INFO event handled successfully, uid: 5, identifier: 157
+Dec 22 15:25:42.420 INFO event handled successfully, uid: 4, identifier: 157
+Dec 22 15:25:42.425 INFO event handled successfully, uid: 3, identifier: 157
+Dec 22 15:25:47.216 INFO publishing a new event, event_identifier: 158
+Dec 22 15:25:47.408 INFO event handled successfully, uid: 1, identifier: 158
+Dec 22 15:25:47.417 INFO event handled successfully, uid: 2, identifier: 158
+Dec 22 15:25:47.420 INFO event handled successfully, uid: 3, identifier: 158
+Dec 22 15:25:47.423 INFO event handled successfully, uid: 4, identifier: 158
+Dec 22 15:25:47.425 INFO event handled successfully, uid: 5, identifier: 158
+Dec 22 15:25:47.428 INFO event handled successfully, uid: 6, identifier: 158
+Dec 22 15:25:51.217 INFO publishing a new event, event_identifier: 159
+Dec 22 15:25:51.399 INFO event handled successfully, uid: 2, identifier: 159
+Dec 22 15:25:51.404 INFO event handled successfully, uid: 3, identifier: 159
+Dec 22 15:25:51.409 INFO event handled successfully, uid: 1, identifier: 159
+Dec 22 15:25:51.412 INFO event handled successfully, uid: 5, identifier: 159
+Dec 22 15:25:51.414 INFO event handled successfully, uid: 6, identifier: 159
+Dec 22 15:25:51.417 INFO event handled successfully, uid: 4, identifier: 159
+Dec 22 15:25:55.219 INFO publishing a new event, event_identifier: 160
+Dec 22 15:25:55.427 INFO event handled successfully, uid: 3, identifier: 160
+Dec 22 15:25:55.433 INFO event handled successfully, uid: 1, identifier: 160
+Dec 22 15:25:55.436 INFO event handled successfully, uid: 2, identifier: 160
+Dec 22 15:25:55.439 INFO event handled successfully, uid: 6, identifier: 160
+Dec 22 15:25:55.442 INFO event handled successfully, uid: 4, identifier: 160
+Dec 22 15:25:55.445 INFO event handled successfully, uid: 5, identifier: 160
+Dec 22 15:26:00.219 INFO publishing a new event, event_identifier: 161
+Dec 22 15:26:00.454 INFO event handled successfully, uid: 2, identifier: 161
+Dec 22 15:26:00.461 INFO event handled successfully, uid: 1, identifier: 161
+Dec 22 15:26:00.465 INFO event handled successfully, uid: 3, identifier: 161
+Dec 22 15:26:00.469 INFO event handled successfully, uid: 6, identifier: 161
+Dec 22 15:26:00.472 INFO event handled successfully, uid: 4, identifier: 161
+Dec 22 15:26:00.476 INFO event handled successfully, uid: 5, identifier: 161
+Dec 22 15:26:06.220 INFO publishing a new event, event_identifier: 162
+Dec 22 15:26:06.402 INFO event handled successfully, uid: 1, identifier: 162
+Dec 22 15:26:06.409 INFO event handled successfully, uid: 4, identifier: 162
+Dec 22 15:26:06.412 INFO event handled successfully, uid: 2, identifier: 162
+Dec 22 15:26:06.415 INFO event handled successfully, uid: 3, identifier: 162
+Dec 22 15:26:06.418 INFO event handled successfully, uid: 6, identifier: 162
+Dec 22 15:26:06.421 INFO event handled successfully, uid: 5, identifier: 162
+Dec 22 15:26:09.221 INFO publishing a new event, event_identifier: 163
+Dec 22 15:26:09.394 INFO event handled successfully, uid: 1, identifier: 163
+Dec 22 15:26:09.399 INFO event handled successfully, uid: 6, identifier: 163
+Dec 22 15:26:09.403 INFO event handled successfully, uid: 2, identifier: 163
+Dec 22 15:26:09.406 INFO event handled successfully, uid: 3, identifier: 163
+Dec 22 15:26:09.409 INFO event handled successfully, uid: 5, identifier: 163
+Dec 22 15:26:09.412 INFO event handled successfully, uid: 4, identifier: 163
+Dec 22 15:26:13.225 INFO publishing a new event, event_identifier: 164
+Dec 22 15:26:13.463 INFO event handled successfully, uid: 2, identifier: 164
+Dec 22 15:26:13.469 INFO event handled successfully, uid: 5, identifier: 164
+Dec 22 15:26:13.472 INFO event handled successfully, uid: 1, identifier: 164
+Dec 22 15:26:13.475 INFO event handled successfully, uid: 6, identifier: 164
+Dec 22 15:26:13.478 INFO event handled successfully, uid: 3, identifier: 164
+Dec 22 15:26:13.480 INFO event handled successfully, uid: 4, identifier: 164
+Dec 22 15:26:19.223 INFO publishing a new event, event_identifier: 165
+Dec 22 15:26:19.402 INFO event handled successfully, uid: 1, identifier: 165
+Dec 22 15:26:19.411 INFO event handled successfully, uid: 3, identifier: 165
+Dec 22 15:26:19.415 INFO event handled successfully, uid: 4, identifier: 165
+Dec 22 15:26:19.418 INFO event handled successfully, uid: 2, identifier: 165
+Dec 22 15:26:19.421 INFO event handled successfully, uid: 6, identifier: 165
+Dec 22 15:26:19.424 INFO event handled successfully, uid: 5, identifier: 165
+Dec 22 15:26:24.225 INFO publishing a new event, event_identifier: 166
+Dec 22 15:26:24.457 INFO event handled successfully, uid: 2, identifier: 166
+Dec 22 15:26:24.461 INFO event handled successfully, uid: 1, identifier: 166
+Dec 22 15:26:24.464 INFO event handled successfully, uid: 6, identifier: 166
+Dec 22 15:26:24.467 INFO event handled successfully, uid: 5, identifier: 166
+Dec 22 15:26:24.470 INFO event handled successfully, uid: 3, identifier: 166
+Dec 22 15:26:24.473 INFO event handled successfully, uid: 4, identifier: 166
+Dec 22 15:26:30.226 INFO publishing a new event, event_identifier: 167
+Dec 22 15:26:30.403 INFO event handled successfully, uid: 2, identifier: 167
+Dec 22 15:26:30.410 INFO event handled successfully, uid: 1, identifier: 167
+Dec 22 15:26:30.412 INFO event handled successfully, uid: 5, identifier: 167
+Dec 22 15:26:30.418 INFO event handled successfully, uid: 3, identifier: 167
+Dec 22 15:26:30.421 INFO event handled successfully, uid: 6, identifier: 167
+Dec 22 15:26:30.423 INFO event handled successfully, uid: 4, identifier: 167
+Dec 22 15:26:34.229 INFO publishing a new event, event_identifier: 168
+Dec 22 15:26:34.600 INFO event handled successfully, uid: 6, identifier: 168
+Dec 22 15:26:34.609 INFO event handled successfully, uid: 2, identifier: 168
+Dec 22 15:26:34.612 INFO event handled successfully, uid: 1, identifier: 168
+Dec 22 15:26:34.615 INFO event handled successfully, uid: 3, identifier: 168
+Dec 22 15:26:34.618 INFO event handled successfully, uid: 5, identifier: 168
+Dec 22 15:26:34.621 INFO event handled successfully, uid: 4, identifier: 168
+Dec 22 15:26:37.237 INFO publishing a new event, event_identifier: 169
+Dec 22 15:26:37.795 INFO event handled successfully, uid: 3, identifier: 169
+Dec 22 15:26:37.798 INFO event handled successfully, uid: 1, identifier: 169
+Dec 22 15:26:37.801 INFO event handled successfully, uid: 5, identifier: 169
+Dec 22 15:26:37.805 INFO event handled successfully, uid: 4, identifier: 169
+Dec 22 15:26:37.808 INFO event handled successfully, uid: 6, identifier: 169
+Dec 22 15:26:37.811 INFO event handled successfully, uid: 2, identifier: 169
+Dec 22 15:26:43.234 INFO publishing a new event, event_identifier: 170
+Dec 22 15:26:43.920 INFO event handled successfully, uid: 5, identifier: 170
+Dec 22 15:26:43.931 INFO event handled successfully, uid: 1, identifier: 170
+Dec 22 15:26:43.934 INFO event handled successfully, uid: 2, identifier: 170
+Dec 22 15:26:43.963 INFO event handled successfully, uid: 6, identifier: 170
+Dec 22 15:26:44.056 INFO event handled successfully, uid: 3, identifier: 170
+Dec 22 15:26:44.077 INFO event handled successfully, uid: 4, identifier: 170
+Dec 22 15:26:46.239 INFO publishing a new event, event_identifier: 171
+Dec 22 15:26:46.792 INFO event handled successfully, uid: 4, identifier: 171
+Dec 22 15:26:46.798 INFO event handled successfully, uid: 2, identifier: 171
+Dec 22 15:26:46.801 INFO event handled successfully, uid: 5, identifier: 171
+Dec 22 15:26:46.804 INFO event handled successfully, uid: 6, identifier: 171
+Dec 22 15:26:46.807 INFO event handled successfully, uid: 1, identifier: 171
+Dec 22 15:26:46.809 INFO event handled successfully, uid: 3, identifier: 171
+Dec 22 15:26:51.241 INFO publishing a new event, event_identifier: 172
+Dec 22 15:26:51.715 INFO event handled successfully, uid: 3, identifier: 172
+Dec 22 15:26:51.723 INFO event handled successfully, uid: 1, identifier: 172
+Dec 22 15:26:51.726 INFO event handled successfully, uid: 2, identifier: 172
+Dec 22 15:26:51.729 INFO event handled successfully, uid: 6, identifier: 172
+Dec 22 15:26:51.732 INFO event handled successfully, uid: 4, identifier: 172
+Dec 22 15:26:51.735 INFO event handled successfully, uid: 5, identifier: 172
+Dec 22 15:26:55.241 INFO publishing a new event, event_identifier: 173
+Dec 22 15:26:55.494 INFO event handled successfully, uid: 6, identifier: 173
+Dec 22 15:26:55.498 INFO event handled successfully, uid: 1, identifier: 173
+Dec 22 15:26:55.500 INFO event handled successfully, uid: 2, identifier: 173
+Dec 22 15:26:55.503 INFO event handled successfully, uid: 3, identifier: 173
+Dec 22 15:26:55.508 INFO event handled successfully, uid: 4, identifier: 173
+Dec 22 15:26:55.510 INFO event handled successfully, uid: 5, identifier: 173
+Dec 22 15:26:58.241 INFO publishing a new event, event_identifier: 174
+Dec 22 15:26:58.442 INFO event handled successfully, uid: 2, identifier: 174
+Dec 22 15:26:58.447 INFO event handled successfully, uid: 3, identifier: 174
+Dec 22 15:26:58.449 INFO event handled successfully, uid: 1, identifier: 174
+Dec 22 15:26:58.452 INFO event handled successfully, uid: 4, identifier: 174
+Dec 22 15:26:58.455 INFO event handled successfully, uid: 5, identifier: 174
+Dec 22 15:26:58.458 INFO event handled successfully, uid: 6, identifier: 174
+Dec 22 15:27:02.242 INFO publishing a new event, event_identifier: 175
+Dec 22 15:27:02.431 INFO event handled successfully, uid: 2, identifier: 175
+Dec 22 15:27:02.436 INFO event handled successfully, uid: 5, identifier: 175
+Dec 22 15:27:02.441 INFO event handled successfully, uid: 1, identifier: 175
+Dec 22 15:27:02.445 INFO event handled successfully, uid: 3, identifier: 175
+Dec 22 15:27:02.448 INFO event handled successfully, uid: 6, identifier: 175
+Dec 22 15:27:02.450 INFO event handled successfully, uid: 4, identifier: 175
+Dec 22 15:27:07.243 INFO publishing a new event, event_identifier: 176
+Dec 22 15:27:07.439 INFO event handled successfully, uid: 4, identifier: 176
+Dec 22 15:27:07.442 INFO event handled successfully, uid: 2, identifier: 176
+Dec 22 15:27:07.445 INFO event handled successfully, uid: 6, identifier: 176
+Dec 22 15:27:07.451 INFO event handled successfully, uid: 1, identifier: 176
+Dec 22 15:27:07.454 INFO event handled successfully, uid: 3, identifier: 176
+Dec 22 15:27:07.457 INFO event handled successfully, uid: 5, identifier: 176
+Dec 22 15:27:13.244 INFO publishing a new event, event_identifier: 177
+Dec 22 15:27:13.434 INFO event handled successfully, uid: 2, identifier: 177
+Dec 22 15:27:13.441 INFO event handled successfully, uid: 1, identifier: 177
+Dec 22 15:27:13.446 INFO event handled successfully, uid: 4, identifier: 177
+Dec 22 15:27:13.449 INFO event handled successfully, uid: 3, identifier: 177
+Dec 22 15:27:13.452 INFO event handled successfully, uid: 6, identifier: 177
+Dec 22 15:27:13.455 INFO event handled successfully, uid: 5, identifier: 177
+Dec 22 15:27:19.246 INFO publishing a new event, event_identifier: 178
+Dec 22 15:27:19.634 INFO event handled successfully, uid: 6, identifier: 178
+Dec 22 15:27:19.649 INFO event handled successfully, uid: 1, identifier: 178
+Dec 22 15:27:19.652 INFO event handled successfully, uid: 2, identifier: 178
+Dec 22 15:27:19.655 INFO event handled successfully, uid: 4, identifier: 178
+Dec 22 15:27:19.657 INFO event handled successfully, uid: 5, identifier: 178
+Dec 22 15:27:19.660 INFO event handled successfully, uid: 3, identifier: 178
+Dec 22 15:27:22.246 INFO publishing a new event, event_identifier: 179
+Dec 22 15:27:22.433 INFO event handled successfully, uid: 3, identifier: 179
+Dec 22 15:27:22.441 INFO event handled successfully, uid: 2, identifier: 179
+Dec 22 15:27:22.445 INFO event handled successfully, uid: 1, identifier: 179
+Dec 22 15:27:22.448 INFO event handled successfully, uid: 4, identifier: 179
+Dec 22 15:27:22.451 INFO event handled successfully, uid: 6, identifier: 179
+Dec 22 15:27:22.454 INFO event handled successfully, uid: 5, identifier: 179
+Dec 22 15:27:26.248 INFO publishing a new event, event_identifier: 180
+Dec 22 15:27:26.426 INFO event handled successfully, uid: 2, identifier: 180
+Dec 22 15:27:26.432 INFO event handled successfully, uid: 3, identifier: 180
+Dec 22 15:27:26.435 INFO event handled successfully, uid: 5, identifier: 180
+Dec 22 15:27:26.438 INFO event handled successfully, uid: 1, identifier: 180
+Dec 22 15:27:26.441 INFO event handled successfully, uid: 6, identifier: 180
+Dec 22 15:27:26.444 INFO event handled successfully, uid: 4, identifier: 180
+Dec 22 15:27:29.248 INFO publishing a new event, event_identifier: 181
+Dec 22 15:27:29.468 INFO event handled successfully, uid: 6, identifier: 181
+Dec 22 15:27:29.478 INFO event handled successfully, uid: 1, identifier: 181
+Dec 22 15:27:29.481 INFO event handled successfully, uid: 2, identifier: 181
+Dec 22 15:27:29.485 INFO event handled successfully, uid: 3, identifier: 181
+Dec 22 15:27:29.488 INFO event handled successfully, uid: 5, identifier: 181
+Dec 22 15:27:29.492 INFO event handled successfully, uid: 4, identifier: 181
+Dec 22 15:27:33.249 INFO publishing a new event, event_identifier: 182
+Dec 22 15:27:33.668 INFO event handled successfully, uid: 1, identifier: 182
+Dec 22 15:27:33.675 INFO event handled successfully, uid: 6, identifier: 182
+Dec 22 15:27:33.690 INFO event handled successfully, uid: 3, identifier: 182
+Dec 22 15:27:33.700 INFO event handled successfully, uid: 2, identifier: 182
+Dec 22 15:27:33.706 INFO event handled successfully, uid: 4, identifier: 182
+Dec 22 15:27:33.712 INFO event handled successfully, uid: 5, identifier: 182
+Dec 22 15:27:36.250 INFO publishing a new event, event_identifier: 183
+Dec 22 15:27:36.430 INFO event handled successfully, uid: 5, identifier: 183
+Dec 22 15:27:36.436 INFO event handled successfully, uid: 1, identifier: 183
+Dec 22 15:27:36.439 INFO event handled successfully, uid: 2, identifier: 183
+Dec 22 15:27:36.443 INFO event handled successfully, uid: 3, identifier: 183
+Dec 22 15:27:36.445 INFO event handled successfully, uid: 4, identifier: 183
+Dec 22 15:27:36.448 INFO event handled successfully, uid: 6, identifier: 183
+Dec 22 15:27:40.252 INFO publishing a new event, event_identifier: 184
+Dec 22 15:27:40.436 INFO event handled successfully, uid: 1, identifier: 184
+Dec 22 15:27:40.439 INFO event handled successfully, uid: 2, identifier: 184
+Dec 22 15:27:40.443 INFO event handled successfully, uid: 3, identifier: 184
+Dec 22 15:27:40.446 INFO event handled successfully, uid: 6, identifier: 184
+Dec 22 15:27:40.449 INFO event handled successfully, uid: 5, identifier: 184
+Dec 22 15:27:40.452 INFO event handled successfully, uid: 4, identifier: 184
+Dec 22 15:27:44.252 INFO publishing a new event, event_identifier: 185
+Dec 22 15:27:44.431 INFO event handled successfully, uid: 2, identifier: 185
+Dec 22 15:27:44.436 INFO event handled successfully, uid: 1, identifier: 185
+Dec 22 15:27:44.440 INFO event handled successfully, uid: 3, identifier: 185
+Dec 22 15:27:44.443 INFO event handled successfully, uid: 4, identifier: 185
+Dec 22 15:27:44.446 INFO event handled successfully, uid: 6, identifier: 185
+Dec 22 15:27:44.448 INFO event handled successfully, uid: 5, identifier: 185
+Dec 22 15:27:48.253 INFO publishing a new event, event_identifier: 186
+Dec 22 15:27:48.437 INFO event handled successfully, uid: 1, identifier: 186
+Dec 22 15:27:48.441 INFO event handled successfully, uid: 2, identifier: 186
+Dec 22 15:27:48.446 INFO event handled successfully, uid: 5, identifier: 186
+Dec 22 15:27:48.450 INFO event handled successfully, uid: 6, identifier: 186
+Dec 22 15:27:48.452 INFO event handled successfully, uid: 4, identifier: 186
+Dec 22 15:27:48.455 INFO event handled successfully, uid: 3, identifier: 186
+Dec 22 15:27:51.255 INFO publishing a new event, event_identifier: 187
+Dec 22 15:27:51.459 INFO event handled successfully, uid: 3, identifier: 187
+Dec 22 15:27:51.468 INFO event handled successfully, uid: 2, identifier: 187
+Dec 22 15:27:51.471 INFO event handled successfully, uid: 1, identifier: 187
+Dec 22 15:27:51.474 INFO event handled successfully, uid: 6, identifier: 187
+Dec 22 15:27:51.477 INFO event handled successfully, uid: 5, identifier: 187
+Dec 22 15:27:51.480 INFO event handled successfully, uid: 4, identifier: 187
+Dec 22 15:27:55.256 INFO publishing a new event, event_identifier: 188
+Dec 22 15:27:55.446 INFO event handled successfully, uid: 1, identifier: 188
+Dec 22 15:27:55.450 INFO event handled successfully, uid: 3, identifier: 188
+Dec 22 15:27:55.455 INFO event handled successfully, uid: 2, identifier: 188
+Dec 22 15:27:55.458 INFO event handled successfully, uid: 6, identifier: 188
+Dec 22 15:27:55.461 INFO event handled successfully, uid: 4, identifier: 188
+Dec 22 15:27:55.464 INFO event handled successfully, uid: 5, identifier: 188
+Dec 22 15:28:01.257 INFO publishing a new event, event_identifier: 189
+Dec 22 15:28:01.503 INFO event handled successfully, uid: 2, identifier: 189
+Dec 22 15:28:01.516 INFO event handled successfully, uid: 3, identifier: 189
+Dec 22 15:28:01.519 INFO event handled successfully, uid: 4, identifier: 189
+Dec 22 15:28:01.521 INFO event handled successfully, uid: 1, identifier: 189
+Dec 22 15:28:01.524 INFO event handled successfully, uid: 6, identifier: 189
+Dec 22 15:28:01.527 INFO event handled successfully, uid: 5, identifier: 189
+Dec 22 15:28:05.258 INFO publishing a new event, event_identifier: 190
+Dec 22 15:28:05.447 INFO event handled successfully, uid: 1, identifier: 190
+Dec 22 15:28:05.454 INFO event handled successfully, uid: 2, identifier: 190
+Dec 22 15:28:05.458 INFO event handled successfully, uid: 3, identifier: 190
+Dec 22 15:28:05.461 INFO event handled successfully, uid: 4, identifier: 190
+Dec 22 15:28:05.463 INFO event handled successfully, uid: 5, identifier: 190
+Dec 22 15:28:05.467 INFO event handled successfully, uid: 6, identifier: 190
+Dec 22 15:28:08.258 INFO publishing a new event, event_identifier: 191
+Dec 22 15:28:08.453 INFO event handled successfully, uid: 2, identifier: 191
+Dec 22 15:28:08.458 INFO event handled successfully, uid: 4, identifier: 191
+Dec 22 15:28:08.461 INFO event handled successfully, uid: 3, identifier: 191
+Dec 22 15:28:08.467 INFO event handled successfully, uid: 1, identifier: 191
+Dec 22 15:28:08.474 INFO event handled successfully, uid: 5, identifier: 191
+Dec 22 15:28:08.482 INFO event handled successfully, uid: 6, identifier: 191
+Dec 22 15:28:12.259 INFO publishing a new event, event_identifier: 192
+Dec 22 15:28:12.533 INFO event handled successfully, uid: 3, identifier: 192
+Dec 22 15:28:12.538 INFO event handled successfully, uid: 4, identifier: 192
+Dec 22 15:28:12.543 INFO event handled successfully, uid: 2, identifier: 192
+Dec 22 15:28:12.547 INFO event handled successfully, uid: 1, identifier: 192
+Dec 22 15:28:12.550 INFO event handled successfully, uid: 6, identifier: 192
+Dec 22 15:28:12.553 INFO event handled successfully, uid: 5, identifier: 192
+Dec 22 15:28:16.260 INFO publishing a new event, event_identifier: 193
+Dec 22 15:28:16.469 INFO event handled successfully, uid: 4, identifier: 193
+Dec 22 15:28:16.472 INFO event handled successfully, uid: 6, identifier: 193
+Dec 22 15:28:16.475 INFO event handled successfully, uid: 3, identifier: 193
+Dec 22 15:28:16.478 INFO event handled successfully, uid: 1, identifier: 193
+Dec 22 15:28:16.481 INFO event handled successfully, uid: 2, identifier: 193
+Dec 22 15:28:16.484 INFO event handled successfully, uid: 5, identifier: 193
+Dec 22 15:28:20.262 INFO publishing a new event, event_identifier: 194
+Dec 22 15:28:20.471 INFO event handled successfully, uid: 2, identifier: 194
+Dec 22 15:28:20.478 INFO event handled successfully, uid: 1, identifier: 194
+Dec 22 15:28:20.481 INFO event handled successfully, uid: 3, identifier: 194
+Dec 22 15:28:20.484 INFO event handled successfully, uid: 5, identifier: 194
+Dec 22 15:28:20.486 INFO event handled successfully, uid: 4, identifier: 194
+Dec 22 15:28:20.489 INFO event handled successfully, uid: 6, identifier: 194
+Dec 22 15:28:25.262 INFO publishing a new event, event_identifier: 195
+Dec 22 15:28:25.452 INFO event handled successfully, uid: 1, identifier: 195
+Dec 22 15:28:25.458 INFO event handled successfully, uid: 2, identifier: 195
+Dec 22 15:28:25.462 INFO event handled successfully, uid: 6, identifier: 195
+Dec 22 15:28:25.465 INFO event handled successfully, uid: 3, identifier: 195
+Dec 22 15:28:25.467 INFO event handled successfully, uid: 5, identifier: 195
+Dec 22 15:28:25.470 INFO event handled successfully, uid: 4, identifier: 195
+Dec 22 15:28:30.264 INFO publishing a new event, event_identifier: 196
+Dec 22 15:28:30.469 INFO event handled successfully, uid: 1, identifier: 196
+Dec 22 15:28:30.472 INFO event handled successfully, uid: 6, identifier: 196
+Dec 22 15:28:30.476 INFO event handled successfully, uid: 4, identifier: 196
+Dec 22 15:28:30.482 INFO event handled successfully, uid: 2, identifier: 196
+Dec 22 15:28:30.485 INFO event handled successfully, uid: 3, identifier: 196
+Dec 22 15:28:30.488 INFO event handled successfully, uid: 5, identifier: 196
+Dec 22 15:28:34.265 INFO publishing a new event, event_identifier: 197
+Dec 22 15:28:34.540 INFO event handled successfully, uid: 1, identifier: 197
+Dec 22 15:28:34.546 INFO event handled successfully, uid: 2, identifier: 197
+Dec 22 15:28:34.549 INFO event handled successfully, uid: 4, identifier: 197
+Dec 22 15:28:34.553 INFO event handled successfully, uid: 3, identifier: 197
+Dec 22 15:28:34.556 INFO event handled successfully, uid: 6, identifier: 197
+Dec 22 15:28:34.560 INFO event handled successfully, uid: 5, identifier: 197
+Dec 22 15:28:39.266 INFO publishing a new event, event_identifier: 198
+Dec 22 15:28:39.491 INFO event handled successfully, uid: 6, identifier: 198
+Dec 22 15:28:39.496 INFO event handled successfully, uid: 2, identifier: 198
+Dec 22 15:28:39.500 INFO event handled successfully, uid: 5, identifier: 198
+Dec 22 15:28:39.503 INFO event handled successfully, uid: 4, identifier: 198
+Dec 22 15:28:39.505 INFO event handled successfully, uid: 3, identifier: 198
+Dec 22 15:28:39.508 INFO event handled successfully, uid: 1, identifier: 198
+Dec 22 15:28:45.266 INFO publishing a new event, event_identifier: 199
+Dec 22 15:28:45.459 INFO event handled successfully, uid: 6, identifier: 199
+Dec 22 15:28:45.466 INFO event handled successfully, uid: 1, identifier: 199
+Dec 22 15:28:45.470 INFO event handled successfully, uid: 2, identifier: 199
+Dec 22 15:28:45.473 INFO event handled successfully, uid: 4, identifier: 199
+Dec 22 15:28:45.475 INFO event handled successfully, uid: 5, identifier: 199
+Dec 22 15:28:45.479 INFO event handled successfully, uid: 3, identifier: 199
+Dec 22 15:28:49.268 INFO publishing a new event, event_identifier: 200
+Dec 22 15:28:49.505 INFO event handled successfully, uid: 1, identifier: 200
+Dec 22 15:28:49.509 INFO event handled successfully, uid: 3, identifier: 200
+Dec 22 15:28:49.512 INFO event handled successfully, uid: 2, identifier: 200
+Dec 22 15:28:49.518 INFO event handled successfully, uid: 6, identifier: 200
+Dec 22 15:28:49.521 INFO event handled successfully, uid: 4, identifier: 200
+Dec 22 15:28:49.524 INFO event handled successfully, uid: 5, identifier: 200

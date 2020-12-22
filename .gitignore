@@ -19,6 +19,5 @@ Cargo.lock
 
 *.code-workspace
 
-# network packet data package: too big
+# uncompressed network packet data package: too big
 *.pcapng
-*.pcapng.gz

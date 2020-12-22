@@ -220,7 +220,7 @@ More configurable test parameters will be added in the future.
 If you have followed all the instructions above or just have run the automatic testing script we 
 provide, you may get a result similar with the example one restored in `./result` where you can find:
 
-* [a wireshark packet set](./result/6-200.zip) (you have to unzip it first)
+* [a wireshark packet set](./result/6-200.pcapng.gz)
 * six slave log files named like `slave_x.log`
 * a master log file named `master.log`
 
@@ -228,15 +228,17 @@ Here's a flow chart of this process, exported from wireshark.
 
 ![flow chart](./result/6-200.png)
 
+where the grey dots indicates the bytes flowed through master & all slaves; the red line indicates the bytes flowed through master; the blue line indicates the bytes flowed through slave_1.
+
 Its corresponding data is [here](./result/6-200.csv). With this data, we can figure out the total flow of this whole process (200 rounds).
 
 |                            | All       | Master   | Slave 1 |
 |----------------------------|-----------|----------|---------|
-| Total Amount \(byte\)      | 111921739 | 66160613 | 7955648 |
+| Total Amount \(byte\)      | 111898431 | 66135847 | 7954972 |
 
 We can figure out such estimations:
 
-* an approximate amount of data transmitted through *master* in one iteration per slave: 55,134 B, i.e. 53.84 KB
-* an approximate amount of data transmitted through one *slave* in one iteration: 39,778 B, i.e. 38.85 KB
+* an approximate amount of data transmitted through *master* in one iteration per slave: 55,113 B, i.e. 53.82 KB
+* an approximate amount of data transmitted through one *slave* in one iteration: 39,775 B, i.e. 38.84 KB
 
-*Note*: Since slaves are similar, here we just provide the data amount of slave_1 (in most cases, other slaves' data amount should be no bigger than the slave_1's). If you are interested in the other slaves', you can utilize [the network packet set](./result/6-200.zip).
+*Note*: Since slaves are similar, here we just provide the data amount of slave_1 (in most cases, other slaves' data amount should be no bigger than the slave_1's). If you are interested in the other slaves', you can utilize [the network packet set](./result/6-200.pcapng.gz).
