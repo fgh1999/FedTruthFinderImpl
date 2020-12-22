@@ -723,10 +723,8 @@ impl master_server::Master for MasterServer {
                                 // erase the buffered event_confidence_computation_configuration (eid)'s clients_pk
                                 // ** should not erase the buffered event_confidence_computation_configuration (eid)
                                 // ** cause we depends on it to verify preconditions
-                                let mut config_w =
-                                    shared.event_computation_configurations.write().await;
-                                // let entry =
-                                //     shared.event_computation_configurations.entry(eid.clone());
+                                // let mut config_w =
+                                    // shared.event_computation_configurations.write().await;
                                 // hold the write lock before updating shared.event_confidence to avoid some sync problems
 
                                 // update the leaderboard
@@ -736,8 +734,7 @@ impl master_server::Master for MasterServer {
                                 }
 
                                 // update after updating the confidence of event
-                                config_w.get_mut(&eid).unwrap().clients_pk.clear();
-                                // entry.and_modify(|config| config.clients_pk.clear());
+                                // config_w.get_mut(&eid).unwrap().clients_pk.clear();
 
                                 info!(self.shared.logger, "Leader board";
                                     "eid"=> eid, "ascending uid ranking list" => fmt_leader_board(leader_board.clone())
