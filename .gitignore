@@ -1,0 +1,4 @@
+/target
+/config/runtime*
+*.code-workspace
+/old_logs/
