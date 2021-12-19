@@ -1,0 +1,36 @@
+syntax = "proto3";
+package master;
+import "google/protobuf/empty.proto";
+//import "google/protobuf/wrappers.proto";
+
+message RegistrationReq {
+    bytes pk = 1;
+    string mailbox = 2; //string-form address of the client mailbox
+    repeated string identifiers = 3;
+}
+message RegistrationRes {
+    int32 uid = 1;  //user id
+    map<string, uint64> identifierEidMap = 2; // { eid: corresponding identifier }
+}
+
+message ClientsPk {
+    map<int32, bytes> value = 1; // map<Uid, pk> 
+}
+
+service Registration {
+    // register itself and all its events
+    rpc Register(RegistrationReq) returns (RegistrationRes) {}
+
+    // return the gid of the given uid
+    // param: uid
+    // returns: gid
+    // rpc GetGroupOf(google.protobuf.Int32Value) returns (google.protobuf.Int32Value) {}
+}
+
+message PublicKeyQuery {
+    bool online = 1;
+}
+
+service Security {
+    rpc GetPublicKeys(PublicKeyQuery) returns (ClientsPk) {}
+}

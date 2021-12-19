@@ -1,0 +1,80 @@
+syntax = "proto3";
+package slave;
+import "google/protobuf/empty.proto";
+import "google/protobuf/wrappers.proto";
+
+message DsijPairsForOneEvent {
+    map<int32, bytes> value = 1; // { uid: encrpyted_pair }
+}
+message DsijPairsForEvents {
+    map<uint64, DsijPairsForOneEvent> value = 1; // { eid: { uid: encrypted_pair } }
+}
+
+message BytesVec {
+    repeated bytes value = 1;
+}
+
+message DsijSumPairsReq {
+    map<uint64, BytesVec> dsijPairs = 1;  // { eid: [encrpyted_pair] }
+}
+message DsijSumPairs {
+    map<uint64, bytes> value = 1;   // { eid: summation_pair }
+}
+
+message OwnedEids {
+    repeated uint64 value = 1;
+}
+
+message Confidence {
+    repeated double value = 1;
+}
+message Confidences {
+    map<uint64, Confidence> value = 1;
+}
+
+service Iteration {
+    rpc GetDsijPairsShares(google.protobuf.Empty) returns (DsijPairsForEvents) {}
+
+    rpc GetDsijSumPairs(DsijSumPairsReq) returns (DsijSumPairs) {}
+
+    rpc UpdateTrustworthinessWith(Confidences) returns (google.protobuf.Empty) {}
+}
+
+message GroupInfo {
+    map<int32, int32> uidGidMap = 1; // { uid: gid }
+}
+message TauSeqShares {
+    map<int32, bytes> value = 1; // { rx_uid: encrpyted_share(Share<Rational>) }
+}
+
+message RShares {
+    map<int32, bytes> value = 1; // { rx_uid: encrpyted_share(Share<Rational>) }
+}
+
+message HSetSharesReq {
+    map<int32, bytes> tauSeqShares = 1; // { tx_uid: encrpyted_share(Share<Rational>) }
+    map<int32, bytes> rShares = 2;      // { gid: encrpyted_share(Share<Rational>) }
+    double lambda = 3;                  // f64
+}
+message HSetShares {
+    map<int32, bytes> value = 1; // { rx_uid: encrpyted_share }
+}
+
+message HApoSetReq {
+    map<int32, bytes> value = 1; // { tx_gid: encrpyted_share(H(g,k)) }
+}
+message HApoSet {
+    bytes value = 1; // h_i'(k) (not encrpyted) Share<Rational>
+}
+
+service Rank {
+    // param: group_num
+    rpc GetTauSeqShares(GroupInfo) returns (TauSeqShares) {}
+
+    // param: group_num
+    rpc GetRShares(GroupInfo) returns (RShares) {}
+
+    rpc GetHSetShares(HSetSharesReq) returns (HSetShares) {}
+
+    rpc GetHApoSet(HApoSetReq) returns (HApoSet) {}
+}

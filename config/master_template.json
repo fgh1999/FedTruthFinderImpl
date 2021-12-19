@@ -1,0 +1,11 @@
+{
+    "addr": "192.168.0.1:8100",
+    "keys": {
+        "ca_path": "config/tls/client_ca.pem",
+        "sk_path": "config/tls/server.key",
+        "pk_path": "config/tls/server.pem"
+    },
+    "group_num": 3,
+    "client_num": 20,
+    "error_rate": 0.0
+}

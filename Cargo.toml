@@ -1,0 +1,54 @@
+[package]
+name = "fed_truth_finder"
+version = "0.1.0"
+authors = ["fgh1999 <fanguanghong1999@163.com>"]
+edition = "2018"
+
+
+[dependencies]
+tonic = { version = "^0.4", features = ["tls"]}
+prost = "^0.7"
+tokio = { version = "^1.0", features = ["full"]}
+futures = "^0.3"
+serde = { version = "^1.0", features = [ "derive" ]}
+serde_json = "^1.0"
+serde_yaml = "^0.8"
+
+# secrect sharing
+sharks = { git = "https://github.com/fgh1999/sharks.git" }
+num-rational = { version = "^0.3", features = ["serde"] }
+num-traits = "^0.2.11"
+
+# public key encryption
+ecies-ed25519 = { version="0.5.0", features = ["ring"], default_features = false }
+rand = "^0.7"
+
+# error handling
+anyhow = "1.0"
+thiserror = "1.0"
+
+# linear algebra
+nalgebra = "^0.24"
+
+# event records
+csv = "^1.1"
+
+# logging
+slog= "^2.7"
+slog-term = "^2.6"
+slog-async = "^2.5"
+
+[build-dependencies]
+tonic-build = { version = "^0.4", features = ["prost"]}
+
+[[bin]]
+name = "master"
+path = "src/master.rs"
+
+[[bin]]
+name = "slave"
+path = "src/slave.rs"
+
+[[bin]]
+name = "configuration_generator"
+path = "src/configuration_generator.rs"
