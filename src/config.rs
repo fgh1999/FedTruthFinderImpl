@@ -14,7 +14,7 @@ pub struct ServerConfig {
     pub keys: SecurityPath,
     pub group_num: i32,
     pub client_num: i32,
-    pub error_rate: f64,
+    pub drop_rate: f64,
 }
 
 #[derive(Debug, Default, Clone, Serialize, Deserialize)]
@@ -29,6 +29,7 @@ pub struct ClientConfig {
     pub addrs: ClientAddrs,
     pub keys: SecurityPath,
     pub event_file_path: String,
+    pub error_rate: f64,
 }
 
 enum ConfigPath {

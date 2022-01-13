@@ -1,25 +1,25 @@
 tonic::include_proto!("master");
 tonic::include_proto!("slave");
 use super::{
+    algo_util::{generate_dsij_shares, make_shares},
     client_management::{ClientManagement, SlaveInfo},
     event::{Eid, EidAssigner, Event, EventIdentifier, Judge},
-    algo_util::{generate_dsij_shares, make_shares},
     id::{Gid, Uid, UidAssigner},
     ResponseResult,
 };
 
 use anyhow::Result;
+use ecies_ed25519::{self as ecies, PublicKey};
 use rand::{prelude::Distribution, Rng};
 use sharks::{secret_type::Rational, Share, Sharks};
 use slog::{crit, debug, error, info, trace, warn, Logger};
+use std::collections::HashMap;
 use std::convert::TryFrom;
 use std::net::SocketAddr;
 use std::sync::Arc;
 use std::time::Duration;
-use std::collections::{HashMap, HashSet};
 use tokio::sync::{Barrier, Notify, RwLock};
 use tonic::{Request, Response, Status};
-use ecies_ed25519::{self as ecies, PublicKey};
 
 /// Shared fields among requests
 #[derive(Debug)]
@@ -27,12 +27,12 @@ struct Shared {
     logger: Logger,
     group_n: Gid,  // the number of groups
     client_n: Uid, // the number of clients
-    error_rate: f64,
+    drop_rate: f64,
 
     uid_assigner: UidAssigner,
     pub clients: RwLock<HashMap<Uid, Arc<SlaveInfo>>>,
     registration_barrier: Barrier,
-    registation_return_barrier: Barrier, 
+    registation_return_barrier: Barrier,
 
     iteration_notifier: Notify,
 
@@ -47,13 +47,13 @@ pub struct MasterServer {
 }
 
 impl MasterServer {
-    pub fn new<L: Into<Logger>>(group_n: Gid, client_n: Uid, error_rate: f64, logger: L) -> Self {
+    pub fn new<L: Into<Logger>>(group_n: Gid, client_n: Uid, drop_rate: f64, logger: L) -> Self {
         let logger = logger.into();
         let shared = Arc::new(Shared {
             logger: logger.clone(),
             group_n,
             client_n,
-            error_rate,
+            drop_rate,
             uid_assigner: UidAssigner::default(),
             clients: RwLock::new(HashMap::new()),
             registration_barrier: Barrier::new(client_n as usize),
@@ -180,7 +180,11 @@ impl Iteration for Arc<MasterServer> {
             // }
         }
         if dsij_sum_pairs_set.len() < threshold {
-            return Err(anyhow::anyhow!("The number of summation pairs are {}, less than {}", dsij_sum_pairs_set.len(), threshold));
+            return Err(anyhow::anyhow!(
+                "The number of summation pairs are {}, less than {}",
+                dsij_sum_pairs_set.len(),
+                threshold
+            ));
         }
 
         // resolve (d_j, s_j) and return the events' confidences
@@ -238,7 +242,7 @@ impl Iteration for Arc<MasterServer> {
                         Confidence {
                             value: match confidences.get(eid) {
                                 Some(conf) => conf.clone(),
-                                None => vec![0.5, 0.5]
+                                None => vec![0.5, 0.5],
                             },
                         },
                     )
@@ -274,9 +278,11 @@ impl Iteration for Arc<MasterServer> {
                 .filter(|(_eid, conf)| conf.is_ok())
                 .map(|(eid, conf)| (eid.clone(), conf.as_ref().unwrap().clone()))
                 .collect();
-            let unsolved_eids: Vec<Eid> = confidences.into_iter()
+            let unsolved_eids: Vec<Eid> = confidences
+                .into_iter()
                 .filter(|(_eid, conf)| conf.is_err())
-                .map(|(eid, _conf)| eid).collect();
+                .map(|(eid, _conf)| eid)
+                .collect();
             info!(self.shared.logger, "Failed events' eids"; "round_ith" => round_num, "the number of failed eids" => unsolved_eids.len());
 
             let updated_confidences = if confidences_temp.is_none() {
@@ -298,7 +304,7 @@ impl Iteration for Arc<MasterServer> {
             if let Err(e) = self.update_trustworthiness(updated_confidences).await {
                 return Err((e, confidences_temp.unwrap_or_default()));
             }
-
+            
             round_num += 1;
             info!(self.shared.logger, "Iteration"; "round_ith" => round_num);
             self.drop_off().await;
@@ -313,11 +319,14 @@ impl Iteration for Arc<MasterServer> {
         info!(self.shared.logger, "Iterations start");
 
         let confidences_to_string = |confidences: ConfidenceDict| -> String {
-            let confidences: Vec<_> = confidences.iter().map(|(eid, conf)| {
-                format!("({}: {}) ", eid.clone(), conf[0])
-            }).collect();
+            let confidences: Vec<_> = confidences
+                .iter()
+                .map(|(eid, conf)| format!("({}: {}) ", eid.clone(), conf[0]))
+                .collect();
             let mut confidence_string = String::new();
-            confidences.into_iter().for_each(|conf| confidence_string.push_str(&conf));
+            confidences
+                .into_iter()
+                .for_each(|conf| confidence_string.push_str(&conf));
             confidence_string
         };
 
@@ -334,8 +343,8 @@ impl Iteration for Arc<MasterServer> {
     }
 
     async fn drop_off(&self) {
-        let error_rate = self.shared.error_rate;
-        let weights: Vec<f64> = vec![1.0 - error_rate, error_rate];
+        let drop_rate = self.shared.drop_rate;
+        let weights: Vec<f64> = vec![1.0 - drop_rate, drop_rate];
         let distribution =
             rand::distributions::weighted::alias_method::WeightedIndex::new(weights).unwrap();
         let online_choices = [true, false];
@@ -453,14 +462,19 @@ impl Rank for Arc<MasterServer> {
             r_shares.insert(gid.clone(), r_shares_of_one);
         } // { tx_gid: { rx_uid: encrpyted_share(Share<Rational>) } }
         let mut rx_r_shares = HashMap::new();
-        r_shares.into_iter().for_each(|(tx_gid, shares_of_one_group)| {
-            shares_of_one_group.into_iter().for_each(|(rx_uid, share)| {
-                if !rx_r_shares.contains_key(&rx_uid) {
-                    rx_r_shares.insert(rx_uid.clone(), HashMap::new());
-                }
-                rx_r_shares.get_mut(&rx_uid).unwrap().insert(tx_gid.clone(), share);
+        r_shares
+            .into_iter()
+            .for_each(|(tx_gid, shares_of_one_group)| {
+                shares_of_one_group.into_iter().for_each(|(rx_uid, share)| {
+                    if !rx_r_shares.contains_key(&rx_uid) {
+                        rx_r_shares.insert(rx_uid.clone(), HashMap::new());
+                    }
+                    rx_r_shares
+                        .get_mut(&rx_uid)
+                        .unwrap()
+                        .insert(tx_gid.clone(), share);
+                });
             });
-        });
         // { rx_uid: { tx_gid: encrpyted_share(Share<Rational>) } }
         let r_shares = rx_r_shares;
 
@@ -667,11 +681,14 @@ impl registration_server::Registration for Arc<MasterServer> {
             let event_set = event_set;
 
             // log identifier_eid_map
-            let identifier_eid_pairs: Vec<_> = event_set.iter().map(|(identifier, eid)| {
-                format!("({}: {}) ", identifier, eid)
-            }).collect();
+            let identifier_eid_pairs: Vec<_> = event_set
+                .iter()
+                .map(|(identifier, eid)| format!("({}: {}) ", identifier, eid))
+                .collect();
             let mut identifier_eid_str = String::new();
-            identifier_eid_pairs.into_iter().for_each(|pair| identifier_eid_str.push_str(&pair));
+            identifier_eid_pairs
+                .into_iter()
+                .for_each(|pair| identifier_eid_str.push_str(&pair));
             info!(self.shared.logger, "Identifier Eid Map"; "pairs(event identifier, eid)" => identifier_eid_str);
 
             // modify inner status

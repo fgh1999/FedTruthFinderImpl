@@ -1,13 +1,16 @@
 tonic::include_proto!("slave");
 tonic::include_proto!("master");
+use crate::event::RawEventRecord;
+
 use super::{
+    algo_util::{generate_dsij_shares, make_shares},
     config::ClientConfig,
     event::{Eid, Event, Judge},
     fmt_leader_board,
     id::{Gid, Uid},
-    algo_util::{generate_dsij_shares, make_shares},
     ResponseResult,
 };
+use rand::distributions;
 use tonic::{Request, Response, Status};
 
 use std::sync::Arc;
@@ -144,7 +147,9 @@ impl iteration_server::Iteration for Arc<SlaveServer> {
             .collect();
         info!(self.shared.logger, "get_dsij_pairs_shares"; "the number of public keys" => pks.len());
 
-        Ok(Response::new(DsijPairsForEvents { value: dsij_pairs_shares }))
+        Ok(Response::new(DsijPairsForEvents {
+            value: dsij_pairs_shares,
+        }))
     }
 
     async fn get_dsij_sum_pairs(
@@ -387,6 +392,28 @@ pub trait Registration {
         ecies::generate_keypair(&mut rng)
     }
 
+    fn judge(error_rate: f64, owned_event_records: Vec<RawEventRecord>) -> Vec<RawEventRecord> {
+        use rand::distributions::Distribution;
+
+        if owned_event_records.len() == 0 {
+            return vec![];
+        }
+        let weights: Vec<_> = vec![error_rate, 1.0 - error_rate];
+        let distribution =
+            rand::distributions::weighted::alias_method::WeightedIndex::new(weights).unwrap();
+        let mut rng = rand::thread_rng();
+        let choices = [true, false];
+        owned_event_records
+            .into_iter()
+            .map(|record| if choices[distribution.sample(&mut rng)] { RawEventRecord {
+                identifier: record.identifier,
+                delay_seconds: record.delay_seconds,
+                owned: record.owned,
+                claim: !record.claim
+            }} else { record })
+            .collect()
+    }
+
     async fn register<P: AsRef<std::path::Path> + Sync + Send>(
         config: ClientConfig,
         log_path: Option<P>,
@@ -403,6 +430,7 @@ pub trait Registration {
             .into_iter()
             .filter(|record| record.owned)
             .collect();
+        let owned_event_records = Self::judge(config.error_rate, owned_event_records);
 
         // request to register
         let server_url = config.addrs.remote_addr.clone();

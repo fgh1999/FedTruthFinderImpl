@@ -13,9 +13,10 @@ futures = "^0.3"
 serde = { version = "^1.0", features = [ "derive" ]}
 serde_json = "^1.0"
 serde_yaml = "^0.8"
+chrono = { version = "0.4", features = ['serde'] }
 
 # secrect sharing
-sharks = { git = "https://github.com/fgh1999/sharks.git" }
+sharks = { git = "https://gitee.com/fgh1999/sharks.git" }
 num-rational = { version = "^0.3", features = ["serde"] }
 num-traits = "^0.2.11"
 
@@ -37,6 +38,7 @@ csv = "^1.1"
 slog= "^2.7"
 slog-term = "^2.6"
 slog-async = "^2.5"
+psutil = { version = "3.2.1", default-features = false, features = ["network"] }
 
 [build-dependencies]
 tonic-build = { version = "^0.4", features = ["prost"]}
@@ -52,3 +54,9 @@ path = "src/slave.rs"
 [[bin]]
 name = "configuration_generator"
 path = "src/configuration_generator.rs"
+
+[source.crates-io]
+replace-with = 'tuna'
+
+[source.tuna]
+registry = "https://mirrors.tuna.tsinghua.edu.cn/git/crates.io-index.git"

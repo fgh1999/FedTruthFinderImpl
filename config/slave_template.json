@@ -9,5 +9,6 @@
         "pk_path": "config/tls/client1.pem",
         "ca_path": "config/tls/ca.pem"
     },
-    "event_file_path": "config/event_SF_01/amknywr.csv"
+    "event_file_path": "config/event_SF_01/amknywr.csv",
+    "error_rate": 0.0
 }

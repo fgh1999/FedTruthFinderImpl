@@ -1,6 +1,6 @@
 use num_rational::BigRational;
 use num_traits::cast::FromPrimitive;
-use sharks::{Share, secret_type::Rational, SecretSharingOperation};
+use sharks::{secret_type::Rational, SecretSharingOperation, Share};
 
 pub fn make_shares(secrets: &[BigRational], t: u8, n: u8) -> Vec<Share<Rational>> {
     let mut shark = sharks::Sharks::new();

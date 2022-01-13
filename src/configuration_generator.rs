@@ -11,17 +11,17 @@
 //!
 
 use fed_truth_finder::config;
+use serde::{Deserialize, Serialize};
 use slog::Drain;
+use std::collections::HashMap;
 use std::fs::File;
 use std::io::Write;
-use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 
 #[derive(Debug, Deserialize, Serialize)]
 struct Compose {
     pub version: String,
     pub services: HashMap<String, Service>,
-    pub networks: HashMap<String, Network>
+    pub networks: HashMap<String, Network>,
 }
 
 impl Default for Compose {
@@ -29,7 +29,7 @@ impl Default for Compose {
         Compose {
             version: String::from("3.0"),
             services: HashMap::new(),
-            networks: HashMap::new()
+            networks: HashMap::new(),
         }
     }
 }
@@ -57,8 +57,8 @@ struct Network {
 async fn main() -> anyhow::Result<()> {
     let args: Vec<String> = std::env::args().collect();
 
-    if args.len() < 5 {
-        eprintln!("insufficient args (args: slave_num master_configuration_template_path slave_configuration_template_path event_path");
+    if args.len() < 6 {
+        eprintln!("insufficient args (args: slave_num master_configuration_template_path slave_configuration_template_path event_path error_rates_path");
         std::process::exit(-1);
     }
 
@@ -76,10 +76,11 @@ async fn main() -> anyhow::Result<()> {
         std::fs::create_dir_all(runtime_config_dir)?;
     }
     let template = config::load_server_config(&args[2]);
+    let slave_n= template.client_num as usize;
     let master_addr = template.addr.clone();
     let master_configuration = serde_json::to_string(&template)?;
-    let mut file =
-        File::create("./config/runtime/master.json").expect("failed to create master configuration file");
+    let mut file = File::create("./config/runtime/master.json")
+        .expect("failed to create master configuration file");
     file.write_all(master_configuration.as_bytes())?;
     slog::info!(logger, #"configuration", "master configuration constructed";
         "listen at" => &master_addr,
@@ -99,34 +100,63 @@ async fn main() -> anyhow::Result<()> {
     } else {
         vec![event_path.to_owned()]
     };
-    let slave_n: usize = args[1].parse()?;
+    // read error rates as a dict
+    let error_rate_for_each_client_path = Path::new(&args[5]);
+    let mut error_rates_for_each_client = HashMap::new();
+    {
+        let mut rdr = csv::Reader::from_reader(File::open(error_rate_for_each_client_path)?);
+        for r in rdr.records() {
+            let r = r?;
+            let name = r[0].to_string();
+            let error_rate: f64 = r[1].parse()?;
+            error_rates_for_each_client.insert(name, error_rate);
+        }
+    }
+
+    // let slave_n: usize = args[1].parse()?;
     if slave_n < template.group_num as usize || slave_n >= u8::MAX as usize {
         eprintln!("the number of slaves should be no less than the group_num in master configuration and no bigger than 255");
         std::process::exit(-2);
     }
-    if event_file_list.len() > 1 && slave_n > event_file_list.len() {
-        eprintln!("the number of slaves should equals to the number of given event files");
-        std::process::exit(-2);
-    }
+    let slave_n = if event_file_list.len() > 1 && slave_n > event_file_list.len() {
+        eprintln!("the number of given event files: {}", event_file_list.len());
+        // std::process::exit(-2);
+        event_file_list.len()
+    } else {
+        slave_n
+    };
     let mut template = config::load_client_config(&args[3]);
     template.addrs.remote_addr = format!("http://{}", master_addr);
-    let mailbox_port:Vec<&str> = template.addrs.mailbox_addr.split(':').collect();
+    let mailbox_port: Vec<&str> = template.addrs.mailbox_addr.split(':').collect();
     let mailbox_port = mailbox_port[1];
     for i in 1..=slave_n {
+        let file_name = event_file_list[i - 1].file_name().unwrap();
+        let filename = file_name.to_owned().into_string().unwrap();
+        let client_name = filename.split('.').next().unwrap();
         let file_path = if event_file_list.len() == 1 {
             format!("./config/runtime/slave_{}.json", i)
         } else {
-            let filename = event_file_list[i-1].file_name().unwrap();
-            let filename = filename.to_owned().into_string().unwrap();
-            format!("./config/runtime/{}.json", filename.split('.').next().unwrap())
+            format!(
+                "./config/runtime/{}.json",
+                client_name
+            )
         };
         let mut config = template.clone();
         let ipv4_last_byte = 1 + i;
         config.addrs.mailbox_addr = format!("192.168.0.{}:{}", ipv4_last_byte, mailbox_port);
         // let event_file_path = event_file_list[i-1].file_name().unwrap();
         // let event_file_path = event_file_path.to_owned().into_string().unwrap();
-        let event_file_path = event_file_list[i-1].to_str().unwrap().to_string();
+        let event_file_path = event_file_list[i - 1].to_str().unwrap().to_string();
         config.event_file_path = event_file_path.replace("\\", "/");
+        match error_rates_for_each_client.get(client_name) {
+            Some(error_rate) => {
+                config.error_rate = *error_rate;
+            }
+            None => {
+                eprintln!("an unknown client for error_rates");
+                std::process::exit(-2);
+            }
+        }
 
         let mut file = File::create(file_path).expect("failed to create slave configuration files");
         let config = serde_json::to_string(&config)?;
@@ -153,14 +183,18 @@ async fn main() -> anyhow::Result<()> {
     let mut services = HashMap::with_capacity(slave_n + 2);
     let mut master_service = Service::default();
     master_service.container_name = "master".into();
-    master_service.image = String::from(docker_image_tag); 
+    master_service.image = String::from(docker_image_tag);
     let mut test_network_config = HashMap::with_capacity(1);
     test_network_config.insert("ipv4_address".into(), "192.168.0.1".into());
     let mut network = HashMap::with_capacity(1);
     network.insert("test".into(), test_network_config);
     master_service.networks = network;
     // master_service.network_mode = String::from("host");
-    master_service.volumes = vec![String::from(format!("{}:{}", std::env::current_dir()?.display(), project_path_in_docker))];
+    master_service.volumes = vec![String::from(format!(
+        "{}:{}",
+        std::env::current_dir()?.display(),
+        project_path_in_docker
+    ))];
     master_service.working_dir = project_path_in_docker.into();
     master_service.command = String::from("master ./config/runtime/master.json ./log/master.log");
     services.insert("master".into(), master_service);
@@ -169,9 +203,9 @@ async fn main() -> anyhow::Result<()> {
         let name = if event_file_list.len() == 1 {
             format!("slave_{}", i)
         } else {
-            let filename = event_file_list[i-1].file_name().unwrap();
+            let filename = event_file_list[i - 1].file_name().unwrap();
             let filename = filename.to_owned().into_string().unwrap();
-            filename[0..(filename.len()-4)].into()
+            filename[0..(filename.len() - 4)].into()
         };
         let mut slave_service = Service::default();
         slave_service.container_name = String::from(&name);
@@ -182,7 +216,11 @@ async fn main() -> anyhow::Result<()> {
         let mut network = HashMap::with_capacity(1);
         network.insert("test".into(), test_network_config);
         slave_service.networks = network;
-        slave_service.volumes = vec![format!("{}:{}", std::env::current_dir()?.display(), project_path_in_docker)];
+        slave_service.volumes = vec![format!(
+            "{}:{}",
+            std::env::current_dir()?.display(),
+            project_path_in_docker
+        )];
         slave_service.working_dir = String::from(project_path_in_docker);
 
         // let event_file_path = if event_file_list.len() == 1 {
@@ -202,7 +240,7 @@ async fn main() -> anyhow::Result<()> {
     let compose = Compose {
         version: String::from("3.0"),
         services,
-        networks
+        networks,
     };
 
     let log_dir_path = "./log";
@@ -210,7 +248,8 @@ async fn main() -> anyhow::Result<()> {
         std::fs::create_dir_all(log_dir_path)?; // construct a dir for log
     }
     let docker_compose_filename = "docker-compose.yml";
-    let mut file = File::create(&docker_compose_filename).expect("failed to create docker-compose file");
+    let mut file =
+        File::create(&docker_compose_filename).expect("failed to create docker-compose file");
     writeln!(&mut file, "{}", serde_yaml::to_string(&compose)?)?;
     slog::info!(logger, #"configuration", "docker-compose file generated";
         "filename" => &docker_compose_filename,

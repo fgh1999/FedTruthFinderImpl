@@ -52,7 +52,7 @@ async fn run_tls_server(config_path: impl AsRef<std::path::Path>, logger: slog::
     let master = master_server::MasterServer::new(
         config.group_num as id::Gid,
         config.client_num,
-        config.error_rate,
+        config.drop_rate,
         logger.clone(),
     );
     let master = Arc::new(master);
@@ -63,16 +63,18 @@ async fn run_tls_server(config_path: impl AsRef<std::path::Path>, logger: slog::
         .add_service(master_server::registration_server::RegistrationServer::new(
             master.clone(),
         ))
-        .add_service(master_server::security_server::SecurityServer::new(
-            master,
-        ))
+        .add_service(master_server::security_server::SecurityServer::new(master))
         .serve(addr)
         .await
         .unwrap();
 }
 
-async fn iterate(master: Arc<master_server::MasterServer>, logger: slog::Logger) -> anyhow::Result<()> {
+async fn iterate(
+    master: Arc<master_server::MasterServer>,
+    logger: slog::Logger,
+) -> anyhow::Result<()> {
     use master_server::{Iteration, Rank};
+    let (i_bytes_start, o_bytes_start) = get_network_total_io_bytes().await;
     master.wrapped_iterate().await;
 
     match master.rank_clients_trustworthiness().await {
@@ -83,11 +85,15 @@ async fn iterate(master: Arc<master_server::MasterServer>, logger: slog::Logger)
                 leader_board.push_str(&uid);
             });
             slog::info!(logger, "Trustworthiness leader-board"; "ascending" => leader_board);
-        },
+        }
         Err(e) => {
             slog::error!(logger, "Trustworthiness ranking ends with an error"; "error" => %e);
         }
     }
+    let (i_bytes_end, o_bytes_end) = get_network_total_io_bytes().await;
+    let i_bytes = i_bytes_end - i_bytes_start;
+    let o_bytes = o_bytes_end - o_bytes_start;
+    slog::info!(logger, "Traffic in bytes"; "in" => i_bytes, "out" => o_bytes);
 
     Ok(())
 }
