@@ -1,0 +1,19 @@
+Jan 13 12:50:05.363 INFO node constructed, self.uid: 32
+Jan 13 12:50:12.606 INFO get_dsij_pairs_shares, the number of public keys: 40, self.uid: 32
+Jan 13 12:50:17.579 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 32
+Jan 13 12:50:21.099 INFO update_trustworthiness_with, trustworthiness after this call: 0.7355919881310232, self.uid: 32
+Jan 13 12:50:23.245 INFO get_dsij_pairs_shares, the number of public keys: 40, self.uid: 32
+Jan 13 12:50:28.263 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 32
+Jan 13 12:50:31.121 INFO update_trustworthiness_with, trustworthiness after this call: 0.6262339090179423, self.uid: 32
+Jan 13 12:50:33.280 INFO get_dsij_pairs_shares, the number of public keys: 40, self.uid: 32
+Jan 13 12:50:40.024 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 32
+Jan 13 12:50:41.191 INFO update_trustworthiness_with, trustworthiness after this call: 0.5754947544594571, self.uid: 32
+Jan 13 12:50:43.341 INFO get_dsij_pairs_shares, the number of public keys: 40, self.uid: 32
+Jan 13 12:50:49.712 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 32
+Jan 13 12:50:51.158 INFO update_trustworthiness_with, trustworthiness after this call: 0.5515880837704406, self.uid: 32
+Jan 13 12:50:53.299 INFO get_dsij_pairs_shares, the number of public keys: 40, self.uid: 32
+Jan 13 12:51:00.066 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 32
+Jan 13 12:51:00.961 INFO update_trustworthiness_with, trustworthiness after this call: 0.5401837509233735, self.uid: 32
+Jan 13 12:51:03.155 INFO get_dsij_pairs_shares, the number of public keys: 40, self.uid: 32
+Jan 13 12:51:08.823 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 32
+Jan 13 12:51:10.308 INFO update_trustworthiness_with, trustworthiness after this call: 0.53514777948505, self.uid: 32

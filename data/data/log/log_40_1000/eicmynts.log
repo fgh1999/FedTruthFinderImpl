@@ -1,0 +1,19 @@
+Jan 13 12:44:11.002 INFO node constructed, self.uid: 25
+Jan 13 12:44:16.479 INFO get_dsij_pairs_shares, the number of public keys: 40, self.uid: 25
+Jan 13 12:44:24.185 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 25
+Jan 13 12:44:26.765 INFO update_trustworthiness_with, trustworthiness after this call: 0.8177292002845031, self.uid: 25
+Jan 13 12:44:27.216 INFO get_dsij_pairs_shares, the number of public keys: 40, self.uid: 25
+Jan 13 12:44:33.781 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 25
+Jan 13 12:44:37.065 INFO update_trustworthiness_with, trustworthiness after this call: 0.692746598202877, self.uid: 25
+Jan 13 12:44:37.514 INFO get_dsij_pairs_shares, the number of public keys: 40, self.uid: 25
+Jan 13 12:44:44.894 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 25
+Jan 13 12:44:46.969 INFO update_trustworthiness_with, trustworthiness after this call: 0.6159998922823641, self.uid: 25
+Jan 13 12:44:47.419 INFO get_dsij_pairs_shares, the number of public keys: 40, self.uid: 25
+Jan 13 12:44:54.219 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 25
+Jan 13 12:44:56.440 INFO update_trustworthiness_with, trustworthiness after this call: 0.5777049010159716, self.uid: 25
+Jan 13 12:44:56.906 INFO get_dsij_pairs_shares, the number of public keys: 40, self.uid: 25
+Jan 13 12:45:03.795 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 25
+Jan 13 12:45:05.493 INFO update_trustworthiness_with, trustworthiness after this call: 0.55966145131589, self.uid: 25
+Jan 13 12:45:05.948 INFO get_dsij_pairs_shares, the number of public keys: 40, self.uid: 25
+Jan 13 12:45:12.576 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 25
+Jan 13 12:45:14.143 INFO update_trustworthiness_with, trustworthiness after this call: 0.5524211343236429, self.uid: 25

@@ -1,0 +1,19 @@
+Jan 13 01:39:59.365 INFO node constructed, self.uid: 90
+Jan 13 01:41:44.956 INFO get_dsij_pairs_shares, the number of public keys: 99, self.uid: 90
+Jan 13 01:41:59.783 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 90
+Jan 13 01:42:17.404 INFO update_trustworthiness_with, trustworthiness after this call: 0.763762615920971, self.uid: 90
+Jan 13 01:43:57.464 INFO get_dsij_pairs_shares, the number of public keys: 99, self.uid: 90
+Jan 13 01:44:16.232 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 90
+Jan 13 01:44:27.296 INFO update_trustworthiness_with, trustworthiness after this call: 0.64589312866985, self.uid: 90
+Jan 13 01:46:07.443 INFO get_dsij_pairs_shares, the number of public keys: 99, self.uid: 90
+Jan 13 01:46:21.568 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 90
+Jan 13 01:46:34.353 INFO update_trustworthiness_with, trustworthiness after this call: 0.5850864647056827, self.uid: 90
+Jan 13 01:48:14.363 INFO get_dsij_pairs_shares, the number of public keys: 99, self.uid: 90
+Jan 13 01:48:29.410 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 90
+Jan 13 01:48:37.956 INFO update_trustworthiness_with, trustworthiness after this call: 0.55771333978377, self.uid: 90
+Jan 13 01:50:18.252 INFO get_dsij_pairs_shares, the number of public keys: 99, self.uid: 90
+Jan 13 01:50:33.427 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 90
+Jan 13 01:50:40.585 INFO update_trustworthiness_with, trustworthiness after this call: 0.5477046887970718, self.uid: 90
+Jan 13 01:52:20.607 INFO get_dsij_pairs_shares, the number of public keys: 99, self.uid: 90
+Jan 13 01:52:34.321 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 90
+Jan 13 01:52:40.643 INFO update_trustworthiness_with, trustworthiness after this call: 0.5442029352325696, self.uid: 90

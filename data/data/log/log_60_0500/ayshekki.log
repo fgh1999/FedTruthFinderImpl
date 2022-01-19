@@ -1,0 +1,19 @@
+Jan 13 09:42:52.466 INFO node constructed, self.uid: 54
+Jan 13 09:43:00.863 INFO get_dsij_pairs_shares, the number of public keys: 60, self.uid: 54
+Jan 13 09:43:22.537 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 98, self.uid: 54
+Jan 13 09:43:27.612 INFO update_trustworthiness_with, trustworthiness after this call: 0.752502221727985, self.uid: 54
+Jan 13 09:43:30.996 INFO get_dsij_pairs_shares, the number of public keys: 60, self.uid: 54
+Jan 13 09:43:50.203 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 98, self.uid: 54
+Jan 13 09:43:56.722 INFO update_trustworthiness_with, trustworthiness after this call: 0.6449889394843086, self.uid: 54
+Jan 13 09:44:00.103 INFO get_dsij_pairs_shares, the number of public keys: 60, self.uid: 54
+Jan 13 09:44:20.700 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 98, self.uid: 54
+Jan 13 09:44:25.315 INFO update_trustworthiness_with, trustworthiness after this call: 0.5873049819950081, self.uid: 54
+Jan 13 09:44:28.711 INFO get_dsij_pairs_shares, the number of public keys: 60, self.uid: 54
+Jan 13 09:44:50.091 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 98, self.uid: 54
+Jan 13 09:44:53.714 INFO update_trustworthiness_with, trustworthiness after this call: 0.5583720588727518, self.uid: 54
+Jan 13 09:44:57.085 INFO get_dsij_pairs_shares, the number of public keys: 60, self.uid: 54
+Jan 13 09:45:18.797 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 98, self.uid: 54
+Jan 13 09:45:22.223 INFO update_trustworthiness_with, trustworthiness after this call: 0.5445797035067794, self.uid: 54
+Jan 13 09:45:25.563 INFO get_dsij_pairs_shares, the number of public keys: 60, self.uid: 54
+Jan 13 09:45:48.393 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 98, self.uid: 54
+Jan 13 09:45:50.313 INFO update_trustworthiness_with, trustworthiness after this call: 0.5379608303288904, self.uid: 54

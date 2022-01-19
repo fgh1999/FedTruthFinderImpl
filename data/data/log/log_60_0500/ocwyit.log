@@ -1,0 +1,19 @@
+Jan 13 09:42:52.465 INFO node constructed, self.uid: 35
+Jan 13 09:43:08.977 INFO get_dsij_pairs_shares, the number of public keys: 60, self.uid: 35
+Jan 13 09:43:21.776 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 98, self.uid: 35
+Jan 13 09:43:27.624 INFO update_trustworthiness_with, trustworthiness after this call: 0.7108390982021958, self.uid: 35
+Jan 13 09:43:38.971 INFO get_dsij_pairs_shares, the number of public keys: 60, self.uid: 35
+Jan 13 09:43:52.031 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 98, self.uid: 35
+Jan 13 09:43:56.732 INFO update_trustworthiness_with, trustworthiness after this call: 0.6184541785934207, self.uid: 35
+Jan 13 09:44:08.098 INFO get_dsij_pairs_shares, the number of public keys: 60, self.uid: 35
+Jan 13 09:44:22.823 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 98, self.uid: 35
+Jan 13 09:44:25.324 INFO update_trustworthiness_with, trustworthiness after this call: 0.5705115655747324, self.uid: 35
+Jan 13 09:44:36.790 INFO get_dsij_pairs_shares, the number of public keys: 60, self.uid: 35
+Jan 13 09:44:48.493 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 98, self.uid: 35
+Jan 13 09:44:53.724 INFO update_trustworthiness_with, trustworthiness after this call: 0.5470809053064406, self.uid: 35
+Jan 13 09:45:05.090 INFO get_dsij_pairs_shares, the number of public keys: 60, self.uid: 35
+Jan 13 09:45:17.278 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 98, self.uid: 35
+Jan 13 09:45:22.231 INFO update_trustworthiness_with, trustworthiness after this call: 0.5359270172085988, self.uid: 35
+Jan 13 09:45:33.645 INFO get_dsij_pairs_shares, the number of public keys: 60, self.uid: 35
+Jan 13 09:45:46.446 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 98, self.uid: 35
+Jan 13 09:45:50.321 INFO update_trustworthiness_with, trustworthiness after this call: 0.530598818523569, self.uid: 35

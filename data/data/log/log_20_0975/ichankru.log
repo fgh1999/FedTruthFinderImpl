@@ -1,0 +1,19 @@
+Jan 13 13:10:52.043 INFO node constructed, self.uid: 6
+Jan 13 13:10:57.440 INFO get_dsij_pairs_shares, the number of public keys: 20, self.uid: 6
+Jan 13 13:10:58.452 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 96, self.uid: 6
+Jan 13 13:10:59.351 INFO update_trustworthiness_with, trustworthiness after this call: 0.8008973918070256, self.uid: 6
+Jan 13 13:10:59.745 INFO get_dsij_pairs_shares, the number of public keys: 20, self.uid: 6
+Jan 13 13:11:00.904 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 96, self.uid: 6
+Jan 13 13:11:01.461 INFO update_trustworthiness_with, trustworthiness after this call: 0.6903089053413524, self.uid: 6
+Jan 13 13:11:01.848 INFO get_dsij_pairs_shares, the number of public keys: 20, self.uid: 6
+Jan 13 13:11:03.184 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 96, self.uid: 6
+Jan 13 13:11:03.476 INFO update_trustworthiness_with, trustworthiness after this call: 0.6237519845078454, self.uid: 6
+Jan 13 13:11:03.839 INFO get_dsij_pairs_shares, the number of public keys: 20, self.uid: 6
+Jan 13 13:11:05.061 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 96, self.uid: 6
+Jan 13 13:11:05.419 INFO update_trustworthiness_with, trustworthiness after this call: 0.5909863307573743, self.uid: 6
+Jan 13 13:11:05.828 INFO get_dsij_pairs_shares, the number of public keys: 20, self.uid: 6
+Jan 13 13:11:07.231 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 96, self.uid: 6
+Jan 13 13:11:07.332 INFO update_trustworthiness_with, trustworthiness after this call: 0.5750240658469298, self.uid: 6
+Jan 13 13:11:07.705 INFO get_dsij_pairs_shares, the number of public keys: 20, self.uid: 6
+Jan 13 13:11:08.886 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 96, self.uid: 6
+Jan 13 13:11:09.151 INFO update_trustworthiness_with, trustworthiness after this call: 0.5674185591899658, self.uid: 6

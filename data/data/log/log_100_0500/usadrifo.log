@@ -1,0 +1,19 @@
+Jan 12 23:37:08.665 INFO node constructed, self.uid: 52
+Jan 12 23:37:33.228 INFO get_dsij_pairs_shares, the number of public keys: 99, self.uid: 52
+Jan 12 23:39:11.623 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 52
+Jan 12 23:39:26.787 INFO update_trustworthiness_with, trustworthiness after this call: 0.4997690641069992, self.uid: 52
+Jan 12 23:39:46.307 INFO get_dsij_pairs_shares, the number of public keys: 99, self.uid: 52
+Jan 12 23:41:18.223 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 52
+Jan 12 23:41:39.105 INFO update_trustworthiness_with, trustworthiness after this call: 0.4934988771424881, self.uid: 52
+Jan 12 23:41:58.592 INFO get_dsij_pairs_shares, the number of public keys: 99, self.uid: 52
+Jan 12 23:43:41.155 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 52
+Jan 12 23:43:49.711 INFO update_trustworthiness_with, trustworthiness after this call: 0.4958602796570936, self.uid: 52
+Jan 12 23:44:09.130 INFO get_dsij_pairs_shares, the number of public keys: 99, self.uid: 52
+Jan 12 23:45:46.025 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 52
+Jan 12 23:45:58.772 INFO update_trustworthiness_with, trustworthiness after this call: 0.49894148399419386, self.uid: 52
+Jan 12 23:46:18.213 INFO get_dsij_pairs_shares, the number of public keys: 99, self.uid: 52
+Jan 12 23:47:57.042 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 52
+Jan 12 23:48:05.693 INFO update_trustworthiness_with, trustworthiness after this call: 0.5008372646139352, self.uid: 52
+Jan 12 23:48:25.140 INFO get_dsij_pairs_shares, the number of public keys: 99, self.uid: 52
+Jan 12 23:50:05.727 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 52
+Jan 12 23:50:11.923 INFO update_trustworthiness_with, trustworthiness after this call: 0.5018060834968975, self.uid: 52

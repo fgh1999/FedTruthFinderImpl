@@ -1,0 +1,120 @@
+Jan 12 23:08:06.376 INFO logger initiated
+Jan 12 23:08:06.376 INFO launching server...
+Jan 12 23:08:07.263 INFO registration, new client: SlaveInfo { uid: 1, mailbox: 192.168.0.29:50101 }
+Jan 12 23:08:07.263 INFO registration, new client: SlaveInfo { uid: 2, mailbox: 192.168.0.93:50101 }
+Jan 12 23:08:07.347 INFO registration, new client: SlaveInfo { uid: 3, mailbox: 192.168.0.6:50101 }
+Jan 12 23:08:07.583 INFO registration, new client: SlaveInfo { uid: 4, mailbox: 192.168.0.44:50101 }
+Jan 12 23:08:07.818 INFO registration, new client: SlaveInfo { uid: 5, mailbox: 192.168.0.14:50101 }
+Jan 12 23:08:08.104 INFO registration, new client: SlaveInfo { uid: 6, mailbox: 192.168.0.48:50101 }
+Jan 12 23:08:08.105 INFO registration, new client: SlaveInfo { uid: 7, mailbox: 192.168.0.36:50101 }
+Jan 12 23:08:08.344 INFO registration, new client: SlaveInfo { uid: 9, mailbox: 192.168.0.37:50101 }
+Jan 12 23:08:08.344 INFO registration, new client: SlaveInfo { uid: 8, mailbox: 192.168.0.22:50101 }
+Jan 12 23:08:08.645 INFO registration, new client: SlaveInfo { uid: 10, mailbox: 192.168.0.89:50101 }
+Jan 12 23:08:08.771 INFO registration, new client: SlaveInfo { uid: 11, mailbox: 192.168.0.25:50101 }
+Jan 12 23:08:09.028 INFO registration, new client: SlaveInfo { uid: 12, mailbox: 192.168.0.79:50101 }
+Jan 12 23:08:09.030 INFO registration, new client: SlaveInfo { uid: 13, mailbox: 192.168.0.7:50101 }
+Jan 12 23:08:09.230 INFO registration, new client: SlaveInfo { uid: 14, mailbox: 192.168.0.83:50101 }
+Jan 12 23:08:09.511 INFO registration, new client: SlaveInfo { uid: 16, mailbox: 192.168.0.73:50101 }
+Jan 12 23:08:09.511 INFO registration, new client: SlaveInfo { uid: 15, mailbox: 192.168.0.47:50101 }
+Jan 12 23:08:09.511 INFO registration, new client: SlaveInfo { uid: 17, mailbox: 192.168.0.9:50101 }
+Jan 12 23:08:09.573 INFO registration, new client: SlaveInfo { uid: 18, mailbox: 192.168.0.45:50101 }
+Jan 12 23:08:09.575 INFO registration, new client: SlaveInfo { uid: 19, mailbox: 192.168.0.90:50101 }
+Jan 12 23:08:09.600 INFO registration, new client: SlaveInfo { uid: 20, mailbox: 192.168.0.84:50101 }
+Jan 12 23:08:09.795 INFO registration, new client: SlaveInfo { uid: 21, mailbox: 192.168.0.52:50101 }
+Jan 12 23:08:10.034 INFO registration, new client: SlaveInfo { uid: 22, mailbox: 192.168.0.81:50101 }
+Jan 12 23:08:10.035 INFO registration, new client: SlaveInfo { uid: 23, mailbox: 192.168.0.77:50101 }
+Jan 12 23:08:10.203 INFO registration, new client: SlaveInfo { uid: 24, mailbox: 192.168.0.21:50101 }
+Jan 12 23:08:10.233 INFO registration, new client: SlaveInfo { uid: 25, mailbox: 192.168.0.56:50101 }
+Jan 12 23:08:10.368 INFO registration, new client: SlaveInfo { uid: 26, mailbox: 192.168.0.2:50101 }
+Jan 12 23:08:10.491 INFO registration, new client: SlaveInfo { uid: 27, mailbox: 192.168.0.95:50101 }
+Jan 12 23:08:10.736 INFO registration, new client: SlaveInfo { uid: 28, mailbox: 192.168.0.96:50101 }
+Jan 12 23:08:10.809 INFO registration, new client: SlaveInfo { uid: 29, mailbox: 192.168.0.87:50101 }
+Jan 12 23:08:11.021 INFO registration, new client: SlaveInfo { uid: 30, mailbox: 192.168.0.66:50101 }
+Jan 12 23:08:11.134 INFO registration, new client: SlaveInfo { uid: 31, mailbox: 192.168.0.75:50101 }
+Jan 12 23:08:11.271 INFO registration, new client: SlaveInfo { uid: 32, mailbox: 192.168.0.12:50101 }
+Jan 12 23:08:11.463 INFO registration, new client: SlaveInfo { uid: 33, mailbox: 192.168.0.13:50101 }
+Jan 12 23:08:11.558 INFO registration, new client: SlaveInfo { uid: 34, mailbox: 192.168.0.32:50101 }
+Jan 12 23:08:11.698 INFO registration, new client: SlaveInfo { uid: 35, mailbox: 192.168.0.43:50101 }
+Jan 12 23:08:11.846 INFO registration, new client: SlaveInfo { uid: 36, mailbox: 192.168.0.35:50101 }
+Jan 12 23:08:11.984 INFO registration, new client: SlaveInfo { uid: 37, mailbox: 192.168.0.8:50101 }
+Jan 12 23:08:12.007 INFO registration, new client: SlaveInfo { uid: 38, mailbox: 192.168.0.34:50101 }
+Jan 12 23:08:12.224 INFO registration, new client: SlaveInfo { uid: 39, mailbox: 192.168.0.46:50101 }
+Jan 12 23:08:12.407 INFO registration, new client: SlaveInfo { uid: 40, mailbox: 192.168.0.40:50101 }
+Jan 12 23:08:12.576 INFO registration, new client: SlaveInfo { uid: 41, mailbox: 192.168.0.100:50101 }
+Jan 12 23:08:12.920 INFO registration, new client: SlaveInfo { uid: 42, mailbox: 192.168.0.99:50101 }
+Jan 12 23:08:12.940 INFO registration, new client: SlaveInfo { uid: 43, mailbox: 192.168.0.41:50101 }
+Jan 12 23:08:13.112 INFO registration, new client: SlaveInfo { uid: 44, mailbox: 192.168.0.23:50101 }
+Jan 12 23:08:13.350 INFO registration, new client: SlaveInfo { uid: 45, mailbox: 192.168.0.70:50101 }
+Jan 12 23:08:13.350 INFO registration, new client: SlaveInfo { uid: 46, mailbox: 192.168.0.30:50101 }
+Jan 12 23:08:13.701 INFO registration, new client: SlaveInfo { uid: 47, mailbox: 192.168.0.27:50101 }
+Jan 12 23:08:13.701 INFO registration, new client: SlaveInfo { uid: 48, mailbox: 192.168.0.86:50101 }
+Jan 12 23:08:13.806 INFO registration, new client: SlaveInfo { uid: 49, mailbox: 192.168.0.4:50101 }
+Jan 12 23:08:14.071 INFO registration, new client: SlaveInfo { uid: 50, mailbox: 192.168.0.19:50101 }
+Jan 12 23:08:14.303 INFO registration, new client: SlaveInfo { uid: 51, mailbox: 192.168.0.5:50101 }
+Jan 12 23:08:14.307 INFO registration, new client: SlaveInfo { uid: 52, mailbox: 192.168.0.28:50101 }
+Jan 12 23:08:14.524 INFO registration, new client: SlaveInfo { uid: 53, mailbox: 192.168.0.58:50101 }
+Jan 12 23:08:14.657 INFO registration, new client: SlaveInfo { uid: 54, mailbox: 192.168.0.61:50101 }
+Jan 12 23:08:14.800 INFO registration, new client: SlaveInfo { uid: 55, mailbox: 192.168.0.51:50101 }
+Jan 12 23:08:14.851 INFO registration, new client: SlaveInfo { uid: 56, mailbox: 192.168.0.10:50101 }
+Jan 12 23:08:14.977 INFO registration, new client: SlaveInfo { uid: 57, mailbox: 192.168.0.53:50101 }
+Jan 12 23:08:15.132 INFO registration, new client: SlaveInfo { uid: 58, mailbox: 192.168.0.50:50101 }
+Jan 12 23:08:15.183 INFO registration, new client: SlaveInfo { uid: 59, mailbox: 192.168.0.38:50101 }
+Jan 12 23:08:15.203 INFO registration, new client: SlaveInfo { uid: 60, mailbox: 192.168.0.57:50101 }
+Jan 12 23:08:15.353 INFO registration, new client: SlaveInfo { uid: 61, mailbox: 192.168.0.64:50101 }
+Jan 12 23:08:15.396 INFO registration, new client: SlaveInfo { uid: 62, mailbox: 192.168.0.67:50101 }
+Jan 12 23:08:15.501 INFO registration, new client: SlaveInfo { uid: 63, mailbox: 192.168.0.63:50101 }
+Jan 12 23:08:15.748 INFO registration, new client: SlaveInfo { uid: 64, mailbox: 192.168.0.54:50101 }
+Jan 12 23:08:15.748 INFO registration, new client: SlaveInfo { uid: 65, mailbox: 192.168.0.49:50101 }
+Jan 12 23:08:15.939 INFO registration, new client: SlaveInfo { uid: 66, mailbox: 192.168.0.15:50101 }
+Jan 12 23:08:16.005 INFO registration, new client: SlaveInfo { uid: 67, mailbox: 192.168.0.71:50101 }
+Jan 12 23:08:16.249 INFO registration, new client: SlaveInfo { uid: 68, mailbox: 192.168.0.78:50101 }
+Jan 12 23:08:16.548 INFO registration, new client: SlaveInfo { uid: 69, mailbox: 192.168.0.60:50101 }
+Jan 12 23:08:16.643 INFO registration, new client: SlaveInfo { uid: 70, mailbox: 192.168.0.82:50101 }
+Jan 12 23:08:16.756 INFO registration, new client: SlaveInfo { uid: 71, mailbox: 192.168.0.26:50101 }
+Jan 12 23:08:17.223 INFO registration, new client: SlaveInfo { uid: 73, mailbox: 192.168.0.97:50101 }
+Jan 12 23:08:17.223 INFO registration, new client: SlaveInfo { uid: 72, mailbox: 192.168.0.11:50101 }
+Jan 12 23:08:17.227 INFO registration, new client: SlaveInfo { uid: 74, mailbox: 192.168.0.88:50101 }
+Jan 12 23:08:17.349 INFO registration, new client: SlaveInfo { uid: 75, mailbox: 192.168.0.24:50101 }
+Jan 12 23:08:17.456 INFO registration, new client: SlaveInfo { uid: 76, mailbox: 192.168.0.31:50101 }
+Jan 12 23:08:17.642 INFO registration, new client: SlaveInfo { uid: 77, mailbox: 192.168.0.94:50101 }
+Jan 12 23:08:17.792 INFO registration, new client: SlaveInfo { uid: 78, mailbox: 192.168.0.39:50101 }
+Jan 12 23:08:17.855 INFO registration, new client: SlaveInfo { uid: 79, mailbox: 192.168.0.16:50101 }
+Jan 12 23:08:17.955 INFO registration, new client: SlaveInfo { uid: 80, mailbox: 192.168.0.92:50101 }
+Jan 12 23:08:18.203 INFO registration, new client: SlaveInfo { uid: 81, mailbox: 192.168.0.80:50101 }
+Jan 12 23:08:18.448 INFO registration, new client: SlaveInfo { uid: 82, mailbox: 192.168.0.91:50101 }
+Jan 12 23:08:18.583 INFO registration, new client: SlaveInfo { uid: 83, mailbox: 192.168.0.85:50101 }
+Jan 12 23:08:18.690 INFO registration, new client: SlaveInfo { uid: 84, mailbox: 192.168.0.33:50101 }
+Jan 12 23:08:18.933 INFO registration, new client: SlaveInfo { uid: 85, mailbox: 192.168.0.59:50101 }
+Jan 12 23:08:19.176 INFO registration, new client: SlaveInfo { uid: 86, mailbox: 192.168.0.20:50101 }
+Jan 12 23:08:19.364 INFO registration, new client: SlaveInfo { uid: 87, mailbox: 192.168.0.69:50101 }
+Jan 12 23:08:19.492 INFO registration, new client: SlaveInfo { uid: 89, mailbox: 192.168.0.42:50101 }
+Jan 12 23:08:19.492 INFO registration, new client: SlaveInfo { uid: 88, mailbox: 192.168.0.55:50101 }
+Jan 12 23:08:19.557 INFO registration, new client: SlaveInfo { uid: 90, mailbox: 192.168.0.68:50101 }
+Jan 12 23:08:20.035 INFO registration, new client: SlaveInfo { uid: 91, mailbox: 192.168.0.18:50101 }
+Jan 12 23:08:20.235 INFO registration, new client: SlaveInfo { uid: 92, mailbox: 192.168.0.74:50101 }
+Jan 12 23:08:20.311 INFO registration, new client: SlaveInfo { uid: 93, mailbox: 192.168.0.3:50101 }
+Jan 12 23:08:20.523 INFO registration, new client: SlaveInfo { uid: 94, mailbox: 192.168.0.65:50101 }
+Jan 12 23:08:20.591 INFO registration, new client: SlaveInfo { uid: 95, mailbox: 192.168.0.72:50101 }
+Jan 12 23:08:20.932 INFO registration, new client: SlaveInfo { uid: 96, mailbox: 192.168.0.98:50101 }
+Jan 12 23:08:20.936 INFO registration, new client: SlaveInfo { uid: 97, mailbox: 192.168.0.76:50101 }
+Jan 12 23:08:21.030 INFO registration, new client: SlaveInfo { uid: 98, mailbox: 192.168.0.17:50101 }
+Jan 12 23:08:21.032 INFO registration, new client: SlaveInfo { uid: 99, mailbox: 192.168.0.62:50101 }
+Jan 12 23:08:21.033 INFO Identifier Eid Map, pairs(event identifier, eid): (33: 23) (95: 60) (161: 12) (1172: 58) (181: 14) (326: 30) (86: 11) (56: 20) (155: 3) (493: 55) (502: 66) (804: 2) (120: 91) (30: 5) (368: 13) (646: 31) (169: 89) (165: 21) (562: 45) (69: 50) (176: 62) (132: 19) (63: 9) (126: 4) (6: 25) (845: 35) (46: 37) (242: 32) (23: 8) (3: 41) (381: 48) (189: 52) (157: 85) (611: 29) (130: 15) (519: 36) (34: 43) (222: 87) (36: 10) (20: 68) (557: 16) (17: 28) (7: 77) (1409: 93) (104: 61) (26: 44) (361: 22) (953: 95) (514: 97) (425: 38) (58: 75) (137: 18) (44: 47) (142: 57) (1085: 98) (461: 39) (74: 34) (524: 69) (80: 71) (259: 76) (101: 78) (234: 83) (785: 56) (770: 84) (309: 51) (402: 49) (569: 46) (135: 64) (290: 65) (52: 70) (399: 54) (379: 17) (198: 42) (59: 72) (389: 27) (217: 1) (109: 73) (273: 79) (617: 40) (384: 6) (21: 33) (937: 82) (276: 86) (518: 90) (576: 92) (467: 94) (618: 96) (275: 80) (647: 100) (280: 53) (252: 63) (87: 88) (1281: 99) (470: 74) (172: 26) (125: 67) (644: 59) (100: 24) (546: 7) (226: 81) 
+Jan 12 23:08:26.037 INFO Iterations start
+Jan 12 23:10:40.647 INFO Failed events' eids, the number of failed eids: 0, round_ith: 0
+Jan 12 23:10:40.705 INFO Iteration, round_ith: 1
+Jan 12 23:12:53.286 INFO Failed events' eids, the number of failed eids: 0, round_ith: 1
+Jan 12 23:12:53.333 INFO Iteration, round_ith: 2
+Jan 12 23:15:05.603 INFO Failed events' eids, the number of failed eids: 0, round_ith: 2
+Jan 12 23:15:05.649 INFO Iteration, round_ith: 3
+Jan 12 23:17:18.116 INFO Failed events' eids, the number of failed eids: 0, round_ith: 3
+Jan 12 23:17:18.161 INFO Iteration, round_ith: 4
+Jan 12 23:19:30.806 INFO Failed events' eids, the number of failed eids: 0, round_ith: 4
+Jan 12 23:19:30.852 INFO Iteration, round_ith: 5
+Jan 12 23:21:43.096 INFO Failed events' eids, the number of failed eids: 0, round_ith: 5
+Jan 12 23:21:43.139 INFO Iteration, round_ith: 6
+Jan 12 23:23:56.327 INFO Failed events' eids, the number of failed eids: 0, round_ith: 6
+Jan 12 23:23:56.372 INFO Iteration, round_ith: 7
+Jan 12 23:23:56.373 INFO Iterations end, event_confidence: (90: 0.4847450034317786) (63: 0.5095866002761519) (14: 0.489603659640726) (40: 0.4875359273033849) (70: 0.4903581545078234) (1: 0.5112493380821256) (41: 0.5090680029931629) (37: 0.5086873955627471) (89: 0.49068622118810584) (11: 0.48870647978286386) (39: 0.5101773176915446) (24: 0.49177570486709005) (77: 0.4907640051685709) (36: 0.5107460993182992) (22: 0.48619920914701864) (93: 0.48123359673934807) (94: 0.4865582823457264) (23: 0.5115197457184847) (71: 0.5104835714276099) (7: 0.48896526062836465) (28: 0.49112378335612994) (99: 0.47944434319490903) (16: 0.5090384270444659) (8: 0.5077564933194133) (31: 0.51038180420714) (97: 0.48916876185821645) (19: 0.48776524123546516) (83: 0.4894036298446459) (52: 0.48985819572320416) (65: 0.49007384533298776) (79: 0.5116493840008576) (26: 0.5109367141220115) (10: 0.5107904446597274) (54: 0.4910147800109389) (17: 0.48901600071895235) (95: 0.505646573172388) (76: 0.5087209262008875) (72: 0.4887752667600859) (38: 0.5102654687816078) (56: 0.4905102347188991) (55: 0.48743877023755117) (64: 0.49046783377889924) (50: 0.5075309708751392) (92: 0.4835704846182023) (34: 0.5069263139430542) (73: 0.5111588444032027) (47: 0.5112409727121212) (51: 0.4901053056350805) (58: 0.49537016722721494) (2: 0.5136183470368472) (20: 0.5096690865400213) (43: 0.5074503197740078) (81: 0.5079553063592387) (33: 0.510007221019962) (21: 0.5093942140119547) (12: 0.4907286452113838) (49: 0.4895397124603059) (74: 0.4868805519324158) (88: 0.493652376990272) (78: 0.5107911691965155) (3: 0.4862942653065172) (6: 0.5102108111178001) (60: 0.5125466864469753) (82: 0.48300842284686346) (61: 0.48744972440109663) (57: 0.5094090171371138) (25: 0.4898604267200646) (18: 0.5059644842811544) (96: 0.4997327919930905) (100: 0.489313452109095) (9: 0.5116926841570294) (80: 0.5107793442181143) (84: 0.5113091631626334) (85: 0.5089674505465207) (42: 0.5114244204464129) (86: 0.5067914606589434) (32: 0.48871038100193953) (66: 0.49341738115436) (45: 0.506837523375742) (69: 0.48860756797052884) (67: 0.48945339526801107) (4: 0.5076863748879664) (15: 0.5093024792037769) (75: 0.49358252135590813) (27: 0.5090089256250476) (98: 0.5151936199496245) (13: 0.5114047829337588) (44: 0.5102292454955741) (87: 0.5074717438647424) (5: 0.5102300692392541) (30: 0.5109528323465851) (35: 0.48644740709975526) (46: 0.512804754690012) (68: 0.48896101286182453) (53: 0.5072732798387068) (59: 0.5106183387177463) (48: 0.5082913862156169) (91: 0.5102092955063924) (62: 0.5116017330425483) (29: 0.5119959244792881) 
+Jan 12 23:24:02.139 INFO Trustworthiness leader-board, ascending: 12 40 93 39 65 51 60 9 45 7 52 72 18 71 28 92 24 56 26 44 88 74 23 34 48 79 78 43 13 16 83 73 2 63 3 25 62 5 49 57 99 19 42 37 91 29 35 69 36 94 50 97 59 10 98 41 30 6 14 15 53 87 38 82 47 54 4 77 76 96 89 22 46 21 27 95 33 20 70 86 85 75 58 61 64 67 81 1 80 84 31 8 11 68 90 32 17 55 66 
+Jan 12 23:24:02.139 INFO Traffic in bytes, out: 290288094, in: 304769627

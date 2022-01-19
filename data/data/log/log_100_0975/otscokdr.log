@@ -1,0 +1,19 @@
+Jan 13 01:21:41.382 INFO node constructed, self.uid: 3
+Jan 13 01:23:05.345 INFO get_dsij_pairs_shares, the number of public keys: 99, self.uid: 3
+Jan 13 01:23:41.078 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 3
+Jan 13 01:23:59.279 INFO update_trustworthiness_with, trustworthiness after this call: 0.6803428676270189, self.uid: 3
+Jan 13 01:25:17.946 INFO get_dsij_pairs_shares, the number of public keys: 99, self.uid: 3
+Jan 13 01:25:57.371 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 3
+Jan 13 01:26:08.421 INFO update_trustworthiness_with, trustworthiness after this call: 0.6039987693710785, self.uid: 3
+Jan 13 01:27:27.083 INFO get_dsij_pairs_shares, the number of public keys: 99, self.uid: 3
+Jan 13 01:28:01.120 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 3
+Jan 13 01:28:14.810 INFO update_trustworthiness_with, trustworthiness after this call: 0.5646575580467704, self.uid: 3
+Jan 13 01:29:33.501 INFO get_dsij_pairs_shares, the number of public keys: 99, self.uid: 3
+Jan 13 01:30:15.788 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 3
+Jan 13 01:30:20.185 INFO update_trustworthiness_with, trustworthiness after this call: 0.5467250707982343, self.uid: 3
+Jan 13 01:31:39.056 INFO get_dsij_pairs_shares, the number of public keys: 99, self.uid: 3
+Jan 13 01:32:11.729 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 3
+Jan 13 01:32:23.273 INFO update_trustworthiness_with, trustworthiness after this call: 0.53896511906289, self.uid: 3
+Jan 13 01:33:42.058 INFO get_dsij_pairs_shares, the number of public keys: 99, self.uid: 3
+Jan 13 01:34:22.385 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 3
+Jan 13 01:34:25.282 INFO update_trustworthiness_with, trustworthiness after this call: 0.5359138683608385, self.uid: 3

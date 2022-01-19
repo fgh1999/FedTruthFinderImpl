@@ -1,0 +1,19 @@
+Jan 13 12:50:05.371 INFO node constructed, self.uid: 36
+Jan 13 12:50:16.398 INFO get_dsij_pairs_shares, the number of public keys: 40, self.uid: 36
+Jan 13 12:50:19.929 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 36
+Jan 13 12:50:21.110 INFO update_trustworthiness_with, trustworthiness after this call: 0.6708879626755643, self.uid: 36
+Jan 13 12:50:26.991 INFO get_dsij_pairs_shares, the number of public keys: 40, self.uid: 36
+Jan 13 12:50:29.469 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 36
+Jan 13 12:50:31.131 INFO update_trustworthiness_with, trustworthiness after this call: 0.590005909863441, self.uid: 36
+Jan 13 12:50:37.050 INFO get_dsij_pairs_shares, the number of public keys: 40, self.uid: 36
+Jan 13 12:50:39.800 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 36
+Jan 13 12:50:41.200 INFO update_trustworthiness_with, trustworthiness after this call: 0.552640671236549, self.uid: 36
+Jan 13 12:50:47.105 INFO get_dsij_pairs_shares, the number of public keys: 40, self.uid: 36
+Jan 13 12:50:48.890 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 36
+Jan 13 12:50:51.169 INFO update_trustworthiness_with, trustworthiness after this call: 0.5351414148649252, self.uid: 36
+Jan 13 12:50:57.081 INFO get_dsij_pairs_shares, the number of public keys: 40, self.uid: 36
+Jan 13 12:50:59.763 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 36
+Jan 13 12:51:00.973 INFO update_trustworthiness_with, trustworthiness after this call: 0.5271525031751642, self.uid: 36
+Jan 13 12:51:06.897 INFO get_dsij_pairs_shares, the number of public keys: 40, self.uid: 36
+Jan 13 12:51:08.551 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 36
+Jan 13 12:51:10.318 INFO update_trustworthiness_with, trustworthiness after this call: 0.5235358816860421, self.uid: 36

@@ -1,0 +1,19 @@
+Jan 13 12:50:05.372 INFO node constructed, self.uid: 8
+Jan 13 12:50:11.434 INFO get_dsij_pairs_shares, the number of public keys: 40, self.uid: 8
+Jan 13 12:50:20.003 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 8
+Jan 13 12:50:21.094 INFO update_trustworthiness_with, trustworthiness after this call: 0.762359249411572, self.uid: 8
+Jan 13 12:50:22.117 INFO get_dsij_pairs_shares, the number of public keys: 40, self.uid: 8
+Jan 13 12:50:29.608 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 8
+Jan 13 12:50:31.116 INFO update_trustworthiness_with, trustworthiness after this call: 0.6448378274647623, self.uid: 8
+Jan 13 12:50:32.154 INFO get_dsij_pairs_shares, the number of public keys: 40, self.uid: 8
+Jan 13 12:50:39.477 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 8
+Jan 13 12:50:41.186 INFO update_trustworthiness_with, trustworthiness after this call: 0.5855347033773927, self.uid: 8
+Jan 13 12:50:42.221 INFO get_dsij_pairs_shares, the number of public keys: 40, self.uid: 8
+Jan 13 12:50:49.436 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 8
+Jan 13 12:50:51.154 INFO update_trustworthiness_with, trustworthiness after this call: 0.5572528816957855, self.uid: 8
+Jan 13 12:50:52.165 INFO get_dsij_pairs_shares, the number of public keys: 40, self.uid: 8
+Jan 13 12:50:59.837 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 8
+Jan 13 12:51:00.957 INFO update_trustworthiness_with, trustworthiness after this call: 0.5441224334843742, self.uid: 8
+Jan 13 12:51:02.024 INFO get_dsij_pairs_shares, the number of public keys: 40, self.uid: 8
+Jan 13 12:51:08.951 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 8
+Jan 13 12:51:10.304 INFO update_trustworthiness_with, trustworthiness after this call: 0.5381773950651747, self.uid: 8

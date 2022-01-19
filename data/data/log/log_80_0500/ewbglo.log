@@ -1,0 +1,19 @@
+Jan 13 09:18:35.824 INFO node constructed, self.uid: 24
+Jan 13 09:19:29.507 INFO get_dsij_pairs_shares, the number of public keys: 80, self.uid: 24
+Jan 13 09:19:39.642 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 24
+Jan 13 09:19:54.259 INFO update_trustworthiness_with, trustworthiness after this call: 0.7243258225432772, self.uid: 24
+Jan 13 09:20:42.731 INFO get_dsij_pairs_shares, the number of public keys: 80, self.uid: 24
+Jan 13 09:21:01.063 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 24
+Jan 13 09:21:06.353 INFO update_trustworthiness_with, trustworthiness after this call: 0.616099067916924, self.uid: 24
+Jan 13 09:21:54.822 INFO get_dsij_pairs_shares, the number of public keys: 80, self.uid: 24
+Jan 13 09:22:10.655 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 24
+Jan 13 09:22:17.861 INFO update_trustworthiness_with, trustworthiness after this call: 0.5626960074387004, self.uid: 24
+Jan 13 09:23:06.336 INFO get_dsij_pairs_shares, the number of public keys: 80, self.uid: 24
+Jan 13 09:23:21.893 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 24
+Jan 13 09:23:28.998 INFO update_trustworthiness_with, trustworthiness after this call: 0.5367855680937229, self.uid: 24
+Jan 13 09:24:17.533 INFO get_dsij_pairs_shares, the number of public keys: 80, self.uid: 24
+Jan 13 09:24:27.755 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 24
+Jan 13 09:24:39.085 INFO update_trustworthiness_with, trustworthiness after this call: 0.5244046685424022, self.uid: 24
+Jan 13 09:25:27.458 INFO get_dsij_pairs_shares, the number of public keys: 80, self.uid: 24
+Jan 13 09:25:39.641 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 24
+Jan 13 09:25:48.569 INFO update_trustworthiness_with, trustworthiness after this call: 0.518786918689089, self.uid: 24

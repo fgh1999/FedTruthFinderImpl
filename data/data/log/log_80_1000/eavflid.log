@@ -1,0 +1,16 @@
+Jan 13 08:58:10.420 INFO node constructed, self.uid: 53
+Jan 13 08:58:49.623 INFO get_dsij_pairs_shares, the number of public keys: 80, self.uid: 53
+Jan 13 08:59:15.181 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 53
+Jan 13 08:59:28.637 INFO update_trustworthiness_with, trustworthiness after this call: 0.7113265857783437, self.uid: 53
+Jan 13 09:00:02.631 INFO get_dsij_pairs_shares, the number of public keys: 80, self.uid: 53
+Jan 13 09:00:34.249 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 53
+Jan 13 09:00:38.903 INFO update_trustworthiness_with, trustworthiness after this call: 0.6115148994530554, self.uid: 53
+Jan 13 09:01:12.985 INFO get_dsij_pairs_shares, the number of public keys: 80, self.uid: 53
+Jan 13 09:01:44.754 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 53
+Jan 13 09:01:47.015 INFO update_trustworthiness_with, trustworthiness after this call: 0.5679320650712785, self.uid: 53
+Jan 13 09:02:21.025 INFO get_dsij_pairs_shares, the number of public keys: 80, self.uid: 53
+Jan 13 09:02:49.347 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 53
+Jan 13 09:02:54.641 INFO update_trustworthiness_with, trustworthiness after this call: 0.551757065289702, self.uid: 53
+Jan 13 09:03:28.613 INFO get_dsij_pairs_shares, the number of public keys: 80, self.uid: 53
+Jan 13 09:03:55.459 INFO get_dsij_sum_pairs, the number of summation pairs (equals to eids) in this call: 100, self.uid: 53
+Jan 13 09:04:00.667 INFO update_trustworthiness_with, trustworthiness after this call: 0.5459323437171256, self.uid: 53
